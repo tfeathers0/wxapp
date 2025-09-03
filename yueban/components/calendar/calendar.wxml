@@ -1,0 +1,59 @@
+<view class="calendar-container">
+  <!-- 月份切换栏 -->
+  <view class="calendar-header">
+    <button bindtap="prevMonth" class="month-btn">←</button>
+    <text class="current-month">{{ currentYear }}年{{ currentMonth }}月</text>
+    <button bindtap="nextMonth" class="month-btn">→</button>
+  </view>
+
+  <!-- 星期标题 -->
+  <view class="week-header">
+    <view class="week-day">日</view>
+    <view class="week-day">一</view>
+    <view class="week-day">二</view>
+    <view class="week-day">三</view>
+    <view class="week-day">四</view>
+    <view class="week-day">五</view>
+    <view class="week-day">六</view>
+  </view>
+
+  <!-- 日期网格 -->
+  <view class="date-grid">
+    <!-- 上个月的日期（灰色显示） -->
+    <view 
+      wx:for="{{ prevMonthDates }}" 
+      wx:key="prev-{{ index }}"
+      class="date-item prev-month-date"
+    >
+      {{ item }}
+    </view>
+
+    <!-- 当月日期（可点击） -->
+    <view 
+      wx:for="{{ currentMonthDates }}" 
+      wx:key="current-{{ index }}"
+      class="date-item current-month-date {{ item === selectedDate ? 'selected' : '' }}"
+      bindtap="onDateClick"
+      data-date="{{ item }}"
+    >
+      <!-- 日期文本 -->
+      <text class="date-text">{{ item }}</text>
+      <!-- 日期标记（只在有标记时显示） -->
+      <view 
+        wx:if="{{ isMarkedDate(currentYear, currentMonth, item) }}"
+        class="date-mark"
+        style="border-color: {{ getMarkedColor(currentYear, currentMonth, item) }};"
+      ></view>
+    </view>
+
+    <!-- 下个月的日期（灰色显示） -->
+    <view 
+      wx:for="{{ nextMonthDates }}" 
+      wx:key="next-{{ index }}"
+      class="date-item next-month-date"
+    >
+      {{ item }}
+    </view>
+
+  </view>
+</view>

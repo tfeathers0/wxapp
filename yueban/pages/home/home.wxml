@@ -1,0 +1,25 @@
+<view class="container">
+
+    <!-- clock -->
+    <view class="clock">
+      <clock></clock>
+    </view>
+  <!-- 顶部装饰 -->
+
+
+
+  <view class="responsive-image">
+    <image src="/images/title6.png" class="title"></image>
+  </view>
+  
+  <!-- 登录和注册按钮 -->
+  <button class="button login-button" bindtap="handleLogin">登录</button>
+  <button class="button register-button" bindtap="handleRegister">注册</button>
+
+
+  <!-- 底部装饰 -->
+  <view class="responsive-image">
+    <image src="/images/background-bottom.png" class="bottom"></image>
+  </view>
+</view>
+

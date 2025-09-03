@@ -1,0 +1,86 @@
+<view class="container">
+  <!-- 背景装饰 -->
+  <image class="background_top" src="../../images/moon3.png" ></image>
+  
+  <!-- 柔和光晕效果 -->
+  <view class="soft-glow top-left-glow"></view>
+  <view class="soft-glow bottom-right-glow"></view>
+
+  <!-- 页面主要内容区域 -->
+  <view class="page-container">
+    <!-- 提醒信息板块 -->
+    <view class="reminder-section" data-status="{{statusType}}" bindtap="onReminderTap" wx:if="{{abnormalContacts.length > 0}}">
+      <view class="reminder-header">
+        <text class="reminder-title">关联人提醒</text>
+        <text class="reminder-time">{{currentTime}}</text>
+      </view>
+      
+      <view class="reminder-content">
+        <!-- 显示状态图标 -->
+        <image class="status-icon" src="{{statusIcon}}" mode="widthFix" wx:if="{{statusIcon}}"/>
+        <text class="reminder-text">{{reminderText}}</text>
+      </view>
+    </view>
+
+    <!-- 默认提醒信息，当没有异常关联人时显示 -->
+    <view class="reminder-section default-reminder" data-status="normal" bindtap="onReminderTap" wx:else>
+      <view class="reminder-header">
+        <text class="reminder-title">关联人提醒</text>
+        <text class="reminder-time">{{currentTime}}</text>
+      </view>
+
+      <view class="reminder-content">
+        <!-- 显示状态图标 -->
+        <image class="status-icon" src="{{statusIcon}}" mode="widthFix" wx:if="{{statusIcon}}"/>
+        <text class="reminder-text {{isCaringMessage ? 'caring-message' : ''}}">{{reminderText}}</text>
+      </view>
+    </view>
+
+       <!-- 日期显示卡片 -->
+    <view class="date-square">
+      <text class="date-day">{{currentDay}}</text>
+      <text class="date-week">{{currentWeekday}}</text>
+      <view class="date-divider"></view>
+      <text class="date-month">{{currentMonth}}月</text>
+    </view>
+ 
+   <!-- 关联切换按钮 -->
+    <view class="date-section">
+      <button bindtap="goToRelationship" class="switch-button">关联切换</button>
+    </view>
+
+  <!-- 知识卡片区域 -->
+    <view class="knowledge-section">
+      <text class="knowledge-title">月伴小贴士</text>
+      <view class="knowledge-scroll-container">
+        <view class="knowledge-scroll-wrapper" style="transform: translateY(-{{currentKnowledgeIndex * 86}}px);">
+          <view class="knowledge-item">月经期注意保暖，可用暖水袋热敷腹部</view>
+          <view class="knowledge-item">卵泡期雌激素升高，可适当增加蛋白质摄入</view>
+          <view class="knowledge-item">排卵期女性可能会有轻微腹痛，注意休息</view>
+          <view class="knowledge-item">黄体期情绪可能波动，多给予关心和理解</view>
+          <view class="knowledge-item">陪伴是最好的关怀，耐心倾听很重要</view>
+        </view>
+      </view>
+      <view class="knowledge-indicator"></view>
+    </view>
+ 
+  </view>
+
+  
+
+ 
+
+  <!-- 底部导航栏 -->
+  <view class="tab-bar">
+    <view class="tab-item" bindtap="switchToKnowledge">
+      <text class="tab-text">知识库</text>
+    </view>
+
+    <image class="tab-plus" src="/images/plus2.png" bindtap="switchToCenter" mode="widthFix"></image>
+
+    <view class="tab-item" bindtap="switchToMine">
+      <text class="tab-text">我的</text>
+    </view>
+  </view>
+</view>
+    

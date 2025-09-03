@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="agent-header">
+    <view class="nav">
+      
+      <!-- 标题 -->
+      <text class="agent-title">健康助手</text>
+    </view>
+  </view>
+
+  <scroll-view class="message-container" scroll-y="true" scroll-into-view="{{scrollToView}}" scroll-with-animation="true">
+    <view class="messages">
+      <block wx:for="{{agentMessages}}" wx:key="index">
+        <view id="message-{{index}}" class="message-item {{item.role === 'user' ? 'user-message' : 'assistant-message'}}">
+          <view class="message-bubble">
+            <text class="message-content" user-select="true">{{item.content}}</text>
+          </view>
+        </view>
+      </block>
+      
+      <!-- 思考中提示 -->
+      <view wx:if="{{loading}}" class="loading-indicator">
+        <text class="loading-text">思考中...</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="input-area">
+    <input
+      class="agent-input"
+      placeholder="请输入您的问题..."
+      value="{{agentInput}}"
+      bindinput="setAgentInput"
+      confirm-type="send"
+      bindconfirm="sendAgentRequest"
+    />
+    <button class="send-btn" bindtap="sendAgentRequest">发送</button>
+  </view>
+</view>

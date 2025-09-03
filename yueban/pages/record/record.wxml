@@ -1,0 +1,37 @@
+<view class="container">
+  <text class="title">记录月经情况 - {{date}}</text>
+
+  <!-- 经血量：单选 -->
+  <view class="section">
+    <text class="section-title">经血量：</text>
+    <radio-group class="radio-group" bindchange="onBloodAmountChange">
+      <label class="radio-label" wx:for="{{bloodOptions}}" wx:key="index">
+        <radio class="radio" value="{{item}}" checked="{{bloodAmount === item}}"></radio>
+        <text class="radio-text">{{item}}</text>
+      </label>
+    </radio-group>
+  </view>
+
+  <!-- 症状：多选 -->
+  <view class="section">
+    <text class="section-title">症状：</text>
+    <checkbox-group class="checkbox-group" bindchange="onSymptomsChange" value="{{symptoms}}">
+      <label class="checkbox-label" wx:for="{{symptomOptions}}" wx:key="index">
+        <checkbox class="checkbox" value="{{item}}"></checkbox>
+        <text class="checkbox-text">{{item}}</text>
+      </label>
+    </checkbox-group>
+  </view>
+
+  <!-- 其他情况：文本 -->
+  <view class="section">
+    <text class="section-title">记录：</text>
+    <textarea
+      class="textarea"
+      placeholder="输入当天的情况"
+      value="{{record}}"
+      bindinput="onRecordInput"/>
+  </view>
+
+  <button class="save-btn" bindtap="saveRecord">保存记录</button>
+</view>

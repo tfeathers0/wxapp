@@ -1,0 +1,70 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+    position: relative;
+    z-index: 1;
+  }
+  
+  page {
+    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+  }
+  
+  .header {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 50rpx 0;
+    text-align: center;
+    margin-top: -80px;
+  }
+  
+  .header text {
+    font-family: "Helvetica";
+    font-size: 48rpx;
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  /* Bottom Tab Bar */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 160rpx;
+    background: rgba(129, 152, 194, 0.95);
+    padding: 50rpx 20;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top-left-radius: 30rpx;
+    border-top-right-radius: 30rpx;
+    box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
+  }
+  
+  .tab-plus {
+    width: 150rpx;
+    height: 150rpx;
+    position: relative;
+    z-index: 999;
+    display: block;
+  }
+  
+  .tab-item {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .tab-text {
+    font-size: 40rpx;
+    color: #ffffff;
+    font-weight: 500;
+  }
+  
+  /* 内容区域样式 */
+  .content {
+    flex: 1;
+    padding: 40rpx;
+    background: transparent;
+  }

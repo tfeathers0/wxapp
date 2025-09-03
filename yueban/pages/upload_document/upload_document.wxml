@@ -1,0 +1,87 @@
+<view class="container">
+  <!-- 顶部导航栏 -->
+  <view class="header">
+    <image src="/images/back.png" class="back-icon" bindtap="goBack"></image>
+    <text class="page-title">上传知识库文档</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 主要内容区 -->
+  <view class="content">
+    <!-- 选择文档 -->
+    <view class="section">
+      <text class="section-title">选择Word文档</text>
+      <view class="file-chooser" bindtap="chooseDocument">
+        <image wx:if="{{filePath}}" src="/images/knowledge_base_icon.png" class="file-icon"></image>
+        <image wx:else src="/images/plus2.png" class="file-icon-plus"></image>
+        <view class="file-info">
+          <text wx:if="{{filePath}}" class="file-name">{{fileName}}</text>
+          <text wx:else class="choose-tip">点击选择Word文档 (.docx/.doc)</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 文档标题 -->
+    <view class="section">
+      <text class="section-title">文档标题</text>
+      <input 
+        class="title-input" 
+        placeholder="请输入文档标题" 
+        value="{{documentTitle}}"
+        bindinput="onTitleInput" 
+      />
+    </view>
+
+    <!-- 标签输入 -->
+    <view class="section">
+      <text class="section-title">文档标签</text>
+      <view class="tag-input-container">
+        <input 
+          class="tag-input" 
+          placeholder="输入标签后按回车" 
+          value="{{tagInput}}"
+          bindinput="onTagInput" 
+          bindconfirm="onTagConfirm"
+        />
+        <button class="add-tag-btn" size="mini" bindtap="addTag">添加</button>
+      </view>
+
+      <!-- 已添加标签 -->
+      <view class="tags-container" wx:if="{{tags.length > 0}}">
+        <text class="added-tags-title">已添加标签：</text>
+        <block wx:for="{{tags}}" wx:key="*this">
+          <view class="tag-item">
+            <text class="tag-text">{{item}}</text>
+            <text class="tag-remove" data-index="{{index}}" bindtap="removeTag">×</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 上传提示 -->
+    <view wx:if="{{!filePath || !isTitleValid}}" class="upload-tip">
+      <text wx:if="{{!filePath && !isTitleValid}}">请先选择Word文档并输入标题</text>
+      <text wx:elif="{{!filePath}}">请先选择Word文档</text>
+      <text wx:else>请输入文档标题</text>
+    </view>
+
+    <!-- 调试按钮 -->
+    <button 
+      class="debug-btn"
+      type="default"
+      bindtap="showDebugInfo"
+    >
+      查看状态
+    </button>
+
+      <!-- 上传按钮 -->
+    <button 
+      class="upload-btn"
+      type="primary"
+      disabled="{{isSubmitting || !filePath || !isTitleValid}}"
+      bindtap="uploadDocument"
+    >
+      {{isSubmitting ? '上传中...' : '上传文档'}}
+    </button>
+  </view>
+</view>

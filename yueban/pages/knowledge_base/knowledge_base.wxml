@@ -1,0 +1,43 @@
+<view class="page">
+
+<!-- 主容器 -->
+<view class="container">
+  <!-- 主体内容 -->
+  <view class="main">
+    <!-- 检索按钮 -->
+    <button class="menu-btn" bindtap="goSearch">
+      <image src="/images/knowledge_base_icon.png" class="icon"></image>
+      <text class="label">检索</text>
+    </button>
+
+    <!-- 收藏按钮 -->
+    <button class="menu-btn" bindtap="goFavorite">
+      <image src="/icon/list.png" class="icon"></image>
+      <text class="label">收藏</text>
+    </button>
+
+    <!-- 智能体按钮 -->
+    <button class="menu-btn" bindtap="goToAgent">
+      <image src="/images/plus2.png" class="icon"></image>
+      <text class="label">AI问答</text>
+    </button>
+  </view>
+</view>
+
+<!-- 隐藏的导航线 -->
+<view class="tab-bar-line"></view>
+
+<!-- 底部导航栏 -->
+<view class="tab-bar">
+  <view class="tab-item" bindtap="switchToKnowledge">
+    <text class="tab-text">知识库</text>
+  </view>
+
+  <!-- 中心按钮 -->
+  <image class="tab-plus" src="/images/plus2.png" bindtap="goAdd" mode="widthFix"></image>
+
+  <view class="tab-item" bindtap="switchToMine">
+    <text class="tab-text">我的</text>
+  </view>
+</view>
+</view>

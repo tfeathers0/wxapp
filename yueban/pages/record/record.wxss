@@ -1,0 +1,78 @@
+.container {
+    padding: 32rpx;
+    background-color: #faf7f8;
+    min-height: 100vh;
+  }
+  
+  .title {
+    display: block;
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #d46a6a;
+    text-align: center;
+    margin-bottom: 40rpx;
+    padding-bottom: 24rpx;
+    border-bottom: 1rpx solid #f0e6e7;
+  }
+  
+  .section {
+    background-color: #fff;
+    border-radius: 16rpx;
+    padding: 32rpx;
+    margin-bottom: 32rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  }
+  
+  .section-title {
+    display: block;
+    font-size: 32rpx;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 24rpx;
+  }
+  
+  .radio-group, .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .radio-label, .checkbox-label {
+    display: flex;
+    align-items: center;
+    margin-right: 40rpx;
+    margin-bottom: 20rpx;
+  }
+  
+  .radio, .checkbox {
+    transform: scale(0.9);
+    margin-right: 12rpx;
+  }
+  
+  .radio-text, .checkbox-text {
+    font-size: 28rpx;
+  }
+  
+  .textarea {
+    width: 100%;
+    height: 200rpx;
+    padding: 24rpx;
+    border: 1rpx solid #e8dcdd;
+    border-radius: 16rpx;
+    font-size: 28rpx;
+  }
+  
+  .save-btn {
+    background-color: #dcb8ba;
+    color: white;
+    padding: 28rpx;
+    border: none;
+    border-radius: 16rpx;
+    width: 100%;
+    font-size: 32rpx;
+    font-weight: 500;
+    margin-top: 32rpx;
+  }
+  
+  .save-btn:active {
+    background-color: #c99a9d;
+  }

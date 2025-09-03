@@ -1,0 +1,23 @@
+<view class="container">
+  <!-- Subscription Switch -->
+  <view class="switch-item">
+    <text>消息订阅</text>
+    <switch checked="{{subscriptionEnabled}}" bindchange="toggleSubscription"/>
+  </view>
+
+  <!-- Reminder Switch -->
+  <view class="switch-item">
+    <text>预测提醒</text>
+    <switch checked="{{reminderEnabled}}" bindchange="toggleReminder"/>
+  </view>
+
+  <!-- Timer -->
+  <view class="switch-item">
+    <picker mode="time" value="{{Reminder_time}}" bindchange="onTimeChange">
+  <view class="picker">
+    <text>提醒时间 ：</text>
+    <text class="time-text">{{Reminder_time}}</text>
+  </view>
+</picker>
+</view>
+</view>

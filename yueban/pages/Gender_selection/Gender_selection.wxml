@@ -1,0 +1,11 @@
+<view class="container">
+  <text class="title">请选择您的性别</text>
+  <image class="background_bottom" src="../../images/background_bottom.png" ></image>
+  <image class="background_top" src="../../images/background_top.png" ></image>
+  <view class="icon-container">
+    <image class="icon" src="../../images/female_icon.png" bindtap="chooseFemale"></image>
+    <image class="icon" src="../../images/male_icon.png" bindtap="chooseMale"></image>
+  </view>
+
+</view>
+

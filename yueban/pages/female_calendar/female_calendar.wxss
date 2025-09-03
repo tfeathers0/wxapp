@@ -1,0 +1,161 @@
+/* calendar.wxss */
+.calendar {
+  padding: 20rpx;
+  background-color: #fff9f5;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+}
+
+.day {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.day.period {
+  border: 3rpx solid #8198c2;
+  border-radius: 50%;
+}
+
+.day.ovulation {
+  border: 3rpx solid #d792a5;
+  border-radius: 50%;
+}
+
+.day.recorded {
+  background-color: #daeaf6;
+  border-radius: 50%;
+}
+
+/* 支持多重类型 */
+.day.period.recorded {
+  border: 3rpx solid #8198c2;
+  background-color: #daeaf6;
+  border-radius: 50%;
+}
+
+.day.ovulation.recorded {
+  border: 3rpx solid #d792a5;
+  background-color: #daeaf6;
+  border-radius: 50%;
+}
+
+.legend {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  margin-right: 10rpx;
+}
+
+.dot.ovulation {
+  border: 3rpx solid #d792a5;
+}
+
+.dot.period {
+  border: 3rpx solid #8198c2;
+}
+
+.dot.recorded {
+  background-color: #daeaf6;
+}
+
+.month-btn {
+  background-color: #dcb8ba; 
+  color: #ffffff;           
+  border: none;             
+  border-radius: 8px;       
+  padding: 6px 12px;        
+}
+
+/* 红色板块 */
+.red-box {
+  margin-top: 30rpx;
+  padding: 20rpx;
+  border: 2rpx solid #dcb8ba;
+  border-radius: 12rpx;
+  color: #dcb8ba;
+}
+
+.red-box .row {
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker {
+  color: #dcb8ba;
+  margin-left: 10rpx;
+}
+
+.input {
+  border: 1rpx solid #dcb8ba;
+  padding: 5rpx 10rpx;
+  width: 100rpx;
+  text-align: center;
+  margin-left: 10rpx;
+  border-radius: 6rpx;
+}
+
+.history-btn {
+  background-color: #dcb8ba;
+  color: #fff;
+  padding: 6rpx 12rpx;
+  border: none;
+  border-radius: 6rpx;
+  cursor: pointer;
+}
+
+.record-box {
+  margin-top: 30rpx;
+  padding: 20rpx;
+  border: 2rpx solid #dcb8ba;
+  border-radius: 12rpx;
+  background-color: #fff9f5;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.08);
+}
+
+.record-title {
+  font-weight: bold;
+  color: #dcb8ba;
+  margin-bottom: 15rpx;
+  font-size: 30rpx;
+}
+
+.record-row {
+  margin-bottom: 12rpx;
+  color: #555;
+  font-size: 28rpx;
+}

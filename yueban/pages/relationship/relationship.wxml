@@ -1,0 +1,136 @@
+<view class="container">
+  <!-- 柔和光晕效果 -->
+  <view class="soft-glow top-left-glow"></view>
+  <view class="soft-glow bottom-right-glow"></view>
+  <!-- 搜索框 -->
+  <view class="search-box">
+    <icon type="search" size="16" class="search-icon"/>
+    <input class="search-input" placeholder="搜索" bindinput="onSearchInput" bindconfirm="searchUser" value="{{searchQuery}}"/>
+    <button class="search-button" size="mini" bindtap="searchUser" loading="{{isSearching}}">搜索</button>
+  </view>
+
+  <!-- 待处理请求 -->
+  <view class="wechat-section" wx:if="{{pendingRequests.length > 0}}">
+    <view class="wechat-divider">待处理请求</view>
+    <view wx:for="{{pendingRequests}}" wx:key="id" class="wechat-item" bindtap="showRequestActions" data-requestid="{{item.id}}">
+      <image class="contact-avatar" src="{{item.fromUser.get('avatar') || '/images/avatar1.png'}}" mode="aspectFill"/>
+      <view class="contact-info">
+        <view class="wechat-content-header">
+          <text class="contact-name">{{item.fromUserName || '未命名'}}</text>
+          <text class="request-time">{{item.createdAt}}</text>
+        </view>
+        <text class="wechat-message">请求添加为关联人</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已关联列表 -->
+  <view class="wechat-section" wx:if="{{contactGroups.length > 0}}">
+    <view class="wechat-divider">已关联联系人</view>
+    <view class="contact-list">
+      <block wx:for="{{contactGroups}}" wx:for-item="group" wx:key="letter">
+        <view class="wechat-divider" id="group-{{group.letter}}">{{group.letter}}</view>
+        <view wx:for="{{group.contacts}}" wx:for-item="contact" wx:key="id" class="wechat-item" bindtap="goToRelationshipInfo" data-contactid="{{contact.id}}" data-gender="{{contact.gender}}">
+          <image class="contact-avatar" src="{{contact.avatar || '/images/avatar1.png'}}" mode="aspectFill">
+            <image wx:if="{{contact.isOnline}}" class="status-indicator" src="/images/online_dot.png" mode="aspectFill"/>
+          </image>
+          <view class="contact-info">
+            <view class="wechat-content-header">
+              <text class="contact-name">{{contact.nickname || '未命名'}}</text>
+              <view class="button-group">
+                <button class="add-button permission-button" wx:if="{{currentUserGender !== 0}}" catchtap="openPermissionSettings" data-contactid="{{contact.id}}" data-name="{{contact.nickname || '未命名'}}">设置权限</button>
+                <button class="add-button remove-button" catchtap="removeFriend" data-id="{{contact.id}}" data-name="{{contact.nickname || '未命名'}}">解除关联</button>
+              </view>
+            </view>
+            <view class="contact-status">
+              <image wx:if="{{contact.gender === 1 && (contact.state || contact.cycleStage) && contact.permissions && contact.permissions.canViewStatus}}" class="status-icon" src="{{getStatusIcon(contact.state || contact.cycleStage)}}" mode="aspectFill"/>
+              <text wx:if="{{contact.gender === 1 && contact.permissions && contact.permissions.canViewStatus}}" class="status-text">{{contact.state || contact.cycleStage || '未设置'}}</text>
+              <text class="contact-relation">{{contact.relation || '朋友'}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 搜索结果弹窗 -->
+  <view class="search-result-modal" wx:if="{{showSearchResultModal}}">
+    <view class="search-result-modal-content">
+      <view class="search-result-header">
+        <text class="search-result-title">搜索结果</text>
+        <icon class="close-icon" type="clear" size="20" bindtap="closeSearchResultModal"/>
+      </view>
+      <view class="search-result-list" wx:if="{{searchResults.length > 0}}">
+        <view wx:for="{{searchResults}}" wx:key="id" class="search-result-item">
+          <image class="contact-avatar" src="{{item.avatar || '/images/avatar1.png'}}" mode="aspectFill"/>
+          <view class="contact-info">
+            <view class="wechat-content-header">
+              <text class="contact-name">{{item.nickname || '未命名'}}</text>
+              <text wx:if="{{item.isFriend}}" class="contact-relation">已关联</text>
+            </view>
+            <button wx:if="{{!item.isFriend}}" class="add-button" size="mini" bindtap="sendFriendRequest" data-userid="{{item.id}}" data-nickname="{{item.nickname || '未命名'}}">添加关联</button>
+          </view>
+        </view>
+      </view>
+      <view class="no-result" wx:if="{{searchResults.length === 0}}">
+        <text>未找到匹配的用户</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{contactList.length === 0 && !searchQuery && pendingRequests.length === 0}}" class="empty-state">
+    <image class="empty-icon" src="/images/moon2.png" mode="aspectFill"/>
+    <text class="empty-text">暂无关联人</text>
+    <text class="empty-text">请搜索添加关联人</text>
+  </view>
+
+  <!-- 右侧字母导航 -->
+  <view class="wechat-letter-nav">
+    <view wx:for="{{letters}}" wx:key="index" class="wechat-letter-item" bindtap="scrollToGroup" data-letter="{{item}}">{{item}}</view>
+  </view>
+
+  <!-- 请求操作弹窗 -->
+  <view class="action-modal" wx:if="{{showActionModal}}">
+    <view class="action-modal-content">
+      <view class="action-modal-header">
+        <text class="action-modal-title">{{selectedRequest.fromUserName || '未命名'}}</text>
+        <icon class="close-icon" type="clear" size="24" bindtap="closeActionModal"/>
+      </view>
+      <text class="action-modal-subtitle">请求添加为关联人</text>
+      <view class="action-modal-buttons">
+        <button class="action-button decline" bindtap="declineFriendRequest">拒绝</button>
+        <button class="action-button accept" bindtap="acceptFriendRequest">接受</button>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 关系选择弹窗 -->
+  <view class="relation-select-modal" wx:if="{{showRelationSelectModal}}">
+    <view class="relation-select-modal-content">
+      <view class="relation-select-header">
+        <text class="relation-select-title">{{isAcceptingRequest ? '接受关联人请求' : '添加关联人'}}</text>
+        <text class="relation-select-subtitle">{{isAcceptingRequest ? '请选择与对方的关系' : '请选择与'+selectedNickname+'的关系'}}</text>
+      </view>
+      <view class="relation-options">
+        <view class="relation-option {{selectedRelation === '恋人' ? 'selected' : ''}}" bindtap="selectRelation" data-relation="恋人">
+          <text class="relation-text">恋人</text>
+          <icon wx:if="{{selectedRelation === '恋人'}}" type="success" size="16" class="check-icon"/>
+        </view>
+        <view class="relation-option {{selectedRelation === '朋友' ? 'selected' : ''}}" bindtap="selectRelation" data-relation="朋友">
+          <text class="relation-text">朋友</text>
+          <icon wx:if="{{selectedRelation === '朋友'}}" type="success" size="16" class="check-icon"/>
+        </view>
+        <view class="relation-option {{selectedRelation === '家人' ? 'selected' : ''}}" bindtap="selectRelation" data-relation="家人">
+          <text class="relation-text">家人</text>
+          <icon wx:if="{{selectedRelation === '家人'}}" type="success" size="16" class="check-icon"/>
+        </view>
+      </view>
+      <view class="relation-select-buttons">
+        <button class="relation-button cancel" bindtap="cancelRelationSelect">取消</button>
+        <button class="relation-button confirm" bindtap="confirmRelationSelect">确定</button>
+      </view>
+    </view>
+  </view>
+</view>
+    

@@ -1,0 +1,114 @@
+/* 覆盖全局container样式，确保本地样式优先级 */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+    background-color: #f5f5f5;
+    position: relative;
+    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+    /* 增加权重确保优先级 */
+  }
+  
+  /* 柔和光晕效果 */
+  .soft-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    z-index: 0;
+  }
+  
+  .top-left-glow {
+    top: -10%;
+    left: -10%;
+    width: 400rpx;
+    height: 400rpx;
+    background: radial-gradient(circle, #a5cdd7 0%, transparent 70%);
+  }
+  
+  .bottom-right-glow {
+    bottom: -20%;
+    right: -10%;
+    width: 500rpx;
+    height: 500rpx;
+    background: radial-gradient(circle, #d792a5 0%, transparent 70%);
+  }
+  
+  /* 移除.responsive-image对图片尺寸的影响 */
+  .responsive-image {
+    width: 100%;
+    /* 不再设置object-fit，让图片自然显示 */
+  }
+  
+  /* 修改.up类样式，使其可调整尺寸 */
+  .up {
+    position: absolute;
+    width: 100%;
+    height:23vh; /* 增加高度值以便测试调整效果 */
+    top: 0px;
+    object-fit: contain; /* 保持图片比例 */
+  }
+  
+  /* 时钟样式保持不变 */
+  .clock {
+    position: absolute;
+    top: 120px; /* 减小这个值可以让时钟更往上移 */
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  /* 修改.bottom类样式，使其可调整尺寸 */
+  .bottom {
+    position: absolute;
+    width: 100%;
+    height: 25vh; /* 增加高度值以便测试调整效果 */
+    bottom: 0px;
+    object-fit: contain; /* 保持图片比例 */
+  }
+  
+  .button {
+    width: 180px;
+    height: 50px;
+    font-size: 18px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #efd4e8 0%, #bbd6ee 100%);
+    border: none;
+    border-radius: 25px;
+    margin: 0;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(215, 146, 165, 0.3);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  .register-button{
+    position: absolute;
+    bottom:180px;
+  }
+  .login-button{
+    position: absolute;
+    bottom:240px;
+  }
+  
+  .button:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 10px rgba(215, 146, 165, 0.2);
+  }
+  
+  /* 按钮悬停效果（Web端预览） */
+  .button:hover {
+    box-shadow: 0 8px 25px rgba(215, 146, 165, 0.4);
+    transform: translateY(-2px);
+  }
+  
+  .title {
+    position: absolute;
+    width: 80%;
+    top:220px;
+    right:50px;
+    height: 40vh;
+    object-fit: contain; /* 保持图片比例 */
+  }

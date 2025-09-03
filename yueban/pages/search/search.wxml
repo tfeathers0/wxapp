@@ -1,0 +1,147 @@
+<view class="page">
+  <!-- 顶部导航栏 -->
+  <view class="header">
+    <view class="nav">
+      <!-- 返回箭头 -->
+      <image src="/images/back.png" class="back-icon" bindtap="goBack"></image>
+      
+      <!-- 搜索输入框 -->
+      <view class="search-input-container">
+        <input 
+          class="search-input" 
+          placeholder="请输入关键词搜索文档" 
+          value="{{searchKeyword}}" 
+          bindinput="onInput" 
+          bindconfirm="onSearchConfirm"
+        />
+        <image 
+          wx:if="{{searchKeyword}}"
+          src="/images/clear.png" 
+          class="clear-icon" 
+          bindtap="clearSearchKeyword"
+        ></image>
+      </view>
+      
+      <!-- 搜索按钮 -->
+      <text class="search-btn" bindtap="doSearch">搜索</text>
+      
+      <!-- 上传按钮 -->
+      <image src="/images/plus2.png" class="upload-icon" bindtap="navigateToUpload"></image>
+    </view>
+  </view>
+  
+  <!-- 标签筛选 -->
+  <view class="tags-section">
+    <view class="section-header">
+      <text class="section-title">标签筛选</text>
+      <text 
+        wx:if="{{selectedTags.length > 0}}"
+        class="clear-tags-btn"
+        bindtap="clearSelectedTags">清除</text>
+    </view>
+    
+    <view class="tags-list">
+      <block wx:for="{{allTags}}" wx:key="*this">
+        <view 
+          class="tag {{selectedTags.indexOf(item) !== -1 ? 'tag-selected' : ''}}"
+          bindtap="onTagToggle"
+          data-tag="{{item}}"
+        >
+          {{item}}
+        </view>
+      </block>
+      <view wx:if="{{allTags.length === 0}}">
+        <text class="no-tags-text">暂无标签</text>
+      </view>
+    </view>
+    
+    <!-- 已选标签显示 -->
+    <view wx:if="{{selectedTags.length > 0}}" class="selected-tags">
+      <text class="selected-tags-label">已选择：</text>
+      <block wx:for="{{selectedTags}}" wx:key="*this">
+        <view class="selected-tag-item">
+          <text>{{item}}</text>
+          <text 
+            class="remove-tag-btn" 
+            bindtap="onTagToggle"
+            data-tag="{{item}}"
+          >
+            ×
+          </text>
+        </view>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 搜索结果提示 -->
+  <view wx:if="{{searchResultText}}" class="search-result-info">
+    <text>{{searchResultText}}</text>
+  </view>
+  
+  <!-- 主体内容 -->
+  <view class="main">
+    <!-- 搜索结果 -->
+    <view class="results-section">
+      <!-- 加载中显示 -->
+      <view wx:if="{{isLoading && documents.length === 0}}" class="loading">
+        <view class="loading-spinner"></view>
+        <text class="loading-text">
+          {{isSearching ? '搜索中...' : '加载文档中...'}}
+        </text>
+      </view>
+      
+      <!-- 搜索结果列表 -->
+      <block wx:for="{{documents}}" wx:key="id">
+        <view class="doc-item" bindtap="onDocItemTap" data-id="{{item.id}}" wx:if="{{item.matchingParagraphs && item.matchingParagraphs.length > 0}}">
+          <!-- 匹配的段落 - 完整版，同时支持二维和三维数组结构 -->
+          <block wx:if="{{item.matchingParagraphs && item.matchingParagraphs.length > 0}}">
+            <view class="matching-paragraphs-section">
+              <block wx:for="{{item.matchingParagraphs}}" wx:for-item="paragraphGroup" wx:for-index="paragraphIndex" wx:key="paragraphIndex">
+                <view class="matching-paragraph" wx:if="{{paragraphGroup}}">
+                  <!-- 检查是否是三维数组结构 [[[{text, isMatch}]]] -->
+                  <block wx:if="{{paragraphGroup.length > 0 && paragraphGroup[0].length > 0 && paragraphGroup[0][0].text !== undefined}}">
+                    <block wx:for="{{paragraphGroup}}" wx:for-item="subGroup" wx:for-index="subGroupIndex" wx:key="subGroupIndex">
+                      <block wx:for="{{subGroup}}" wx:for-item="segment" wx:for-index="segmentIndex" wx:key="segmentIndex">
+                        <text class="{{segment.isMatch ? 'highlight-text' : ''}}">{{segment.text}}</text>
+                      </block>
+                    </block>
+                  </block>
+                  <!-- 检查是否是二维数组结构 [[{text, isMatch}]] -->
+                  <block wx:elif="{{paragraphGroup.length > 0 && paragraphGroup[0].text !== undefined}}">
+                    <!-- 渲染一维结构 [{text, isMatch}] -->
+                    <block wx:for="{{paragraphGroup}}" wx:for-item="segment" wx:for-index="segmentIndex" wx:key="segmentIndex">
+                      <text class="{{segment.isMatch ? 'highlight-text' : ''}}">{{segment.text}}</text>
+                    </block>
+                  </block>
+                  <!-- 处理普通文本 -->
+                  <text wx:else>{{paragraphGroup}}</text>
+                </view>
+              </block>
+            </view>
+          </block>
+          
+        
+        </view>
+      </block>
+      
+      <!-- 无结果显示 -->
+      <view wx:if="{{!isLoading && documents.length === 0}}" class="no-results">
+        <text class="no-results-text">
+          {{isSearching ? '未找到相关文档，请尝试其他关键词' : '暂无数据'}}
+        </text>
+      </view>
+      
+      <!-- 加载更多 -->
+      <view wx:if="{{hasMore && documents.length > 0}}" class="load-more">
+        <button 
+          class="load-more-btn"
+          bindtap="loadMore"
+          loading="{{isLoading}}"
+          disabled="{{isLoading}}"
+        >
+          {{isLoading ? '加载中...' : '加载更多'}}
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,24 @@
+<view class="container">
+  <view class="header">
+    <text>我的收藏</text>
+  </view>
+  
+  <!-- 内容区域 -->
+  <view class="content">
+    <!-- 这里可以添加收藏内容 -->
+  </view>
+  
+  <!-- Bottom bar -->
+  <view class="tab-bar">
+    <view class="tab-item" bindtap="switchToKnowledge">
+      <text class="tab-text">知识库</text>
+    </view>
+
+    <!-- Center icon as an image -->
+    <image class="tab-plus" src="/images/plus2.png" bindtap="switchToCenter" mode="widthFix"></image>
+
+    <view class="tab-item" bindtap="switchToMine">
+      <text class="tab-text">我的</text>
+    </view>
+  </view>
+</view>

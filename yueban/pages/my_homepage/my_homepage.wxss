@@ -1,0 +1,205 @@
+page {
+    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+  }
+  
+  .navigationline {
+    height: 40rpx;             /* thin band height */
+    background-color: #a5cdd7; /* line color */
+    width: 100%;
+    position: absolute; /* or absolute if needed */
+    top: 0rpx; /* move up */
+    left: 0;
+    right: 0;
+    margin: 0 auto; /* center horizontally */
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* vertically center */
+    padding-bottom: 140rpx; /* still avoid tab bar overlap */
+  }
+  
+  .profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 180rpx;
+    position: relative;
+  }
+  
+  .noavatar{
+    width: 250rpx;
+    height: 250rpx;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 30rpx;
+    position: absolute;
+    top: 150rpx;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    border: 5rpx solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .avatar {
+    width: 250rpx;
+    height: 250rpx;
+    border-radius: 50%;
+    margin-bottom: 30rpx;
+    position: absolute;
+    top: -250rpx;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    border: 5rpx solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+  }
+  
+  .avatar:active {
+    transform: scale(1.05);
+  }
+  
+  /* Avatar upload indicator */
+  .avatar-upload {
+    position: absolute;
+    bottom: 35rpx;
+    right: 230rpx;
+    width: 70rpx;
+    height: 70rpx;
+    border-radius: 50%;
+    background-color: #d792a5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 40rpx;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .avatar-upload:active {
+    transform: scale(1.1);
+  }
+  
+  .avatar-container {
+    position: relative;
+    margin-bottom: 50rpx;
+  }
+  
+  .nickname {
+    font-size: 56rpx;
+    color: #ffffff;
+    text-align: center;
+    margin-top: 50rpx;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .inp {
+    width: 450rpx;
+    height: 100rpx;
+    text-align: center;
+    font-size: 44rpx;
+    color: #ffffff;
+    border: none;
+    border-radius: 50rpx;
+    margin: 60rpx auto 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 0 30rpx;
+  }
+  
+  .inp::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .info-complete {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 26rpx;
+    text-align: center;
+    margin-top: 10rpx;
+  }
+    
+  .menu {
+    width: 100%;
+    position: absolute;
+    top:  600rpx;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+
+  }
+  
+  .menu-item {
+    text-align: center;
+    font-size: 40rpx;
+    color:rgb(255, 255, 255,0.7);
+    padding: 35rpx 0;
+    transition: all 0.3s ease;
+  }
+  
+  .menu-item:active {
+    background: rgba(129, 152, 194, 0.2);
+    color: #d792a5;
+  }
+  
+  /* Divider line */
+  .menu-divider {
+    height: 2rpx;
+    width:70%;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0 auto;
+  }
+  
+  /* Logout button style */
+  .logout-item {
+    color:rgb(189, 91, 91);
+    font-weight: bold;
+  }
+  
+  .tab-bar-line {
+    display: none;
+  }
+  
+  /* Bottom Tab Bar */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 160rpx;
+    background: rgba(129, 152, 194, 0.95);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top-left-radius: 30rpx;
+    border-top-right-radius: 30rpx;
+    box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
+  }
+  
+  .tab-plus {
+    width: 150rpx;
+    height: 150rpx;
+    margin-top: -50rpx;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20rpx;
+  }
+  
+  .tab-item {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .tab-text {
+    font-size: 56rpx;
+    color: #ffffff;
+    font-weight: 500;
+  }

@@ -1,0 +1,19 @@
+<view class="container">
+  <!-- Clock Section -->
+  <canvas canvas-id="clock" class="clock-canvas"></canvas>
+  <image src="/images/yueban.jpg" class="title-image" mode="widthFix"></image>
+
+  <block wx:for="{{items}}" wx:key="index">
+    <view class="box" bindtap="toggleBox" data-index="{{index}}">
+      <text class="box-text">{{item.isOpen ? "▼" : "▶"}} {{item.title}}</text>
+    </view>
+
+    <view class="details" style="height: {{item.height}}px; opacity: {{item.isOpen ? 1 : 0}};">
+      <view id="content-{{index}}" class="details-content">
+        <block wx:for="{{item.details}}" wx:key="text">
+          <text class="{{item.style}}">{{item.text}}</text>
+        </block>
+      </view>
+    </view>
+  </block>
+</view>

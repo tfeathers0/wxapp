@@ -1,0 +1,97 @@
+.calendar-container {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 16rpx;
+    padding: 20rpx;
+    box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+  }
+  
+  /* 月份切换栏 */
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20rpx;
+  }
+  
+  .month-btn {
+    font-size: 28rpx;
+    color: #333;
+    background: transparent;
+    border: none;
+    padding: 8rpx 16rpx;
+  }
+  
+  .current-month {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* 星期标题 */
+  .week-header {
+    display: flex;
+    margin-bottom: 16rpx;
+  }
+  
+  .week-day {
+    flex: 1;
+    text-align: center;
+    font-size: 24rpx;
+    color: #999;
+  }
+  
+  /* 日期网格 */
+  .date-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .date-item {
+    width: 14.28%; /* 7列均分 */
+    height: 72rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26rpx;
+    box-sizing: border-box;
+    position: relative;
+  }
+  
+  .date-text {
+    z-index: 1;
+  }
+  
+  .date-mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60rpx;
+    height: 60rpx;
+    border: 2rpx solid #ff6b81;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+  }
+  
+  /* 非当月日期（灰色） */
+  .prev-month-date, .next-month-date {
+    color: #eee;
+  }
+  
+  /* 当月日期（可点击） */
+  .current-month-date {
+    color: #333;
+    cursor: pointer;
+  }
+  
+  /* 选中日期（高亮） */
+  .selected {
+    background-color: #dcb8ba;
+    color: #fff;
+    border-radius: 5%;
+  }
+  
+  /* 标记日期样式已更新为.date-mark */
+
+
+  

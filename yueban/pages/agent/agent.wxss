@@ -1,0 +1,177 @@
+/* 整体布局和背景 */
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+}
+
+/* 头部样式 */
+.agent-header {
+  padding: 8px 16px 16px 16px; /* 减少顶部内边距 */
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+/* 导航容器 */
+.nav {
+  display: flex;
+  align-items: center;
+  padding-top: 4px; /* 调整导航容器位置 */
+}
+
+/* 返回箭头 */
+.back-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 20rpx;
+}
+
+.agent-title {
+  font-size: 18px;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+/* 消息容器 */
+.message-container {
+  flex: 1;
+  margin-left:20px;
+  width:90%;
+  overflow-y: auto;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 消息项样式 */
+.message-item {
+  display: flex;
+  max-width: 75%;
+}
+
+.user-message {
+  align-self: flex-end;
+}
+
+.assistant-message {
+  align-self: flex-start;
+}
+
+/* 消息气泡 */
+.message-bubble {
+  padding: 10px 14px;
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.user-message .message-bubble {
+  background-color: #8198c2;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant-message .message-bubble {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+
+.message-content {
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 输入区域 */
+.input-area {
+  display: flex;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.agent-input {
+  flex: 1;
+  padding: 10px 14px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(129, 152, 194, 0.2);
+  border-radius: 20px;
+  font-size: 14px;
+  margin-right: 8px;
+  color: #8198c2;
+}
+
+.send-btn {
+  width: 80px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.send-btn:active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 滚动条样式 */
+.message-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.message-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.message-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+/* 思考中提示样式 */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+  color: white;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.loading-text {
+  position: relative;
+  padding-right: 20px;
+}
+
+.loading-text::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}

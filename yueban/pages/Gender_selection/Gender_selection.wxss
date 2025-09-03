@@ -1,0 +1,48 @@
+.container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+  }
+  
+  .background_top{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 20vh;
+  }
+    
+  .background_bottom{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 25vh;
+  }
+
+  .title {
+    font-size: 24px;
+    margin-top: -120px; /* 提高标题的位置 */
+    margin-bottom: 20px;
+    color: #b8a5a5;
+  }
+
+  .icon-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .icon {
+    width: 200rpx;
+    height: 200rpx;
+    margin: 0 40rpx;
+  }
+  
+
+
+  

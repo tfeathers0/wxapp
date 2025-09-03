@@ -1,0 +1,72 @@
+/* Unified container */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 100rpx 20rpx 20rpx 20rpx;
+    background-color: #fcf6f2;
+    box-sizing: border-box;
+  }
+  
+  /* Clock styles */
+  .clock-canvas {
+    width: 200px;
+    height: 200px;
+  }
+  
+  /* Image title */
+  .title-image {
+    width: 200rpx;
+    height: auto;
+    margin-top: 20rpx;
+    margin-bottom: 90rpx;
+  }
+  
+  /* Box styles */
+  .box {
+    width: 100%;
+    padding: 30rpx;
+    background-color: #fcf6f2;
+    border-radius: 12rpx;
+    margin-bottom: 0rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.06); /* subtle shadow */
+  }
+  
+  .box-text {
+    font-family: "PingFang SC", "Arial", sans-serif;
+    font-size: 36rpx;
+    color: #d792a5;
+    font-weight: bold;
+  }
+  
+  .details {
+    overflow: hidden;
+    background-color: #dcb8ba;       /* make it visually distinct */
+    border-radius: 12rpx;            /* rounded corners for the inner box */
+    margin: 10rpx 0 0 0;             /* space from the main box top/bottom */
+    padding: 20rpx;                  /* space between walls and content */
+    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.06); /* subtle shadow */
+    transition: height 0.35s ease, opacity 0.35s ease;
+  }
+  
+  .details-content {
+    padding: 0;   /* remove extra padding inside since .details already has it */
+  }
+  
+  .details-text {
+    font-size: 30rpx;
+    line-height: 36rpx;
+    font-family: "PingFang SC", "Arial", sans-serif;
+    color: #333333;
+    white-space: pre-wrap; /* preserves line breaks \n */
+  }
+  
+  .big-bold-text {
+    font-size: 30rpx;
+    font-weight: bold;
+    color: #ff4a84;
+    display: block;
+    margin: 30rpx 0 15rpx;
+  }

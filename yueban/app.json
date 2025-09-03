@@ -1,0 +1,33 @@
+{
+  "lazyCodeLoading": "requiredComponents",
+  "pages": [
+    "pages/home/home",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/Gender_selection/Gender_selection",
+    "pages/female_home/female_home",
+    "pages/male_home/male_home",
+    "pages/relationship/relationship",
+    "pages/relationship/permission_settings",
+    "pages/knowledge_base/knowledge_base",
+    "pages/my_homepage/my_homepage",
+    "pages/relationship_information/relationship_information",
+    "pages/search/search",
+    "pages/collection/collection",
+    "pages/about_us/about_us",
+    "pages/prediction_reminder/prediction_reminder",
+    "pages/QR_code/QR_code",
+    "pages/female_calendar/female_calendar",
+    "pages/history/history",
+    "pages/record/record",
+    "pages/agent/agent",
+    "pages/document/detail",
+    "pages/upload_document/upload_document"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#8198c2",
+    "navigationBarTitleText": "月伴",
+    "navigationBarTextStyle": "white"
+  }
+}

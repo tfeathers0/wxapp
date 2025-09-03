@@ -1,0 +1,111 @@
+<!-- dashboard.wxml -->
+<view class="container">
+  <!-- 状态相关图片 -->
+  <image wx:if="{{currentPeriod === '月经期'}}" class="period-image" src="/images/menstrual_background.png"></image>
+  <image wx:elif="{{currentPeriod === '卵泡期'}}" class="period-image" src="/images/follicular-background.png"></image>
+  <image wx:elif="{{currentPeriod === '排卵期'}}" class="period-image" src="/images/ovulation_background.png"></image>
+  <image wx:else class="period-image" src="/images/luteal_background.png"></image>
+  
+  <!-- 生理周期显示区域 -->
+  <view class="cycle-section">
+    
+    <view class="cycle-header">
+      <text class="cycle-title">生理周期</text>
+    </view>
+    
+    <!-- 周期进度条 -->
+    <view class="cycle-progress-container">
+      <!-- 四段生理周期进度条 -->
+      <view class="cycle-progress">
+        <view class="cycle-segment segment-1"></view>
+        <view class="cycle-segment segment-2"></view>
+        <view class="cycle-segment segment-3"></view>
+        <view class="cycle-segment segment-4"></view>
+        
+        <!-- 当前位置指示器 -->
+        <view class="current-indicator" style="left: {{indicatorPosition}}"></view>
+      </view>
+      
+      <!-- 生理周期标签 -->
+      <view class="cycle-labels">
+        <view class="cycle-label label-1">排卵期</view>
+        <view class="cycle-label label-2">卵泡期</view>
+        <view class="cycle-label label-3">月经期</view>
+        <view class="cycle-label label-4">黄体期</view>
+      </view>
+    </view>
+    
+    <!-- 当前生理周期显示 -->
+    <view class="current-cycle-display">
+      <view class="cycle-indicator">
+        <text class="indicator-text">当前处于</text>
+        <text class="current-cycle-name">{{currentPeriod}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 信息展示区域 -->
+  <view class="info-section">
+    <view class="info-container">
+      <!-- 左侧区域：日期卡片和关联切换 -->
+      <view class="left-panel">
+        <!-- 日期显示 -->
+        <view class="date-card" bindtap="onDateCardClick">
+          <text class="date-number">{{currentDay}}</text>
+          <text class="date-weekday">{{weekDays[currentWeekday]}}</text>
+        </view>
+
+        <!-- 关联切换按钮 -->
+        <view class="switch-button" bindtap="onSwitchClick">
+          <text class="switch-text">关联切换</text>
+        </view>
+      </view>
+
+      <!-- 右侧区域：知识卡片 -->
+      <view class="right-panel">
+        <!-- 知识卡片 -->
+        <view class="knowledge-card" bindtap="onKnowledgeClick">
+          <text class="knowledge-title">月伴小贴士</text>
+          <view class="knowledge-content">
+            <view class="knowledge-scroll-container">
+              <view class="knowledge-scroll-wrapper" style="transform: translateY(-{{currentKnowledgeIndex * 160}}rpx);">
+                <view class="knowledge-item">月经期注意保暖，可用暖水袋热敷腹部</view>
+                <view class="knowledge-item">卵泡期雌激素升高，可适当增加蛋白质摄入</view>
+                <view class="knowledge-item">排卵期女性可能会有轻微腹痛，注意休息</view>
+                <view class="knowledge-item">黄体期情绪可能波动，多给予关心和理解</view>
+                <view class="knowledge-item">陪伴是最好的关怀，耐心倾听很重要</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 选项卡区域 -->
+  <view class="tab-section">
+    <view class="tabs">
+      <view wx:for="{{tabs}}" wx:key="index" 
+            class="tab-item {{activeTab === index ? 'active' : ''}}"
+            data-index="{{index}}"
+            bindtap="onTabClick">
+        <text class="tab-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+  <view wx:if="{{showPopup}}" class="popup-mask">
+  <view class="popup-container">
+    <button class="popup-close" bindtap="closePopup">✕</button>
+    <view class="popup-content">
+      <!-- 日期部分 - 使用较大粗体 -->
+      <view class="popup-date-large">{{popupDateString}}</view>
+      <view class="popup-weekday">{{popupWeekdayString}}</view>
+      
+      <!-- 消息内容部分 - 使用较小字体 -->
+      <view class="popup-message">
+        <text>{{popupMessage}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+</view>

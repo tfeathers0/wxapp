@@ -1,0 +1,440 @@
+/* 月伴主题 - 柔和静谧风格 */
+.info-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* 柔和光晕效果 */
+.soft-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60rpx);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.top-left-glow {
+  top: -200rpx;
+  left: -200rpx;
+  width: 600rpx;
+  height: 600rpx;
+  background-color: #8198c2;
+}
+
+.bottom-right-glow {
+  bottom: -200rpx;
+  right: -200rpx;
+  width: 600rpx;
+  height: 600rpx;
+  background-color: #d792a5;
+}
+
+/* 顶部信息栏 */
+.header-section {
+  display: flex;
+  align-items: center;
+  height:90px;
+  width:350px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  margin: 20rpx auto;
+  border-radius: 10px;
+  border: 2px solid rgba(165, 205, 215, 0.2);
+  box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  transform: translateY(0);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.header-section:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.03);
+}
+
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  margin-right: 30rpx;
+  border: 5rpx solid #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar:active {
+  transform: scale(1.05);
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.15);
+}
+
+.state {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 100rpx;
+}
+
+.user-info {
+  flex-grow: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.05);
+  letter-spacing: 0.5rpx;
+  background: linear-gradient(90deg, #8198c2 0%, #a5cdd7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.relation {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 状态标签 */
+.status-tag {
+  margin: 20rpx auto;
+  padding: 15rpx 24rpx;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  display: block;
+  text-align: center;
+  width: fit-content;
+  font-weight: 500;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.status-tag::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: all 0.6s ease;
+}
+
+.status-tag:active::before {
+  left: 100%;
+}
+
+.status-tag:active {
+  transform: scale(0.95);
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.08);
+}
+
+.status-menstrual {
+  background: linear-gradient(135deg, #ffcdd2 0%, #ef5350 100%);
+  color: #fff;
+}
+
+.status-follicular {
+  background: linear-gradient(135deg, #c8e6c9 0%, #4caf50 100%);
+  color: #fff;
+}
+
+.status-ovulation {
+  background: linear-gradient(135deg, #bbdefb 0%, #2196f3 100%);
+  color: #fff;
+}
+
+.status-luteal {
+  background: linear-gradient(135deg, #ffe0b2 0%, #ff9800 100%);
+  color: #fff;
+}
+
+/* 通用区域标题 */
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  width:300px;
+  height:30px;
+  margin: 20px auto 0 auto;
+  border-radius: 20rpx 20rpx 0 0;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  letter-spacing: 0.5rpx;
+
+}
+
+.section-title::after {
+
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 30rpx;
+  width: 40rpx;
+  height: 4rpx;
+  background: linear-gradient(90deg, #84fab0 0%, #8fd3f4 100%);
+  border-radius: 2rpx;
+}
+
+/* 日历组件样式 */
+.calendar-section{
+  width:350px;
+  backdrop-filter: blur(8px);
+  border-top: none;
+  box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.7s ease-out 0.3s both;
+}
+
+.calendar-section:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.03);
+}
+
+.custom-calendar {
+  padding: 0 30rpx 30rpx;
+}
+
+/* 授权信息区域 */
+.authorized-info {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(0);
+  margin: 20rpx auto;
+  width:350px;
+  border-radius: 10px;
+  border: 2px solid rgba(165, 205, 215, 0.1);
+  border-top: none;
+  box-shadow: none;
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.authorized-info:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.03);
+}
+
+/* 信息项 */
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(249,240,255,0.3) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.info-item:active {
+  background-color: #f8f9fa;
+  padding-left: 40rpx;
+}
+
+.info-item:active::after {
+  opacity: 1;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: #666;
+  font-weight: 500;
+  min-width: 120rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+  text-align: right;
+  flex: 1;
+  padding-left: 30rpx;
+  font-weight: 500;
+  word-break: break-all;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.03);
+}
+
+/* 日历图例 */
+.legend {
+  display: flex;
+  justify-content: space-around;
+  padding: 20rpx 0;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin: 10rpx 15rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.legend-color {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  margin-right: 10rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
+}
+
+.legend-text {
+  font-size: 24rpx;
+  color: #666;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.03);
+}
+
+/* 权限提示样式 */
+.permission-tip {
+  background-color: #fff3e0;
+  padding: 20rpx 30rpx;
+  margin-top: 10rpx;
+  text-align: center;
+}
+
+.tip-text {
+  font-size: 26rpx;
+  color: #f57c00;
+}
+
+/* TIPs区域样式 */
+.tips-section {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  margin: 20rpx auto;
+  width:350px;
+  border-radius: 10px;
+  border: 2px solid rgba(165, 205, 215, 0.2);
+  box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  animation: fadeInUp 0.9s ease-out 0.5s both;
+}
+
+.tips-section:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.03);
+}
+
+.tip-item {
+  display: flex;
+  flex-direction: column;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tip-item:last-child {
+  border-bottom: none;
+}
+
+.tip-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(249,240,255,0.3) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.tip-item:active {
+  background-color: #f8f9fa;
+  padding-left: 40rpx;
+}
+
+.tip-item:active::after {
+  opacity: 1;
+}
+
+.tip-label {
+  font-size: 28rpx;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 10rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.tip-content {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.03);
+  word-break: break-all;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    box-shadow: 0 0 0 rgba(129, 152, 194, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+    

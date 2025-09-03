@@ -1,0 +1,65 @@
+<view class="info-container">
+  <!-- 顶部信息区 -->
+  <view class="header-section">
+    <image class="avatar" src="{{contactInfo.avatar || '/images/avatar1.png'}}" mode="aspectFill"></image>
+    <view class="user-info">
+        <view class="nickname">{{contactInfo.nickname || contactInfo.username || '未命名'}}</view>
+        <view class="relation">关系：{{contactInfo.relation || '朋友'}}</view>
+      </view>
+    <!-- 状态图标，只有当有状态查看权限时显示 -->
+    <image wx:if="{{permissions.canViewStatus}}" class="state" src="{{contactInfo.state || '/images/icon_state_follicular.png'}}"></image>
+  </view>
+
+  <!-- 自定义日历组件，只有当有周期数据查看权限时显示 -->
+  <view class="calendar-section">
+  <calendar wx:if="{{permissions.canViewPassdays}}"
+    defaultDate="{{ defaultDate }}" 
+    bind:dateSelect="onCalendarDateSelect"
+    showDayNums="true"
+    showWeekDays="true"
+    showLunar="false"
+    showMark="true"
+    markType="dot"
+    markedDates="{{markedDates}}"
+  ></calendar>
+  </view>
+
+
+ <!-- 授权信息区域 -->
+ <view class="authorized-info">
+    <view class="section-title">基本信息</view>
+    <!-- 心情信息，只有当有心情查看权限时显示 -->
+    <view wx:if="{{permissions.canViewMood}}" class="info-item">
+      <view class="info-label">心情</view>
+      <view class="info-value">{{contactInfo.mood || '未设置'}}</view>
+    </view>
+    <!-- 最近更新信息，不受权限控制，始终显示 -->
+    <view class="info-item">
+      <view class="info-label">最近更新</view>
+      <view class="info-value">{{contactInfo.lastUpdate || '未知'}}</view>
+    </view>
+    <!-- 上次月经信息，只有当有月经时间查看权限时显示 -->
+    <view wx:if="{{permissions.canViewMenstruation}}" class="info-item">
+      <view class="info-label">上次月经</view>
+      <view class="info-value">{{contactInfo.lastMenstruation || '暂无数据'}}</view>
+    </view>
+  </view>
+  
+  <!-- TIPs区域 -->
+  <view class="tips-section">
+    <view class="section-title">关怀提示</view>
+    <!-- 状态提示信息，只有当有状态查看权限时显示 -->
+    <view wx:if="{{permissions.canViewStatus}}" class="tip-item">
+      <view class="tip-label">生理状态提示</view>
+      <view class="tip-content">{{contactInfo.statusTip || '暂无状态提示信息'}}</view>
+    </view>
+    
+    <!-- 心情提示信息，只有当同时有状态和心情查看权限时显示 -->
+    <view wx:if="{{permissions.canViewStatus && permissions.canViewMood && contactInfo.moodTip}}" class="tip-item">
+      <view class="tip-label">心情关怀建议</view>
+      <view class="tip-content">{{contactInfo.moodTip}}</view>
+    </view>
+  </view>
+
+</view>
+       

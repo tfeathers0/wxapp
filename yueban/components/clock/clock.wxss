@@ -1,0 +1,15 @@
+/* components/clock/clock.wxss */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 100rpx 20rpx 20rpx 20rpx;
+    background-color: #fcf6f2;
+    box-sizing: border-box;
+  }
+.clock-canvas {
+    width: 200px;
+    height: 200px;
+  }

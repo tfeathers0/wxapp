@@ -1,0 +1,50 @@
+<view class="container">
+  <view class="header">
+    <view class="header-content">
+      <text class="header-icon">📅</text>
+      <text class="header-title">历史月经记录</text>
+    </view>
+    <view class="history-count">共 {{history.length}} 条记录</view>
+  </view>
+  
+  <view class="content">
+    <!-- 统计信息 -->
+    <view class="stats-container">
+      <view class="stat-card">
+        <text class="stat-value">{{avgCycleDays || '--'}}</text>
+        <text class="stat-label">平均周期(天)</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{avgPeriodDays || '--'}}</text>
+        <text class="stat-label">平均经期(天)</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{nextPrediction || '--'}}</text>
+        <text class="stat-label">预测下次经期</text>
+      </view>
+    </view>
+    
+    <view class="section-title">
+      <text class="section-icon">📋</text>
+      <text class="section-text">历史月经开始日期</text>
+    </view>
+    
+    <!-- 历史记录列表 -->
+    <view class="history-list" wx:if="{{history.length > 0}}">
+      <view class="history-item" wx:for="{{history}}" wx:key="index" wx:for-item="date">
+        <text class="item-icon">●</text>
+        <text class="item-date">{{date}}</text>
+        <text class="item-days" wx:if="{{periodDays[index]}}">{{periodDays[index]}}天</text>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无历史记录</text>
+      <button class="add-button" bindtap="navigateToRecord">
+        <text>添加记录</text>
+      </button>
+    </view>
+  </view>
+</view>

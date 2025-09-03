@@ -1,0 +1,51 @@
+<view class="container">
+  <!-- Profile section -->
+  <view class="profile" catchtap>
+    <!-- Avatar -->
+    <image
+      class="avatar"
+      src="{{userInfo.avatarUrl}}"
+      bindtap="changeAvatar"
+      mode="cover"
+    ></image>
+
+    <!-- Nickname input -->
+    <input
+      class="inp"
+      type="text"
+      placeholder="昵称"
+      value="{{userInfo.nickName}}"
+      bindinput="onInputChange"
+      bindtap="stopEvent"
+    ></input>
+
+    <!-- Completion message -->
+    <view wx:if="{{showComplete}}" class="info-complete">
+      用户信息已设置完成
+    </view>
+  </view>
+
+  <!-- Menu -->
+  <view class="menu">
+    <view class="menu-item" bindtap="goAbout">关于我们</view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="goCode">我的月亮码</view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="goReminder">预测提醒</view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="goService">联系客服</view>
+    <view class="menu-divider"></view>
+    <view class="menu-item logout-item">删除账号</view>
+  </view>
+
+  <!-- Bottom tab-bar -->
+  <view class="tab-bar">
+    <view class="tab-item" bindtap="switchToKnowledge">
+      <text class="tab-text">知识库</text>
+    </view>
+    <image class="tab-plus" src="/images/plus2.png" bindtap="switchToCenter" mode="widthFix"></image>
+    <view class="tab-item" bindtap="switchToMine">
+      <text class="tab-text">我的</text>
+    </view>
+  </view>
+</view>

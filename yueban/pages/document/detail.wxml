@@ -1,0 +1,55 @@
+<!--pages/document/detail.wxml-->
+<view class="container">
+  <!-- 顶部导航栏 -->
+  <view class="header">
+    <image src="/images/back.png" class="back-icon" bindtap="goBack"></image>
+    <text class="page-title">文档详情</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 文档内容 -->
+  <view class="content" wx:if="{{!isLoading && document}}">
+    <!-- 文档标题 -->
+    <view class="document-header">
+      <text class="document-title">{{document.title}}</text>
+      <view class="document-meta">
+        <text class="document-author">作者：{{document.author}}</text>
+        <text class="document-date">创建时间：{{document.createdAt.toLocaleDateString()}}</text>
+      </view>
+    </view>
+
+    <!-- 文档标签 -->
+    <view class="tags-section" wx:if="{{document.tags.length > 0}}">
+      <block wx:for="{{document.tags}}" wx:key="*this">
+        <view class="tag">{{item}}</view>
+      </block>
+    </view>
+
+    <!-- 文档内容 -->
+    <view class="document-content">
+      <text>{{document.content}}</text>
+    </view>
+
+    <!-- 下载按钮 -->
+    <button 
+      class="download-btn"
+      size="mini"
+      wx:if="{{document.fileUrl}}"
+      bindtap="downloadOriginalFile"
+    >
+      下载原始文档
+    </button>
+  </view>
+
+  <!-- 错误提示 -->
+  <view class="error" wx:if="{{!isLoading && !document}}">
+    <text>文档不存在或已被删除</text>
+    <button class="back-btn" bindtap="goBack">返回</button>
+  </view>
+</view>

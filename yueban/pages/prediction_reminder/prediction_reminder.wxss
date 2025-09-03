@@ -1,0 +1,33 @@
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff9f5;
+  }
+  
+  .switch-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .switch-item text {
+    margin-right: 20px;
+    font-size: 24px;
+    color: #dcb8ba;
+  }
+  
+  .picker {
+    padding: 10px;
+    background-color: #f2f2f2;
+    text-align: center;
+    border-radius: 5px;
+  }
+  
+  .time-text {
+    color: #dcb8ba; /* color of selected time */
+    font-weight: bold;
+    font-size: 18px;
+  }

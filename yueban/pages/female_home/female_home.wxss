@@ -1,0 +1,545 @@
+/* dashboard.wxss */
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+   }
+   .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40rpx 40rpx 0 40rpx;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+   }
+   /* 状态图片样式 */
+  .period-image {
+    position: absolute;
+    top: 40px;
+    right:130px;
+    width: 100%;
+    height: 33vh;
+    opacity: 0.9;
+    filter: brightness(1.05) saturate(0.9);
+  }
+   
+   /* 生理周期显示区域 */
+   .cycle-section {
+     flex: 0.1; /* 减少flex比例以缩小高度 */
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     margin-top:450rpx;
+     margin-bottom: 10rpx;
+     padding: 20rpx 0 30rpx 0;
+     background-color: rgba(255, 255, 255, 0.7);
+     border-radius: 20rpx;
+     box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+     width: 100%;
+     border: 2px solid rgba(129, 152, 194, 0.2);
+     animation: fadeInUp 0.6s ease-out 0.2s both;
+     backdrop-filter: blur(8px);
+   }
+   /* 周期进度条容器 */
+   .cycle-progress-container {
+    width: 100%;
+    margin-bottom: 20rpx;
+    height:30px;
+    padding:  30rpx;
+    box-sizing: border-box;
+   }
+   /* 当前生理周期显示 */
+   .current-cycle-display {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height:50px;
+    background-color: #f8f9fb;
+    border-radius: 16rpx;
+    box-sizing: border-box;
+    margin-top: 10rpx;
+   }
+   /* 生理周期标题 */
+   .cycle-header {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 30rpx;
+    padding-left: 50rpx;
+   }
+   .cycle-title {
+    font-size: 48rpx;
+    font-weight: bold;
+    color: #8198c2;
+   }
+   .cycle-date {
+    font-size: 28rpx;
+    color: #8198c2;
+   }
+   /* 周期进度条容器 */
+   .cycle-progress-container {
+    width: 100%;
+    margin-bottom: 100rpx;
+   }
+   /* 周期进度条 */
+   .cycle-progress {
+    width: 100%;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 20rpx;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10rpx;
+    border: 1px solid rgba(165, 205, 215, 0.3);
+   }
+   /* 生理周期分段 - 带圆角的矩形 */
+   .cycle-segment {
+    height: 100%;
+    position: relative;
+   }
+   /* 排卵期段 */
+   .segment-1 {
+    background: linear-gradient(90deg, #8198c2 0%, #5c7ab1 100%);
+    width: 20%;
+    box-shadow: 0 3rpx 12rpx rgba(129, 152, 194, 0.4);
+   }
+   /* 卵泡期段 */
+   .segment-2 {
+    background: linear-gradient(90deg, #a5cdd7 0%, #71bed4 100%);
+    width: 30%;
+    box-shadow: 0 3rpx 12rpx rgba(165, 205, 215, 0.4);
+   }
+   /* 月经期段 */
+   .segment-3 {
+    background: linear-gradient(90deg, #d792a5 0%, #c06783 100%);
+    width: 20%;
+    box-shadow: 0 3rpx 12rpx rgba(215, 146, 165, 0.4);
+   }
+   /* 黄体期段 */
+   .segment-4 {
+    background: linear-gradient(90deg, #dcb8ba 0%, #cd979b 100%);
+    width: 30%;
+    box-shadow: 0 3rpx 12rpx rgba(220, 184, 186, 0.4);
+   }
+   /* 当前位置指示器 - 条状样式 */
+   .current-indicator {
+    position: absolute;
+    top: -10rpx;
+    width: 8rpx;
+    height: 350rpx;
+    background: linear-gradient(to bottom, #d792a5 0%, #cc7b8f 100%);
+    border-radius: 4rpx;
+    transform: translateX(-50%);
+    box-shadow: 0 2rpx 12rpx rgba(215, 146, 165, 0.5);
+    z-index: 2;
+    animation: pulse 2s infinite;
+   }
+   
+   /* 指示器脉冲动画 */
+   @keyframes pulse {
+    0% {
+      box-shadow: 0 2rpx 12rpx rgba(215, 146, 165, 0.5);
+    }
+    50% {
+      box-shadow: 0 2rpx 20rpx rgba(215, 146, 165, 0.8);
+    }
+    100% {
+      box-shadow: 0 2rpx 12rpx rgba(215, 146, 165, 0.5);
+    }
+   }
+   /* 生理周期标签容器 */
+   .cycle-labels {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10rpx;
+   }
+   /* 生理周期标签 */
+   .cycle-label {
+    font-size: 28rpx;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+    padding: 8rpx 0;
+   }
+   /* 排卵期标签 */
+   .label-1 {
+    color: #6b85b5;
+    width: 20%;
+    margin-top:20rpx;
+   }
+   /* 卵泡期标签 */
+   .label-2 {
+    color: #8bc5d9;
+    width: 30%;
+    margin-top:20rpx;
+   }
+   /* 月经期标签 */
+   .label-3 {
+    color: #cc7b8f;
+    width: 20%;
+    margin-top:20rpx;
+   }
+   /* 黄体期标签 */
+   .label-4 {
+    color: #d3a5a8;
+    width: 30%;
+    margin-top:20rpx;
+   }
+   
+   /* 文字悬停效果 */
+   .cycle-label:active {
+    transform: scale(1.05);
+   }
+   /* 当前生理周期显示 */
+   .current-cycle-display {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30rpx 30rpx 30rpx 30rpx;
+    background-color: transparent;
+    border-radius: 16rpx;
+    margin-top: 10rpx;
+    border: none;
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+   }
+   /* 周期指示器 */
+   .cycle-indicator {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10rpx;
+   }
+   .indicator-text {
+    font-size: 32rpx;
+    color: #888888;
+    margin-right: 10rpx;
+   }
+   .current-cycle-name {
+    font-size: 40rpx;
+    font-weight: bold;
+    color: #8198c2;
+   }
+   /* 周期天数 */
+   .cycle-days {
+    font-size: 28rpx;
+    color: #999999;
+   }
+   /* 信息展示区域样式 */
+   .info-section {
+    margin-bottom: 20rpx;
+    margin-top: 10rpx;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+   }
+   .info-container {
+    display: flex;
+    flex: 1;
+    gap: 30rpx;
+    height: 100%;
+    align-items: flex-start;
+   }
+   .left-panel {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30rpx;
+   }
+   .right-panel {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+   }
+   .date-card {
+    width: 200rpx;
+    height: 200rpx;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid rgba(165, 205, 215, 0.3);
+    border-radius: 16rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.1);
+    backdrop-filter: blur(8px);
+    animation: fadeInUp 0.6s ease-out 0.6s both;
+    transition: all 0.3s ease;
+   }
+   .date-card:hover {
+    box-shadow: 0 8px 25px rgba(129, 152, 194, 0.15);
+    transform: translateY(-2px);
+    border-color: rgba(165, 205, 215, 0.5);
+   }
+   .date-number {
+    font-size: 80rpx;
+    font-weight: bold;
+    line-height: 1;
+    background: linear-gradient(90deg, #8198c2 0%, #a5cdd7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+   }
+   .date-weekday {
+    font-size: 32rpx;
+    color: #8198c2;
+    margin-top: 10rpx;
+    opacity: 0.9;
+   }
+   .switch-button {
+    background-color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+    color: #d792a5;
+    width: 200rpx;
+    height: 100rpx;
+    margin-top:-8px;
+    border-radius: 10px;
+    border: 1px solid rgb(243, 188, 203);
+    box-shadow: 0 4px 12px rgba(215, 146, 165, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+   }
+   .switch-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(215, 146, 165, 0.2);
+   }
+   .switch-text {
+    font-size: 36rpx;
+    color: #d792a5;
+    font-weight: bold;
+   }
+   .knowledge-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px solid rgba(129, 152, 194, 0.2);
+    border-radius: 20rpx;
+    width: 238px;
+    margin-left:-8px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 325rpx;
+    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.1);
+    backdrop-filter: blur(8px);
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+  
+}
+
+.knowledge-title {
+  font-size: 28rpx;
+  color: #8198c2;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 30rpx;
+  padding-left: 20rpx;
+  padding-top: 20rpx;
+}
+
+.knowledge-content {
+  width: 100%;
+}
+
+.knowledge-scroll-container {
+  height: 160rpx;
+  overflow: hidden;
+  position: relative;
+}
+
+.knowledge-scroll-wrapper {
+  position: absolute;
+  transition: transform 0.5s ease-in-out;
+  width: 100%;
+}
+
+.knowledge-item {
+  color: #8198c2;
+  font-size: 26rpx;
+  line-height: 40rpx;
+  display: block;
+  padding: 0 10rpx;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 160rpx;
+  display: flex;
+  align-items: center;
+}
+   /* 选项卡区域样式 - 铺满底部不留白边 */
+   .tab-section {
+     width: calc(100% + 80rpx); /*补偿container的padding */
+     height: 150rpx;
+     background-color: rgba(129, 152, 194, 0.95);
+     border-radius: 30rpx 30rpx 0 0;
+     display: flex;
+     justify-content: flex-start;
+     align-items: center;
+     margin-top: auto;
+     margin-bottom: 0;
+     margin-left: -40rpx;
+     margin-right: -40rpx;
+     padding: 0;
+     box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
+   }
+   .tabs {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   }
+   .tab-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    flex: 1;
+    padding: 0;
+   }
+   .tab-item.active {
+    color: #ffffff;
+    font-weight: bold;
+   }
+   .tab-text {
+    font-size: 44rpx;
+    color: #ffffff;
+    opacity: 1;
+    font-weight: bold;
+   }
+   /* 中间+号按钮特殊样式 */
+   .tab-item:nth-child(2) {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+   .tab-item:nth-child(2) .tab-text {
+    width: 80rpx;
+    height: 80rpx;
+    background-color: #ffffff;
+    color: #8198C2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 50rpx;
+    opacity: 1;
+    margin-top: -30rpx;
+    z-index: 1;
+   }
+   /* 增加交互效果 */
+   .date-card,
+   .switch-button,
+   .knowledge-card,
+   .tab-item {
+    transition: all 0.3s ease;
+   }
+   .date-card:active,
+   .switch-button:active,
+   .knowledge-card:active {
+    transform: scale(0.98);
+   }
+   .tab-item:active {
+    opacity: 0.8;
+   }
+
+   /* 动画效果 */
+   @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+      box-shadow: 0 0 0 rgba(129, 152, 194, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+    }
+   }
+   .popup-date-large {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+/* 弹窗星期 */
+.popup-weekday {
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+/* 弹窗消息内容 - 较小字体 */
+.popup-message {
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.5;
+  color: #666;
+  margin-top: 20rpx;
+}
+
+/* 其他弹窗样式保持不变 */
+.popup-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-container {
+  background: white;
+  border-radius: 12px;
+  padding: 30rpx;
+  width: 80%;
+  max-width: 600rpx;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.popup-close {
+  position: absolute;
+  top: 10rpx;
+  right: 10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  padding: 20rpx;
+}
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-40rpx);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

@@ -1,0 +1,160 @@
+.container {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  min-height: 100vh;
+  padding: 20rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, #dcb8ba 0%, #d46a6a 100%);
+  color: white;
+  padding: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+.header-icon {
+  font-size: 40rpx;
+  margin-right: 20rpx;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: 500;
+}
+
+.history-count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 12rpx 24rpx;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+}
+
+.content {
+  padding: 0 20rpx;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 48rpx;
+  gap: 20rpx;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 24rpx;
+  padding: 32rpx 24rpx;
+  flex: 1;
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+}
+
+.stat-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #d46a6a;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666;
+  display: block;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  margin-bottom: 32rpx;
+  color: #555;
+  display: flex;
+  align-items: center;
+}
+
+.section-icon {
+  margin-right: 16rpx;
+  font-size: 32rpx;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.history-item {
+  background: #f8f9fa;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  border-left: 8rpx solid #dcb8ba;
+}
+
+.history-item:active {
+  background: #fff;
+  transform: translateY(-4rpx);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+}
+
+.item-icon {
+  color: #d46a6a;
+  margin-right: 24rpx;
+  font-size: 28rpx;
+}
+
+.item-date {
+  font-size: 32rpx;
+  font-weight: 500;
+  flex: 1;
+}
+
+.item-days {
+  background: #e9ecef;
+  color: #495057;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80rpx 40rpx;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 32rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  display: block;
+  margin-bottom: 48rpx;
+}
+
+.add-button {
+  background: #dcb8ba;
+  color: white;
+  border: none;
+  padding: 24rpx 48rpx;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.add-button:active {
+  background: #d46a6a;
+}

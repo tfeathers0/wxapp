@@ -1,0 +1,78 @@
+<view class="container">
+  
+  <view class="content">
+    <!-- 关联人信息 -->
+    <view class="contact-info">
+      <view class="contact-name">{{contactName}}</view>
+      <view class="contact-id">ID: {{contactId}}</view>
+    </view>
+
+    <!-- 权限设置列表 -->
+    <view class="permission-list">
+      <view class="permission-item">
+        <view class="permission-text">
+          <text class="permission-title">状态信息</text>
+          <text class="permission-desc">允许查看生理周期状态（月经期、卵泡期等）</text>
+        </view>
+        <switch 
+          checked="{{canViewStatus}}" 
+          bindchange="onStatusPermissionChange" 
+          disabled="{{loading}}"
+        />
+      </view>
+
+      <view class="permission-item">
+        <view class="permission-text">
+          <text class="permission-title">月经时间</text>
+          <text class="permission-desc">允许查看上次月经日期和日历标记</text>
+        </view>
+        <switch 
+          checked="{{canViewMenstruation}}" 
+          bindchange="onMenstruationPermissionChange" 
+          disabled="{{loading}}"
+        />
+      </view>
+
+      <view class="permission-item">
+        <view class="permission-text">
+          <text class="permission-title">心情信息</text>
+          <text class="permission-desc">允许查看当前心情状态</text>
+        </view>
+        <switch 
+          checked="{{canViewMood}}" 
+          bindchange="onMoodPermissionChange" 
+          disabled="{{loading}}"
+        />
+      </view>
+
+      <view class="permission-item">
+        <view class="permission-text">
+          <text class="permission-title">关键日期</text>
+          <text class="permission-desc">允许查看过去月经时间和日历标记</text>
+        </view>
+        <switch 
+          checked="{{canViewPassdays}}" 
+          bindchange="onPassdaysPermissionChange" 
+          disabled="{{loading}}"
+        />
+      </view>
+    </view>
+
+    <!-- 保存按钮 -->
+    <view class="button-container">
+      <button 
+        class="save-button" 
+        bindtap="savePermissions" 
+        disabled="{{loading}}"
+        loading="{{loading}}"
+      >
+        保存设置
+      </button>
+    </view>
+
+    <!-- 提示信息 -->
+    <view class="tips">
+      <text>设置后，对方将根据您的权限配置查看您的信息</text>
+    </view>
+  </view>
+</view>

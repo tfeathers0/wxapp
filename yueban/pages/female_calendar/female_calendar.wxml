@@ -1,0 +1,99 @@
+<!-- calendar.wxml -->
+<view class="calendar">
+  <!-- 顶部月份切换 -->
+  <view class="header">
+    <button class="month-btn" bindtap="prevMonth">上个月</button>
+    <text>{{currentYear}}年 {{currentMonth+1}}月</text>
+    <button class="month-btn" bindtap="nextMonth">下个月</button>
+  </view>
+
+  <!-- 星期标题 -->
+  <view class="week">
+    <text>日</text>
+    <text>一</text>
+    <text>二</text>
+    <text>三</text>
+    <text>四</text>
+    <text>五</text>
+    <text>六</text>
+  </view>
+
+  <!-- 日期格子 -->
+  <view class="days">
+    <block wx:for="{{days}}" wx:key="index">
+      <view class="day {{item.type}}" bindtap="onDayTap" data-day="{{item.day}}">
+        <text>{{item.day}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 图例 -->
+  <view class="legend">
+    <view class="legend-item">
+      <view class="dot ovulation"></view>
+      <text>排卵日</text>
+    </view>
+    <view class="legend-item">
+      <view class="dot period"></view>
+      <text>生理期</text>
+    </view>
+    <view class="legend-item">
+      <view class="dot recorded"></view>
+      <text>已记录</text>
+    </view>
+  </view>
+
+  <!-- 红色板块 -->
+  <view class="red-box">
+    <!-- 上一次月经 -->
+    <view class="row">
+      <text>上一次月经：</text>
+      <picker mode="date" value="{{lastPeriod}}" bindchange="onLastPeriodChange">
+        <view class="picker">{{lastPeriod || '请选择日期'}}</view>
+      </picker>
+    </view>
+
+    <!-- 下一次月经 -->
+    <view class="row">
+      <text>下一次月经：</text>
+      <text>{{nextPeriod}}</text>
+    </view>
+
+    <!-- 周期设置 -->
+    <view class="row">
+      <text>周期天数：</text>
+      <input type="number" value="{{cycleLength}}" bindinput="onCycleLengthChange" class="input"/>
+    </view>
+
+    <view class="row">
+      <text>月经期长度：</text>
+      <input type="number" value="{{periodDays}}" bindinput="onPeriodDaysChange" class="input"/>
+    </view>
+
+    <!-- 历史记录按钮 -->
+    <view class="row">
+      <button bindtap="goHistoryPage" class="history-btn">查看历史记录</button>
+    </view>
+  </view>
+
+  <!-- ✅ 选中日期的记录展示 -->
+  <view wx:if="{{selectedRecord}}" class="record-box">
+    <view class="record-title">当天记录：</view>
+
+    <view class="record-row">
+      <text>日期：{{selectedRecord.date}}</text>
+    </view>
+
+    <view class="record-row">
+      <text>经血量：{{selectedRecord.bloodAmount || '未记录'}}</text>
+    </view>
+
+    <view class="record-row">
+      <text>症状：{{selectedRecord.symptoms && selectedRecord.symptoms.length > 0 ? selectedRecord.symptoms.join('、') : '无'}}</text>
+    </view>
+
+    <view class="record-row">
+      <text>备注：{{selectedRecord.record || '无'}}</text>
+    </view>
+  </view>
+</view>

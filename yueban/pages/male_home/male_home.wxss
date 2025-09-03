@@ -1,0 +1,459 @@
+/* 月伴主题 - 柔和静谧风格 */
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+   }
+   .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40rpx 40rpx 0 40rpx;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+   }
+
+  .switch-button {
+    background-color:rgba(255, 255, 255, 0.7);
+    font-size: 18px; 
+    color: #d792a5;
+    width: 150px;
+    height:50px;
+    border-radius: 10px;
+    border: 1px solid rgb(243, 188, 203);
+    box-shadow: 0 4px 12px rgba(215, 146, 165, 0.25);
+    transition: all 0.3s ease;
+    top:330px;
+    right:100px;
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+  }
+  
+  .switch-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(215, 146, 165, 0.2);
+  }
+  
+  .knowledge-section {
+    padding: 20rpx 50rpx;
+    border-radius: 20rpx;
+    background: rgba(255, 255, 255, 0.6);
+    color: #8198c2;
+    border: 2px solid rgba(129, 152, 194, 0.2);
+    position: relative;
+    top:340px;
+    width: 300px;
+    margin: 50 auto;
+    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.1);
+    backdrop-filter: blur(8px);
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+  }
+  
+  .knowledge-title {
+    font-size: 16px;
+    line-height: 40rpx;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 500;
+    color: #8198c2;
+  }
+  
+  .knowledge-scroll-container {
+    height: 80px;
+    width: 250px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10rpx;
+  }
+  
+  .knowledge-scroll-wrapper {
+    position: absolute;
+    width: 100%;
+    transition: transform 0.5s ease-out;
+  }
+  
+  .knowledge-item {
+    height: 80px;
+    width:250px;
+    line-height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    color: #666;
+    background: transparent;
+    margin: 5px 0;
+    border-radius: 10rpx;
+    padding: 0 10rpx;
+  }
+  
+
+  .tab-bar-line {
+    display: none;
+  }
+  
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 160rpx;
+    background: rgba(129, 152, 194, 0.95);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top-left-radius: 30rpx;
+    border-top-right-radius: 30rpx;
+    box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
+  }
+  
+  .tab-plus {
+    width: 150rpx;
+    height: 150rpx;
+    margin-top: -50rpx;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20rpx;
+  }
+  
+  .tab-item {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .tab-text {
+    font-size: 56rpx;
+    color: #ffffff;
+    font-weight: 500;
+  }
+  
+/* 关联人提醒模块样式优化 - 月伴主题 */
+.reminder-section {
+    background: rgba(255, 255, 255, 0.65);
+    border-radius: 20rpx;
+    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+    height: 150px;
+    width: 160px;
+    border: 2px solid rgba(165, 205, 215, 0.2);
+    position: absolute;
+    top: 280px;
+    right: 0px;
+    padding: 15px;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    border-radius: 20rpx;
+  }
+  
+  /* 鼠标悬停效果（用于Web端预览） */
+  .reminder-section:hover {
+    box-shadow: 0 8px 25px rgba(129, 152, 194, 0.18), 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+    border-color: rgba(165, 205, 215, 0.4);
+  }
+  
+  /* 点击效果 */
+  .reminder-section:active {
+    transform: scale(0.97);
+    transition: transform 0.15s ease;
+  }
+  
+  /* 默认提醒样式 */
+  .default-reminder {
+    opacity: 0.9;
+    background: rgba(255, 255, 255, 0.65);
+  }
+  
+  /* 有关联人异常时的样式增强 */
+  .reminder-section[data-status="abnormal"] {
+    cursor: pointer;
+    border-color: rgba(245, 108, 108, 0.25);
+    box-shadow: 0 6px 20px rgba(245, 108, 108, 0.1);
+  }
+  
+  /* 异常状态时的文字颜色 */
+  .reminder-section[data-status="abnormal"] .reminder-text {
+    color: #f56c6c;
+  }
+  
+  .reminder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(165, 205, 215, 0.2);
+  }
+  
+  .reminder-title {
+    line-height: 22px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333333;
+    background: linear-gradient(90deg, #8198c2 0%, #a5cdd7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
+  }
+  
+  .reminder-time {
+    font-size: 11px;
+    color: #999999;
+    font-weight: 400;
+    opacity: 0.8;
+  }
+  
+  .reminder-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 4px 0;
+    min-height: 65px;
+  }
+  
+  /* 状态图标样式增强 */
+  .status-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+  
+  /* 图标动画效果 */
+  .status-icon:active {
+    transform: scale(0.92);
+  }
+  
+  .reminder-text {
+    font-size: 13px;
+    color: #555555;
+    line-height: 1.6;
+    font-weight: 400;
+    flex: 1;
+    word-wrap: break-word;
+    word-break: break-all;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  }
+  
+  /* 不同状态的文字颜色变化 */
+  .reminder-section[data-status="normal"] .reminder-text {
+    color: #68a569;
+  }
+  
+  .reminder-section[data-status="attention"] .reminder-text {
+    color: #e6a23c;
+  }
+  
+  .reminder-section[data-status="warning"] .reminder-text {
+    color: #f56c6c;
+  }
+  
+  .reminder-section[data-status="error"] .reminder-text {
+    color: #d9363e;
+  }
+  
+  /* 精致的装饰元素 */
+  .reminder-section::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    height: 6px;
+    background: linear-gradient(90deg, #8198c2, #a5cdd7, #d792a5);
+    border-radius: 16px 16px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .reminder-section:hover::before {
+    opacity: 1;
+  }
+  
+  /* 动画效果 */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+      box-shadow: 0 0 0 rgba(129, 152, 194, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+    }
+  }
+  
+  .reminder-section {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  /* 文字渐变效果（关爱提示） */
+  .reminder-text.caring-message {
+    font-weight: 500;
+    background: linear-gradient(90deg, #8198c2 0%, #d792a5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.4px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .background_top{
+    position: absolute;
+    top: 100px;
+    width: 60%;
+    height: 22vh;
+    right:150px;
+    opacity: 0.9;
+    filter: brightness(1.05) saturate(0.9);
+  }
+  
+  /* 日期显示方形框样式 */
+  .date-square {
+    position: absolute;
+    top: 280px;
+    left:0px;
+    background: rgba(255, 255, 255, 0.7);
+    width: 150px;
+    height: 120px;
+    border: 2px solid rgba(165, 205, 215, 0.3);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.1);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease-out 0.6s both;
+  }
+  
+  .date-square:hover {
+    box-shadow: 0 8px 25px rgba(129, 152, 194, 0.15);
+    transform: translateY(-2px);
+    border-color: rgba(165, 205, 215, 0.5);
+  }
+  
+  .date-day {
+    font-size: 50px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #8198c2 0%, #a5cdd7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .date-week {
+    font-size: 15px;
+    color: #8198c2;
+    margin-top: 8px;
+    opacity: 0.9;
+  }
+  
+  /* 日期分隔线 */
+  .date-divider {
+    width: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(165, 205, 215, 0.5), transparent);
+    margin: 5px 0;
+  }
+  
+  /* 月份显示 */
+  .date-month {
+    font-size: 15px;
+    color: #8198c2;
+    opacity: 0.8;
+    font-weight: 500;
+  }
+ 
+  /* 页面容器优化 */
+  .page-container {
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* 导航线条隐藏 */
+  .navigationline {
+    display: none;
+  }
+  
+  /* 日期区域样式优化 - 横向排列 */
+  .date-section {
+    position: relative;
+    padding: 20rpx 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 70px;
+  }
+  
+  .date-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20rpx;
+  }
+  
+  .date {
+    font-size: 80rpx;
+    font-weight: bold;
+    color: #8198c2;
+  }
+  
+  .day {
+    font-size: 32rpx;
+    color: #8198c2;
+    margin-top: 10rpx;
+  }
+ 
+  /* 柔和光晕效果 */
+  .soft-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    z-index: 0;
+  }
+  
+  .top-left-glow {
+    top: -10%;
+    left: -10%;
+    width: 400rpx;
+    height: 400rpx;
+    background: radial-gradient(circle, #a5cdd7 0%, transparent 70%);
+  }
+  
+  .bottom-right-glow {
+    bottom: -20%;
+    right: -10%;
+    width: 500rpx;
+    height: 500rpx;
+    background: radial-gradient(circle, #d792a5 0%, transparent 70%);
+  }
+  
+  /* 知识指示器 */
+  .knowledge-indicator {
+    display: flex;
+    justify-content: center;
+    margin-top: 15rpx;
+    padding-bottom: 10rpx;
+  }
+  
+  .knowledge-indicator::after {
+    content: "● ● ●";
+    color: rgba(129, 152, 194, 0.3);
+    font-size: 10rpx;
+    letter-spacing: 15rpx;
+  }
+ 
+  

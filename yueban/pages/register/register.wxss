@@ -1,0 +1,102 @@
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+   }
+   .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40rpx 40rpx 0 40rpx;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+   }
+  
+  .up {
+    position: absolute;
+    width: 100%;
+    top:0px;
+  }
+  .bottom {
+    position: absolute;
+    width: 100%;
+    bottom:0px;
+  }
+  
+  .middle {
+    width: 80%;
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent; /* 中间部分背景改为透明 */
+    position: relative;
+    z-index: 1;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    color: #ffffff; /* 用户输入文字设为白色 */
+  }
+  
+  .verify-button {
+    width: 50%;
+    padding: 10px;
+    margin-top: 10px;
+    text-align: center;
+    background-color: #d09f94; /* 接近图片中的颜色 */
+    color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .button:active {
+    background-color: #f08080;
+  }
+  
+  /* 柔和光晕效果 */
+  .soft-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    z-index: 0;
+  }
+  
+  .top-left-glow {
+    top: -10%;
+    left: -10%;
+    width: 400rpx;
+    height: 400rpx;
+    background: radial-gradient(circle, #a5cdd7 0%, transparent 70%);
+  }
+  
+  .bottom-right-glow {
+    bottom: -20%;
+    right: -10%;
+    width: 500rpx;
+    height: 500rpx;
+    background: radial-gradient(circle, #d792a5 0%, transparent 70%);
+  }
+  
+  /* 输入框占位符样式 */
+  input::-webkit-input-placeholder {
+    color: #a0a0a0;
+  }
+  input::-moz-placeholder {
+    color: #a0a0a0;
+  }
+  input:-ms-input-placeholder {
+    color: #a0a0a0;
+  }
+  input::placeholder {
+    color: #a0a0a0;
+  }
+  
