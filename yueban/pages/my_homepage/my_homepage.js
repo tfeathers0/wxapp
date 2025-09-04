@@ -130,13 +130,138 @@ Page({
 
     // Bottom bar
     switchToKnowledge() {
-      wx.navigateTo({ url: '/pages/about_us/about_us' }) // change to your "知识库" page
+      wx.navigateTo({ url: '/pages/knowledge_base/knowledge_base' }) // change to your "知识库" page
     },
     switchToCenter() {
       wx.navigateTo({ url: '/pages/QR_code/QR_code' }) // middle "+"
     },
+    goScan() {
+      wx.scanCode({
+        onlyFromCamera: true, // 只允许从相机扫码
+        success: (res) => {
+          console.log('扫码结果:', res.result);
+          // 这里可以处理扫码成功后的逻辑
+          wx.showToast({
+            title: '扫码成功',
+            icon: 'success'
+          });
+        },
+        fail: (err) => {
+          console.log('扫码失败:', err);
+          // 取消扫码不会弹出提示
+          if (err.errMsg !== 'scanCode:fail cancel') {
+            wx.showToast({
+              title: '扫码失败',
+              icon: 'none'
+            });
+          }
+        }
+      });
+    },
+     // 显示删除账号确认对话框
+    showDeleteAccountConfirm() {
+      wx.showModal({
+        title: '确认删除账号',
+        content: '删除账号后，您的所有数据将被永久删除，且无法恢复。确定要删除账号吗？',
+        confirmText: '确定删除',
+        cancelText: '取消',
+        confirmColor: '#ff6b6b',
+        success: (res) => {
+          if (res.confirm) {
+            this.confirmDeleteAccount();
+          }
+        }
+      });
+    },
     
-    switchToMine() {
-      wx.navigateTo({ url: '/pages/my_homepage/my_homepage' }) // "我的"
+    // 确认删除账号操作
+    confirmDeleteAccount() {
+      try {
+        // 显示加载状态
+        wx.showLoading({
+          title: '处理中...',
+        });
+        
+        // 获取当前用户
+        const currentUser = AV.User.current();
+        
+        if (currentUser) {
+          // 删除后端用户数据
+          currentUser.destroy().then(() => {
+            console.log('User account deleted successfully from backend');
+            
+            // 清除用户登录状态
+            AV.User.logOut();
+            
+            // 清除本地存储的用户信息
+            wx.removeStorageSync('userInfo');
+            wx.removeStorageSync('sessionToken');
+            wx.removeStorageSync('sex');
+            wx.removeStorageSync('sexObject');
+            
+            // 隐藏加载状态
+            wx.hideLoading();
+            
+            // 显示成功提示
+            wx.showToast({
+              title: '账号已删除',
+              icon: 'success',
+              duration: 2000
+            });
+            
+            // 延迟跳转到注册页面
+            setTimeout(() => {
+              wx.redirectTo({
+                url: '/pages/register/register',
+                success: () => {
+                  console.log('Successfully navigated to gender selection page after account deletion');
+                },
+                fail: (err) => {
+                  console.error('Navigation failed after account deletion:', err);
+                }
+              });
+            }, 1500);
+          }).catch(error => {
+            wx.hideLoading();
+            console.error('Delete account failed:', error);
+            
+            wx.showToast({
+              title: '删除失败，请重试',
+              icon: 'error',
+              duration: 2000
+            });
+          });
+        } else {
+          wx.hideLoading();
+          console.log('No user logged in, cannot delete account');
+          
+          // 清除本地存储的用户信息
+          wx.removeStorageSync('userInfo');
+          wx.removeStorageSync('sessionToken');
+          wx.removeStorageSync('sex');
+          wx.removeStorageSync('sexObject');
+          
+          wx.showToast({
+            title: '操作成功',
+            icon: 'success',
+            duration: 2000
+          });
+          
+          setTimeout(() => {
+            wx.redirectTo({
+              url: '/pages/Gender_selection/Gender_selection'
+            });
+          }, 1500);
+        }
+      } catch (error) {
+        wx.hideLoading();
+        console.error('Unexpected error during account deletion:', error);
+        
+        wx.showToast({
+          title: '删除失败，请重试',
+          icon: 'error',
+          duration: 2000
+        });
+      }
     }
 })

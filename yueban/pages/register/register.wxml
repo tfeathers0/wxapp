@@ -7,6 +7,7 @@
   <image src="/images/background_top.png" class="up" mode="widthFix"></image>
 
   <view class="middle">
+    <view class="title">欢迎注册</view>
     <input type="text" class="input-field" placeholder="账号" bindinput="handleUsernameInput" value="{{username}}"/>
     <input type="password" class="input-field" placeholder="密码" bindinput="handlePasswordInput" value="{{password}}" password="true"/>
     <button class="verify-button" bindtap="handleRegister">

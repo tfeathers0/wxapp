@@ -52,7 +52,7 @@
     width: 100rpx;
     height: 100rpx;
     margin-right: 40rpx;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.8);
     border-radius: 20rpx;
     padding: 15rpx;
   }
@@ -72,22 +72,24 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 160rpx;
+    height: 150rpx;
     background: rgba(129, 152, 194, 0.95);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top-left-radius: 30rpx;
-    border-top-right-radius: 30rpx;
     box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
   }
   
   .tab-plus {
-    width: 150rpx;
-    height: 150rpx;
-    position: relative;
-    z-index: 999;
-    display: block;
+    width: 100rpx;
+    height: 100rpx;
+    margin-top: 0rpx;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 10rpx;
   }
   
   .tab-item {
@@ -96,7 +98,7 @@
   }
   
   .tab-text {
-    font-size: 56rpx;
+    font-size: 40rpx;
     color: #ffffff;
     font-weight: 500;
   }

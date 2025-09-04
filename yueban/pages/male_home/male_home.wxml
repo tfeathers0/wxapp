@@ -54,21 +54,16 @@
       <text class="knowledge-title">月伴小贴士</text>
       <view class="knowledge-scroll-container">
         <view class="knowledge-scroll-wrapper" style="transform: translateY(-{{currentKnowledgeIndex * 86}}px);">
-          <view class="knowledge-item">月经期注意保暖，可用暖水袋热敷腹部</view>
-          <view class="knowledge-item">卵泡期雌激素升高，可适当增加蛋白质摄入</view>
-          <view class="knowledge-item">排卵期女性可能会有轻微腹痛，注意休息</view>
-          <view class="knowledge-item">黄体期情绪可能波动，多给予关心和理解</view>
-          <view class="knowledge-item">陪伴是最好的关怀，耐心倾听很重要</view>
-        </view>
+          <view class="knowledge-item">月经期子宫内膜脱落，形成经血排出。身体抵抗力较低。注意补充富含铁的食物（红肉、菠菜、动物血），喝温水，避免生冷辛辣；以休息或轻柔运动为主，如散步、瑜伽拉伸；及时更换卫生巾，保持私处清洁干燥。</view>
+              <view class="knowledge-item">卵泡期在月经结束后，持续约一周左右，身体分泌激素促进卵子发育，子宫内膜增厚。身心状态逐渐回升。注意营养均衡，多补充蛋白质。适合进行高强度运动，如跑步、力量训练，效率高。</view>
+              <view class="knowledge-item">排卵期在卵泡期结束后，一颗成熟卵子从卵巢排出，是最容易怀孕的时期。女性可能会有轻微腹痛，注意休息。</view>
+              <view class="knowledge-item">黄体期在排卵后。激素水平变化可能导致经前综合征（PMS），如情绪波动、长痘、乳房胀痛等；容易食欲大增，可选择高纤维食物（蔬菜、粗粮）稳定血糖，减少盐分摄入以减轻水肿，保证充足睡眠，穿舒适的内衣。</view>
+            </view>
       </view>
       <view class="knowledge-indicator"></view>
     </view>
  
   </view>
-
-  
-
- 
 
   <!-- 底部导航栏 -->
   <view class="tab-bar">
@@ -76,7 +71,7 @@
       <text class="tab-text">知识库</text>
     </view>
 
-    <image class="tab-plus" src="/images/plus2.png" bindtap="switchToCenter" mode="widthFix"></image>
+    <image class="tab-plus" src="/images/plus2.png" bindtap="switchToScan" mode="widthFix"></image>
 
     <view class="tab-item" bindtap="switchToMine">
       <text class="tab-text">我的</text>

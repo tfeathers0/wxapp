@@ -1,7 +1,11 @@
 // pages/register/register.js
 const AV = require('../../libs/av-core-min.js');
 const keyDaysManager = require('../../utils/keyDaysManager.js');
-
+const defaultAvatar = AV.File.withURL(
+    'default-avatar.jpg',
+    'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+  );
+  
 Page({
 
     /**
@@ -66,8 +70,9 @@ Page({
         user.set('reminder', 0);
         user.set('Reminder_time', '12:00');
         user.set('collection', 'nothing');
-        user.set('nickname', 'nick');
+        user.set('nickName', '');
         user.set('passdays',[]);
+        user.set('touxiang', defaultAvatar);
         keyDaysObj.set('username', user);
         keyDaysObj.set('mood', 'happy');
         keyDaysObj.set('state', 'menstrual');

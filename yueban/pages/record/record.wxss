@@ -1,78 +1,264 @@
+/* 容器样式 */
 .container {
-    padding: 32rpx;
-    background-color: #faf7f8;
-    min-height: 100vh;
+  background: linear-gradient(135deg, #f8e6e7 0%, #faf7f8 100%);
+  min-height: 100vh;
+  padding: 20rpx;
+}
+
+/* 头部样式 */
+.header {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  padding: 30rpx;
+  text-align: center;
+  color: white;
+  border-radius: 20rpx 20rpx 0 0;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+
+.date-display {
+  font-size: 28rpx;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* 内容区域 */
+.content {
+  background: white;
+  border-radius: 0 0 20rpx 20rpx;
+  padding: 100rpx;
+  box-shadow: 0 10rpx 30rpx rgba(212, 106, 106, 0.15);
+}
+
+/* 分区样式 */
+.section {
+  margin-bottom: 50rpx;
+  padding-bottom: 50rpx;
+  border-bottom: 1rpx solid #f0e6e7;
+}
+
+.section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #d46a6a;
+  margin-bottom: 30rpx;
+  display: flex;
+  align-items: center;
+}
+
+.section-title .icon {
+  margin-right: 15rpx;
+  font-size: 36rpx;
+}
+
+/* 开关容器 */
+.switch-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.switch-label {
+  font-size: 30rpx;
+  color: #555;
+}
+
+/* 单选按钮组 */
+.radio-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+
+.radio-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.radio-bubble {
+  width: 120rpx;
+  height: 70rpx;
+  border-radius: 35rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0e6e7;
+  color: #888;
+  font-size: 28rpx;
+  transition: all 0.3s;
+}
+
+.radio-bubble.active {
+  background-color: #e57373;
+  color: white;
+}
+
+/* 症状网格 */
+.symptoms-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.symptom-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 25rpx;
+  background-color: #f9f0f1;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.symptom-option.active {
+  background-color: #f8e6e7;
+  border-color: #d792a5;
+}
+
+.symptom-label {
+  font-size: 28rpx;
+  color: #555;
+}
+
+.switch-mini {
+  width: 80rpx;
+  height: 40rpx;
+  border-radius: 40rpx;
+  background-color: #e8dcdd;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.switch-mini::after {
+  content: "";
+  position: absolute;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background-color: white;
+  top: 2rpx;
+  left: 2rpx;
+  transition: all 0.3s;
+}
+
+.switch-mini.active {
+  background-color: #e57373;
+}
+
+.switch-mini.active::after {
+  left: 42rpx;
+}
+
+/* 心情网格 */
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.mood-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25rpx 15rpx;
+  background-color: #f9f0f1;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.mood-option.active {
+  background-color: #f8e6e7;
+  border-color: #d792a5;
+  transform: scale(1.05);
+}
+
+.mood-icon {
+  font-size: 50rpx;
+  margin-bottom: 15rpx;
+}
+
+.mood-label {
+  font-size: 24rpx;
+  color: #555;
+}
+
+/* 文本区域 */
+.textarea {
+  width: 100%;
+  height: 200rpx;
+  padding: 25rpx;
+  border: 2rpx solid #f0e6e7;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  margin-top: 15rpx;
+}
+
+.textarea:focus {
+  border-color: #d792a5;
+}
+
+/* 保存按钮 */
+.save-btn {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  color: white;
+  border: none;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  width: 100%;
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-top: 40rpx;
+  transition: all 0.3s;
+  box-shadow: 0 8rpx 25rpx rgba(212, 106, 106, 0.3);
+}
+
+.save-btn:active {
+  transform: translateY(4rpx);
+  box-shadow: 0 4rpx 15rpx rgba(212, 106, 106, 0.3);
+}
+
+.save-btn.saving {
+  background: #cccccc;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .symptoms-grid {
+    grid-template-columns: 1fr;
   }
   
-  .title {
-    display: block;
-    font-size: 36rpx;
-    font-weight: 600;
-    color: #d46a6a;
-    text-align: center;
-    margin-bottom: 40rpx;
-    padding-bottom: 24rpx;
-    border-bottom: 1rpx solid #f0e6e7;
+  .mood-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  .section {
-    background-color: #fff;
-    border-radius: 16rpx;
-    padding: 32rpx;
-    margin-bottom: 32rpx;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  .radio-group {
+    flex-direction: column;
+    gap: 20rpx;
   }
   
-  .section-title {
-    display: block;
-    font-size: 32rpx;
-    font-weight: 500;
-    color: #555;
-    margin-bottom: 24rpx;
-  }
-  
-  .radio-group, .checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  
-  .radio-label, .checkbox-label {
-    display: flex;
-    align-items: center;
-    margin-right: 40rpx;
-    margin-bottom: 20rpx;
-  }
-  
-  .radio, .checkbox {
-    transform: scale(0.9);
-    margin-right: 12rpx;
-  }
-  
-  .radio-text, .checkbox-text {
-    font-size: 28rpx;
-  }
-  
-  .textarea {
+  .radio-option {
+    flex-direction: row;
+    justify-content: flex-start;
     width: 100%;
-    height: 200rpx;
-    padding: 24rpx;
-    border: 1rpx solid #e8dcdd;
-    border-radius: 16rpx;
-    font-size: 28rpx;
   }
   
-  .save-btn {
-    background-color: #dcb8ba;
-    color: white;
-    padding: 28rpx;
-    border: none;
-    border-radius: 16rpx;
-    width: 100%;
-    font-size: 32rpx;
-    font-weight: 500;
-    margin-top: 32rpx;
+  .radio-bubble {
+    margin-right: 20rpx;
   }
-  
-  .save-btn:active {
-    background-color: #c99a9d;
-  }
+}

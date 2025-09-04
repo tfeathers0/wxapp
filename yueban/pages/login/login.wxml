@@ -3,9 +3,6 @@
   <view class="soft-glow top-left-glow"></view>
   <view class="soft-glow bottom-right-glow"></view>
   
-  <!-- 顶部装饰 -->
-  <image src="/images/background_top.png" class="up" mode="widthFix"></image>
-
   <view class="middle">
     <view class="title">欢迎登录</view>
     <input type="text" class="input-field" placeholder="账号" bindinput="handleUsernameInput" value="{{username}}"/>
