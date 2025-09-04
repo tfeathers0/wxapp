@@ -138,7 +138,7 @@ page {
     text-align: center;
     font-size: 40rpx;
     color:rgb(255, 255, 255,0.7);
-    padding: 35rpx 0;
+    padding: 45rpx 0;
     transition: all 0.3s ease;
   }
   
@@ -157,7 +157,7 @@ page {
   
   /* Logout button style */
   .logout-item {
-    color:rgb(189, 91, 91);
+    color:rgb(188, 0, 0);
     font-weight: bold;
   }
   
@@ -171,26 +171,24 @@ page {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 160rpx;
+    height: 150rpx;
     background: rgba(129, 152, 194, 0.95);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top-left-radius: 30rpx;
-    border-top-right-radius: 30rpx;
     box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
   }
   
   .tab-plus {
-    width: 150rpx;
-    height: 150rpx;
-    margin-top: -50rpx;
+    width: 100rpx;
+    height: 100rpx;
+    margin-top: 0rpx;
     justify-content: center;
     align-items: center;
     background: #ffffff;
     border-radius: 50%;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 20rpx;
+    padding: 10rpx;
   }
   
   .tab-item {
@@ -199,7 +197,7 @@ page {
   }
   
   .tab-text {
-    font-size: 56rpx;
+    font-size: 40rpx;
     color: #ffffff;
     font-weight: 500;
   }

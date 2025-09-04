@@ -1,4 +1,5 @@
-const AV = require('../../libs/av-core-min.js'); 
+// calendar.js
+const AV = require('../../libs/av-core-min.js');
 const oneDay = 24 * 60 * 60 * 1000;
 
 Page({
@@ -6,37 +7,46 @@ Page({
     currentYear: new Date().getFullYear(),
     currentMonth: new Date().getMonth(),
     days: [],
-    lastPeriod: '',
-    nextPeriod: '',
-    cycleLength: 28,
-    periodDays: 5,
     historyPeriods: [],
     records: [],
-    selectedRecord: null // ✅ 新增：保存已点击日期的记录
+    selectedRecord: null,
+    cycleInfo: {      // ✅ 所有周期相关信息
+      lastPeriod: '',
+      nextPeriod: '',
+      cycleLength: 28,
+      periodDays: 5
+    }
   },
 
   async onLoad() {
-    let { currentYear, currentMonth } = this.data;
+    await this.refreshPage();
+  },
 
-    await this.loadFromCloud();
-    this.loadUserPeriods();
+  onShow() {
+    this.refreshPage();
+  },
 
-    let { historyPeriods, records, lastPeriod } = this.data;
+  // ================== 下拉刷新 ==================
+  async onPullDownRefresh() {
+    console.log("Pull-down refresh triggered");
+    await this.refreshPage();
+    wx.stopPullDownRefresh();
+  },
 
-    if (historyPeriods.length > 0) {
-      let last = lastPeriod || historyPeriods[historyPeriods.length - 1];
-      let avgCycle = this.calculateAverageCycle(historyPeriods);
-      let next = this.calculateNextPeriod(last, avgCycle);
+  // ================== 主刷新逻辑 ==================
+  async refreshPage() {
+    try {
+      await this.loadFromCloud();
+      this.loadUserCycleInfo();
+      const { historyPeriods, records, cycleInfo, currentYear, currentMonth } = this.data;
 
-      this.setData({
-        lastPeriod: last,
-        cycleLength: avgCycle,
-        nextPeriod: next
-      });
-
-      this.generateCalendar(last, avgCycle, currentYear, currentMonth, records);
-    } else {
-      this.generateCalendar('', this.data.cycleLength, currentYear, currentMonth, records);
+      if (historyPeriods.length > 0 && cycleInfo.lastPeriod) {
+        this.generateCalendar(cycleInfo.lastPeriod, cycleInfo.cycleLength, currentYear, currentMonth, records);
+      } else {
+        this.generateCalendar('', cycleInfo.cycleLength, currentYear, currentMonth, records);
+      }
+    } catch (err) {
+      console.error('❌ Refresh failed:', err);
     }
   },
 
@@ -52,7 +62,13 @@ Page({
       let recordRes = await Record.find();
 
       let historyPeriods = historyRes.map(h => h.get('date'));
-      let records = recordRes.map(r => ({ date: r.get('date'), note: r.get('note') || '' }));
+      let records = recordRes.map(r => ({
+        date: r.get('date'),
+        record: r.get('record') || '',
+        symptoms: r.get('symptoms') || [],
+        isFirstDay: r.get('isFirstDay') || false,
+        isInPeriod: r.get('isInPeriod') || false
+      }));
 
       this.setData({ historyPeriods, records });
     } catch (err) {
@@ -62,71 +78,99 @@ Page({
 
   async saveHistory(dateStr) {
     try {
-      let History = AV.Object.extend('HistoryPeriods');
-      let obj = new History();
+      const History = AV.Object.extend('HistoryPeriods');
+      const obj = new History();
       obj.set('date', dateStr);
       await obj.save();
+      await this.refreshPage(); // 保存后刷新
     } catch (err) {
       console.error('❌ 保存历史失败:', err);
     }
   },
 
-  async saveRecord(dateStr, note = '') {
+  // ================== 用户周期 ==================
+  loadUserCycleInfo() {
+    const user = AV.User.current();
+    if (!user) return;
+
+    const passdays = user.get('passdays') || [];
+    if (passdays.length === 0) return;
+
+    const firstDayRecord = passdays.slice().reverse().find(r => r.lastPeriod);
+    const lastPeriodDate = firstDayRecord ? firstDayRecord.lastPeriod : '';
+    const nextPeriodDate = firstDayRecord ? firstDayRecord.nextPeriod : '';
+
+    this.setData({
+      cycleInfo: {
+        lastPeriod: lastPeriodDate,
+        nextPeriod: nextPeriodDate,
+        cycleLength: firstDayRecord?.cycleLength || 28,
+        periodDays: firstDayRecord?.periodDays || 5
+      },
+      lastPeriod: lastPeriodDate,
+      nextPeriod: nextPeriodDate
+    });
+  },
+
+  async saveUserCycleInfo() {
+    const user = AV.User.current();
+    if (!user) return;
+
+    const { cycleInfo } = this.data;
+    let passdays = user.get('passdays') || [];
+    let newData = { ...cycleInfo };
+
+    if (passdays.length > 0) {
+      passdays[passdays.length - 1] = newData;
+    } else {
+      passdays.push(newData);
+    }
+
+    user.set('passdays', passdays);
     try {
-      let Record = new AV.Object.extend('PeriodRecords');
-      let obj = new Record();
-      obj.set('date', dateStr);
-      obj.set('note', note);
-      await obj.save();
+      await user.save();
+      wx.showToast({ title: '周期信息已保存', icon: 'success' });
+      await this.refreshPage();
     } catch (err) {
-      console.error('❌ 保存记录失败:', err);
+      console.error('❌ 保存用户周期失败:', err);
     }
   },
 
-  // ================== User Periods ==================
-  loadUserPeriods() {
-    const user = AV.User.current();
-    if (user) {
-      const last = user.get('lastPeriod');
-      const next = user.get('nextPeriod');
-      const cycle = user.get('cycleLength');
-      const period = user.get('periodDays');
-  
-      if (last) this.setData({ lastPeriod: last.toISOString().split('T')[0] });
-      if (next) this.setData({ nextPeriod: next.toISOString().split('T')[0] });
-      if (cycle) this.setData({ cycleLength: cycle });
-      if (period) this.setData({ periodDays: period });
-    }
-  },  
+  // ================== 输入框事件 ==================
+  onCycleLengthChange(e) {
+    const length = parseInt(e.detail.value) || 28;
+    const { lastPeriod } = this.data.cycleInfo;
+    const next = lastPeriod ? this.calculateNextPeriod(lastPeriod, length) : '';
+    this.setData({
+      'cycleInfo.cycleLength': length,
+      'cycleInfo.nextPeriod': next
+    });
+    if (lastPeriod) this.generateCalendar(lastPeriod, length, this.data.currentYear, this.data.currentMonth, this.data.records);
+    this.saveUserCycleInfo();
+  },
 
-  async saveUserPeriods() {
-    const user = AV.User.current();
-    if (!user) return;
-  
-    if (this.data.lastPeriod && this.data.nextPeriod) {
-      user.set('lastPeriod', new Date(this.data.lastPeriod));
-      user.set('nextPeriod', new Date(this.data.nextPeriod));
-      user.set('cycleLength', this.data.cycleLength);
-      user.set('periodDays', this.data.periodDays);
-  
-      try {
-        await user.save();
-        wx.showToast({ title: 'Saved!', icon: 'success' });
-      } catch (err) {
-        console.error('❌ 保存用户周期失败:', err);
-      }
-    }
-  },  
+  onPeriodDaysChange(e) {
+    const days = parseInt(e.detail.value) || 5;
+    this.setData({ 'cycleInfo.periodDays': days });
+    const { lastPeriod, cycleLength } = this.data.cycleInfo;
+    if (lastPeriod) this.generateCalendar(lastPeriod, cycleLength, this.data.currentYear, this.data.currentMonth, this.data.records);
+    this.saveUserCycleInfo();
+  },
 
-  // ================== 日历逻辑 ==================
+  // ================== 日历生成 ==================
   generateCalendar(periodStart, cycleLength, year, month, records = []) {
     let days = [];
     let firstDay = new Date(year, month, 1).getDay();
     let daysInMonth = new Date(year, month + 1, 0).getDate();
 
+    // 空格
     for (let i = 0; i < firstDay; i++) days.push({ day: '', type: '' });
-    for (let i = 1; i <= daysInMonth; i++) days.push({ day: i, type: '' });
+    // 日期
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push({ day: i, type: '', year, month: month + 1 });
+    }
 
+    // 生理期计算
     if (periodStart) {
       let start = new Date(periodStart);
       const maxIterations = 12;
@@ -136,133 +180,81 @@ Page({
         iterations < maxIterations &&
         (start.getFullYear() < year || (start.getFullYear() === year && start.getMonth() <= month))
       ) {
-        let periodEnd = new Date(start.getTime() + (this.data.periodDays - 1) * oneDay);
+        let periodEnd = new Date(start.getTime() + (this.data.cycleInfo.periodDays - 1) * oneDay);
         let ovulationDay = new Date(start.getTime() + (cycleLength - 14) * oneDay);
 
         const startTime = start.getTime();
         const periodEndTime = periodEnd.getTime();
         const ovulationTime = ovulationDay.getTime();
 
-        for (let i = 0; i < days.length; i++) {
-          if (!days[i].day) continue;
-          let d = new Date(year, month, days[i].day);
+        days.forEach(item => {
+          if (!item.day) return;
+          let d = new Date(year, month, item.day);
           let dTime = d.getTime();
 
           if (dTime >= startTime && dTime <= periodEndTime) {
-            days[i].type = days[i].type ? days[i].type + ' period' : 'period';
+            item.type += ' period';
+            if (d.getDate() === start.getDate()) {
+              item.type += ' first-period'; 
+            }
           } else if (dTime === ovulationTime) {
-            days[i].type = days[i].type ? days[i].type + ' ovulation' : 'ovulation';
+            item.type += ' ovulation';
           }
-        }
+        });
 
         start = new Date(start.getTime() + cycleLength * oneDay);
         iterations++;
       }
     }
 
+    // 云端记录覆盖
     records.forEach(r => {
-      let d = new Date(r.date);
-      if (d.getFullYear() === year && d.getMonth() === month) {
-        let index = firstDay + d.getDate() - 1;
-        if (days[index] && days[index].day) {
-          days[index].type = days[index].type ? days[index].type + ' recorded' : 'recorded';
+      const d = new Date(r.date);
+      days.forEach(item => {
+        if (item.day === d.getDate() && item.month === d.getMonth() + 1 && item.year === d.getFullYear()) {
+          if (r.isFirstDay) item.type += ' first-period';
+          if (r.isInPeriod) item.type += ' period';
+          if (r.record || r.symptoms?.length > 0) item.type += ' recorded';
         }
-      }
+      });
     });
 
     this.setData({ days, currentYear: year, currentMonth: month });
   },
 
+  // ================== 月份切换 ==================
   prevMonth() {
-    let { currentYear, currentMonth, lastPeriod, cycleLength, records } = this.data;
+    let { currentYear, currentMonth } = this.data;
     if (currentMonth === 0) {
       currentYear -= 1;
       currentMonth = 11;
-    } else {
-      currentMonth -= 1;
-    }
-    this.generateCalendar(lastPeriod, cycleLength, currentYear, currentMonth, records);
+    } else currentMonth -= 1;
+    const { lastPeriod, cycleLength } = this.data.cycleInfo;
+    this.generateCalendar(lastPeriod, cycleLength, currentYear, currentMonth, this.data.records);
   },
 
   nextMonth() {
-    let { currentYear, currentMonth, lastPeriod, cycleLength, records } = this.data;
+    let { currentYear, currentMonth } = this.data;
     if (currentMonth === 11) {
       currentYear += 1;
       currentMonth = 0;
-    } else {
-      currentMonth += 1;
-    }
-    this.generateCalendar(lastPeriod, cycleLength, currentYear, currentMonth, records);
+    } else currentMonth += 1;
+    const { lastPeriod, cycleLength } = this.data.cycleInfo;
+    this.generateCalendar(lastPeriod, cycleLength, currentYear, currentMonth, this.data.records);
   },
 
-  // ================== onDayTap ==================
-  async onDayTap(e) {
-    let day = e.currentTarget.dataset.day;
+  // ================== 点击日期 ==================
+  onDayTap(e) {
+    const day = e.currentTarget.dataset.day;
     if (!day) return;
-
-    let { currentYear, currentMonth, records, historyPeriods, periodDays } = this.data;
-    let date = new Date(currentYear, currentMonth, day);
-    let dateStr = this.formatDate(date);
-
-    let existing = records.find(r => r.date === dateStr);
-
-    if (existing) {
-      // ✅ 已有记录 → 只显示记录，不跳转
-      this.setData({ selectedRecord: existing });
-      return;
-    } else {
-      // ✅ 没有记录 → 跳转 record 页面
-      let lastPeriodDate = historyPeriods.length > 0 ? new Date(historyPeriods[historyPeriods.length - 1]) : null;
-      let diffDays = lastPeriodDate ? (date - lastPeriodDate) / oneDay : null;
-
-      if (lastPeriodDate && diffDays >= 0 && diffDays < periodDays) {
-        await this.saveRecord(dateStr, '经期中');
-        wx.navigateTo({
-          url: `/pages/record/record?date=${dateStr}&period=1`
-        });
-        await this.loadFromCloud();
-        this.generateCalendar(this.data.lastPeriod, this.data.cycleLength, currentYear, currentMonth, this.data.records);
-        return;
-      }
-
-      wx.showModal({
-        title: '确认记录',
-        content: `标记 ${dateStr} 为新的月经开始日？`,
-        success: async (res) => {
-          if (res.confirm) {
-            let history = this.data.historyPeriods || [];
-            if (!history.includes(dateStr)) {
-              history.push(dateStr);
-              history.sort((a, b) => new Date(a) - new Date(b));
-              await this.saveHistory(dateStr);
-            }
-
-            let avgCycle = this.calculateAverageCycle(history);
-            let next = this.calculateNextPeriod(dateStr, avgCycle);
-
-            this.setData({
-              lastPeriod: dateStr,
-              historyPeriods: history,
-              cycleLength: avgCycle,
-              nextPeriod: next
-            });
-
-            await this.saveUserPeriods();
-
-            wx.navigateTo({
-              url: `/pages/record/record?date=${dateStr}&first=1`
-            });
-
-            await this.loadFromCloud();
-            this.generateCalendar(dateStr, avgCycle, currentYear, currentMonth, this.data.records);
-          }
-        }
-      });
-    }
+    const { currentYear, currentMonth } = this.data;
+    const dateStr = this.formatDate(new Date(currentYear, currentMonth, day));
+    wx.navigateTo({ url: `/pages/record/record?date=${dateStr}` });
   },
 
+  // ================== 工具函数 ==================
   calculateAverageCycle(history) {
-    if (history.length < 2) return this.data.cycleLength;
+    if (history.length < 2) return this.data.cycleInfo.cycleLength;
     let total = 0;
     for (let i = 1; i < history.length; i++) {
       total += (new Date(history[i]) - new Date(history[i - 1])) / oneDay;
@@ -272,9 +264,23 @@ Page({
 
   calculateNextPeriod(lastPeriod, cycleLength) {
     if (!lastPeriod) return '';
-    const lastDate = new Date(lastPeriod);
-    const nextDate = new Date(lastDate.getTime() + cycleLength * oneDay);
+    const nextDate = new Date(new Date(lastPeriod).getTime() + cycleLength * oneDay);
     return this.formatDate(nextDate);
+  },
+
+  updateLastPeriod(date) {
+    this.setData({
+      'cycleInfo.lastPeriod': date,
+      'lastPeriod': date
+    });
+    const { cycleInfo } = this.data;
+    const next = date ? this.calculateNextPeriod(date, cycleInfo.cycleLength) : '';
+    this.setData({
+      'cycleInfo.nextPeriod': next,
+      'nextPeriod': next
+    });
+    this.generateCalendar(date, cycleInfo.cycleLength, this.data.currentYear, this.data.currentMonth, this.data.records);
+    this.saveUserCycleInfo();
   },
 
   formatDate(date) {
@@ -284,53 +290,7 @@ Page({
     return `${y}-${m < 10 ? '0'+m : m}-${d < 10 ? '0'+d : d}`;
   },
 
-  async onLastPeriodChange(e) {
-    let dateStr = e.detail.value;
-    let history = this.data.historyPeriods || [];
-    if (!history.includes(dateStr)) {
-      history.push(dateStr);
-      history.sort((a, b) => new Date(a) - new Date(b));
-      await this.saveHistory(dateStr);
-    }
-
-    let avgCycle = this.calculateAverageCycle(history);
-    let next = this.calculateNextPeriod(dateStr, avgCycle);
-
-    this.setData({
-      lastPeriod: dateStr,
-      historyPeriods: history,
-      cycleLength: avgCycle,
-      nextPeriod: next
-    });
-
-    await this.saveUserPeriods();
-
-    await this.loadFromCloud();
-    this.generateCalendar(dateStr, avgCycle, this.data.currentYear, this.data.currentMonth, this.data.records);
-  },
-
-  onCycleLengthChange(e) {
-    this.setData({ cycleLength: parseInt(e.detail.value) || 28 });
-    if (this.data.lastPeriod) {
-      let next = this.calculateNextPeriod(this.data.lastPeriod, this.data.cycleLength);
-      this.setData({ nextPeriod: next });
-      this.generateCalendar(this.data.lastPeriod, this.data.cycleLength,
-                            this.data.currentYear, this.data.currentMonth, this.data.records);
-      this.saveUserPeriods();
-    }
-  },
-  
-  onPeriodDaysChange(e) {
-    this.setData({ periodDays: parseInt(e.detail.value) || 5 });
-    if (this.data.lastPeriod) {
-      this.generateCalendar(this.data.lastPeriod, this.data.cycleLength,
-                            this.data.currentYear, this.data.currentMonth, this.data.records);
-      this.saveUserPeriods();
-    }
-  },  
-
   goHistoryPage() {
     wx.navigateTo({ url: '/pages/history/history' });
   }
-
 });

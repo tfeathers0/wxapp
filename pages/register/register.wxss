@@ -52,13 +52,30 @@ page {
     padding: 10px;
     margin-top: 10px;
     text-align: center;
-    background-color: #d09f94; /* 接近图片中的颜色 */
+    background: linear-gradient(135deg, #d792a5 0%, #c06783 100%); /* 与页面主题协调的渐变 */
     color: #ffffff;
-    border-radius: 5px;
+    border-radius: 25px; /* 更圆润的边角 */
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4rpx 12rpx rgba(215, 146, 165, 0.4); /* 添加柔和阴影 */
+    transition: all 0.3s ease;
+    letter-spacing: 2rpx;
+    line-height: 1.5;
   }
-  .button:active {
-    background-color: #f08080;
+  .verify-button:active {
+    background: linear-gradient(135deg, #c06783 0%, #d792a5 100%); /* 反向渐变效果 */
+    transform: translateY(2rpx); /* 按下时轻微下沉 */
+    box-shadow: 0 2rpx 8rpx rgba(215, 146, 165, 0.6); /* 调整阴影 */
+  }
+
+  /* 欢迎注册标题样式 */
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 30px;
+    text-align: center;
   }
   
   /* 柔和光晕效果 */

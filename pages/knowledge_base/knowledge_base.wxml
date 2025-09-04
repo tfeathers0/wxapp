@@ -10,15 +10,10 @@
       <text class="label">检索</text>
     </button>
 
-    <!-- 收藏按钮 -->
-    <button class="menu-btn" bindtap="goFavorite">
-      <image src="/icon/list.png" class="icon"></image>
-      <text class="label">收藏</text>
-    </button>
 
     <!-- 智能体按钮 -->
     <button class="menu-btn" bindtap="goToAgent">
-      <image src="/images/plus2.png" class="icon"></image>
+      <image src="/images/AI.png" class="icon"></image>
       <text class="label">AI问答</text>
     </button>
   </view>

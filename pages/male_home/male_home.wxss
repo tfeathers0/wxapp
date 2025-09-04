@@ -61,7 +61,7 @@ page {
   
   .knowledge-scroll-container {
     height: 80px;
-    width: 250px;
+    width: 300px;
     overflow: hidden;
     position: relative;
     border-radius: 10rpx;
@@ -75,9 +75,9 @@ page {
   
   .knowledge-item {
     height: 80px;
-    width:250px;
-    line-height: 20px;
-    font-size: 12px;
+    width:280px;
+    line-height: 18px;
+    font-size: 11px;
     display: flex;
     align-items: center;
     padding: 5px 0;
@@ -98,26 +98,24 @@ page {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 160rpx;
+    height: 150rpx;
     background: rgba(129, 152, 194, 0.95);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top-left-radius: 30rpx;
-    border-top-right-radius: 30rpx;
     box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
   }
   
   .tab-plus {
-    width: 150rpx;
-    height: 150rpx;
-    margin-top: -50rpx;
+    width: 100rpx;
+    height: 100rpx;
+    margin-top: 0rpx;
     justify-content: center;
     align-items: center;
     background: #ffffff;
     border-radius: 50%;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 20rpx;
+    padding: 10rpx;
   }
   
   .tab-item {
@@ -126,7 +124,7 @@ page {
   }
   
   .tab-text {
-    font-size: 56rpx;
+    font-size: 40rpx;
     color: #ffffff;
     font-weight: 500;
   }

@@ -102,28 +102,28 @@ page {
     height: 100%;
     position: relative;
    }
-   /* 排卵期段 */
+   /* 月经期段 */
    .segment-1 {
-    background: linear-gradient(90deg, #8198c2 0%, #5c7ab1 100%);
-    width: 20%;
-    box-shadow: 0 3rpx 12rpx rgba(129, 152, 194, 0.4);
+    background: linear-gradient(90deg, #d792a5 0%, #c06783 100%);
+    width: 17.86%;
+    box-shadow: 0 3rpx 12rpx rgba(215, 146, 165, 0.4);
    }
    /* 卵泡期段 */
    .segment-2 {
     background: linear-gradient(90deg, #a5cdd7 0%, #71bed4 100%);
-    width: 30%;
+    width: 28.57%;
     box-shadow: 0 3rpx 12rpx rgba(165, 205, 215, 0.4);
    }
-   /* 月经期段 */
+   /* 排卵期段 */
    .segment-3 {
-    background: linear-gradient(90deg, #d792a5 0%, #c06783 100%);
-    width: 20%;
-    box-shadow: 0 3rpx 12rpx rgba(215, 146, 165, 0.4);
+    background: linear-gradient(90deg, #8198c2 0%, #5c7ab1 100%);
+    width: 17.86%;
+    box-shadow: 0 3rpx 12rpx rgba(129, 152, 194, 0.4);
    }
    /* 黄体期段 */
    .segment-4 {
     background: linear-gradient(90deg, #dcb8ba 0%, #cd979b 100%);
-    width: 30%;
+    width: 35.71%;
     box-shadow: 0 3rpx 12rpx rgba(220, 184, 186, 0.4);
    }
    /* 当前位置指示器 - 条状样式 */
@@ -168,28 +168,28 @@ page {
     transition: all 0.3s ease;
     padding: 8rpx 0;
    }
-   /* 排卵期标签 */
+   /* 月经期标签 */
    .label-1 {
-    color: #6b85b5;
-    width: 20%;
+    color: #cc7b8f;
+    width: 17.86%;
     margin-top:20rpx;
    }
    /* 卵泡期标签 */
    .label-2 {
     color: #8bc5d9;
-    width: 30%;
+    width: 28.57%;
     margin-top:20rpx;
    }
-   /* 月经期标签 */
+   /* 排卵期标签 */
    .label-3 {
-    color: #cc7b8f;
-    width: 20%;
+    color: #6b85b5;
+    width: 17.86%;
     margin-top:20rpx;
    }
    /* 黄体期标签 */
    .label-4 {
     color: #d3a5a8;
-    width: 30%;
+    width: 35.71%;
     margin-top:20rpx;
    }
    
@@ -364,8 +364,8 @@ page {
 
 .knowledge-item {
   color: #8198c2;
-  font-size: 26rpx;
-  line-height: 40rpx;
+  font-size: 22rpx;
+  line-height: 32rpx;
   display: block;
   padding: 0 10rpx;
   white-space: normal;
@@ -375,67 +375,42 @@ page {
   display: flex;
   align-items: center;
 }
-   /* 选项卡区域样式 - 铺满底部不留白边 */
-   .tab-section {
-     width: calc(100% + 80rpx); /*补偿container的padding */
-     height: 150rpx;
-     background-color: rgba(129, 152, 194, 0.95);
-     border-radius: 30rpx 30rpx 0 0;
-     display: flex;
-     justify-content: flex-start;
-     align-items: center;
-     margin-top: auto;
-     margin-bottom: 0;
-     margin-left: -40rpx;
-     margin-right: -40rpx;
-     padding: 0;
-     box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
-   }
-   .tabs {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-   }
-   .tab-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    flex: 1;
-    padding: 0;
-   }
-   .tab-item.active {
-    color: #ffffff;
-    font-weight: bold;
-   }
-   .tab-text {
-    font-size: 44rpx;
-    color: #ffffff;
-    opacity: 1;
-    font-weight: bold;
-   }
-   /* 中间+号按钮特殊样式 */
-   .tab-item:nth-child(2) {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-   }
-   .tab-item:nth-child(2) .tab-text {
-    width: 80rpx;
-    height: 80rpx;
-    background-color: #ffffff;
-    color: #8198C2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    font-size: 50rpx;
-    opacity: 1;
-    margin-top: -30rpx;
-    z-index: 1;
-   }
+   /* Tab Bar Styles */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150rpx;
+  background: rgba(129, 152, 194, 0.95);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
+}
+
+.tab-plus {
+  width: 100rpx;
+  height: 100rpx;
+  margin-top: 0rpx;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 10rpx;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+}
+
+.tab-text {
+  font-size: 40rpx;
+  color: #ffffff;
+  font-weight: 500;
+}
    /* 增加交互效果 */
    .date-card,
    .switch-button,

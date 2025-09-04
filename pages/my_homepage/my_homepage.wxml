@@ -31,11 +31,9 @@
     <view class="menu-divider"></view>
     <view class="menu-item" bindtap="goCode">我的月亮码</view>
     <view class="menu-divider"></view>
-    <view class="menu-item" bindtap="goReminder">预测提醒</view>
-    <view class="menu-divider"></view>
     <view class="menu-item" bindtap="goService">联系客服</view>
     <view class="menu-divider"></view>
-    <view class="menu-item logout-item">删除账号</view>
+    <view class="menu-item logout-item" bindtap="showDeleteAccountConfirm">删除账号</view>
   </view>
 
   <!-- Bottom tab-bar -->
@@ -43,7 +41,7 @@
     <view class="tab-item" bindtap="switchToKnowledge">
       <text class="tab-text">知识库</text>
     </view>
-    <image class="tab-plus" src="/images/plus2.png" bindtap="switchToCenter" mode="widthFix"></image>
+    <image class="tab-plus" src="/images/plus2.png" bindtap="goScan" mode="widthFix"></image>
     <view class="tab-item" bindtap="switchToMine">
       <text class="tab-text">我的</text>
     </view>

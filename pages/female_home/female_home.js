@@ -11,13 +11,15 @@ Page({
     // 生理周期相关
     currentPeriod: '',
     currentCycleDay: 0,
-    indicatorPosition: 0,
+    indicatorPosition: '0%', // 初始化为带有%的字符串
     periodNames: ['月经期', '卵泡期', '排卵期', '黄体期'],
+    // 默认周期长度为28天
+    cycleLength: 28,
     // 假设周期为28天，不同阶段的天数分布（与UI显示顺序保持一致）
     periodDistribution: {
-      1: { start: 14, end: 18, name: '排卵期', color: '#8198c2', percentage: 17.86 },  // 浅蓝色段
+      1: { start: 1, end: 5, name: '月经期', color: '#d792a5', percentage: 17.86 },     // 红色段
       2: { start: 6, end: 13, name: '卵泡期', color: '#a5cdd7', percentage: 28.57 },    // 蓝色段
-      3: { start: 1, end: 5, name: '月经期', color: '#d792a5', percentage: 17.86 },     // 红色段
+      3: { start: 14, end: 18, name: '排卵期', color: '#8198c2', percentage: 17.86 },  // 浅蓝色段
       4: { start: 19, end: 28, name: '黄体期', color: '#dcb8ba', percentage: 35.71 }   // 粉色段
     },
     // 知识滚动相关
@@ -26,6 +28,12 @@ Page({
     // 添加弹窗相关数据
     showPopup: false,
     todayString: '',
+    // 用户周期设置对象
+    userCycleSettings: {
+      cycleLength: 28,
+      periodLength: 5,
+      lastPeriodStart: null
+    }
   },
 
   onLoad: function() {
@@ -79,12 +87,18 @@ formatTodayDate: function () {
       // 老用户 -> 去 LeanCloud 取数据
       this.loadNextPeriodDate();
     }
+    
+    // 启动知识内容自动滚动
+    this.startKnowledgeScroll();
   },
 
   // 从 LeanCloud 加载用户设置
   loadUserSettings: async function () {
     const currentUser = AV.User.current();
-    if (!currentUser) return;
+    if (!currentUser) {
+      // 未登录时，使用默认周期长度
+      return;
+    }
 
     try {
       const query = new AV.Query('_User');
@@ -96,14 +110,20 @@ formatTodayDate: function () {
         const periodLength = result.get('periodLength') || 5;
         const lastPeriodStart = result.get('lastPeriodStart');
         
+        // 同时更新userCycleSettings对象和直接可访问的cycleLength属性
         this.setData({
           'userCycleSettings.cycleLength': cycleLength,
           'userCycleSettings.periodLength': periodLength,
-          'userCycleSettings.lastPeriodStart': lastPeriodStart
+          'userCycleSettings.lastPeriodStart': lastPeriodStart,
+          cycleLength: cycleLength
         });
       }
     } catch (err) {
       console.error('获取用户设置失败', err);
+      // 出错时确保使用默认周期长度
+      this.setData({
+        cycleLength: 28
+      });
     }
   },
 
@@ -243,11 +263,16 @@ formatTodayDate: function () {
    // 计算并更新生理周期信息
   calculateCycleInfo: function() {
     const now = new Date();
-    const day = now.getDate();
+    const cycleLength = this.data.cycleLength;
     
-    // 设置当前生理周期和周期天数
-    const currentPeriod = this.getMenstrualPeriod(day);
-    const currentCycleDay = (day - 1) % this.data.cycleLength + 1;
+    // 计算当前在周期中的天数 - 使用固定日期(2023年1月1日)作为参考点
+    // 这样可以确保不同日期访问时，周期位置是连续变化的
+    const referenceDate = new Date('2023-01-01');
+    const daysSinceReference = this.calculateDaysDifference(referenceDate, now);
+    const currentCycleDay = (daysSinceReference % cycleLength) + 1;
+    
+    // 设置当前生理周期
+    const currentPeriod = this.getMenstrualPeriod(currentCycleDay);
 
     // 计算指示器位置（考虑UI中各周期段的实际宽度分布）
     const indicatorPosition = this.calculateAccurateIndicatorPosition(currentCycleDay);
@@ -267,21 +292,21 @@ formatTodayDate: function () {
     const cycleLength = this.data.cycleLength;
     let accumulatedPercentage = 0;
     
-    // 当前UI中各周期段的百分比宽度
-    const uiWidths = [20, 30, 20, 30]; // 对应segment-1到segment-4
-    
     // 根据用户的周期长度调整各阶段的天数范围
-    // 基于标准28天周期的比例进行调整
-    const baseRanges = {
-      1: {start: 14, end: 18}, // 排卵期 (5天)
-      2: {start: 6, end: 13},  // 卵泡期 (8天)
-      3: {start: 1, end: 5},   // 月经期 (5天)
-      4: {start: 19, end: 28}  // 黄体期 (10天)
-    };
+    // 注意这里要使用与UI标签顺序对应的阶段范围
+    const uiOrderRanges = [
+      {start: 1, end: 5},   // 月经期 (5天) - UI顺序第1位
+      {start: 6, end: 13},  // 卵泡期 (8天) - UI顺序第2位
+      {start: 14, end: 18}, // 排卵期 (5天) - UI顺序第3位
+      {start: 19, end: 28}  // 黄体期 (10天) - UI顺序第4位
+    ];
+    
+    // 当前UI中各周期段的百分比宽度
+    const uiWidths = [17.86, 28.57, 17.86, 35.71]; // 对应新的UI顺序：月经期(17.86%), 卵泡期(28.57%), 排卵期(17.86%), 黄体期(35.71%)
     
     // 找到当前日期所在的周期阶段
-    for (let i = 1; i <= 4; i++) {
-      const baseRange = baseRanges[i];
+    for (let i = 0; i < uiOrderRanges.length; i++) {
+      const baseRange = uiOrderRanges[i];
       // 基于用户的周期长度调整阶段范围
       const start = Math.round((baseRange.start / 28) * cycleLength);
       const end = Math.round((baseRange.end / 28) * cycleLength);
@@ -291,14 +316,15 @@ formatTodayDate: function () {
         const daysInStage = end - start + 1;
         const relativePosition = (day - start) / daysInStage;
         // 计算在UI中的绝对位置
-        const uiIndex = i - 1; // 转换为0-3的索引
-        return accumulatedPercentage + (relativePosition * uiWidths[uiIndex]);
+        const positionPercentage = accumulatedPercentage + (relativePosition * uiWidths[i]);
+        // 返回带有%符号的字符串，确保CSS正确解析为百分比
+        return positionPercentage + '%';
       }
       // 累加前一个阶段的宽度百分比
-      accumulatedPercentage += uiWidths[i - 1];
+      accumulatedPercentage += uiWidths[i];
     }
     
-    return 0; // 默认位置
+    return '0%'; // 默认位置
   },
   
   // 根据日期获取当前生理周期
@@ -308,17 +334,22 @@ formatTodayDate: function () {
     const normalizedDay = (day - 1) % cycleLength + 1;
     
     // 根据用户的周期长度调整各阶段的天数范围
-    // 基于标准28天周期的比例进行调整
-    const baseRanges = this.data.periodDistribution;
+    // 使用数组确保遍历顺序与UI显示顺序一致
+    const periodStages = [
+      this.data.periodDistribution[1], // 月经期
+      this.data.periodDistribution[2], // 卵泡期
+      this.data.periodDistribution[3], // 排卵期
+      this.data.periodDistribution[4]  // 黄体期
+    ];
     
-    for (let key in baseRanges) {
-      const baseRange = baseRanges[key];
+    for (let i = 0; i < periodStages.length; i++) {
+      const stage = periodStages[i];
       // 基于用户的周期长度调整阶段范围
-      const start = Math.round((baseRange.start / 28) * cycleLength);
-      const end = Math.round((baseRange.end / 28) * cycleLength);
+      const start = Math.round((stage.start / 28) * cycleLength);
+      const end = Math.round((stage.end / 28) * cycleLength);
       
       if (normalizedDay >= start && normalizedDay <= end) {
-        return baseRange.name;
+        return stage.name;
       }
     }
   },
@@ -403,5 +434,44 @@ formatTodayDate: function () {
         url: '../my_homepage/my_homepage'
       });
     }
+  },
+  
+  // 导航到知识库
+  switchToKnowledge: function() {
+    wx.navigateTo({
+      url: '../knowledge_base/knowledge_base'
+    });
+  },
+  
+  // 扫码功能
+  switchToScan: function() {
+    wx.scanCode({
+      onlyFromCamera: true, // 只允许从相机扫码
+      success: (res) => {
+        console.log('扫码结果:', res.result);
+        // 这里可以处理扫码成功后的逻辑
+        wx.showToast({
+          title: '扫码成功',
+          icon: 'success'
+        });
+      },
+      fail: (err) => {
+        console.log('扫码失败:', err);
+        // 取消扫码不会弹出提示
+        if (err.errMsg !== 'scanCode:fail cancel') {
+          wx.showToast({
+            title: '扫码失败',
+            icon: 'none'
+          });
+        }
+      }
+    });
+  },
+  
+  // 导航到我的页面
+  switchToMine: function() {
+    wx.navigateTo({
+      url: '../my_homepage/my_homepage'
+    });
   }
 })
