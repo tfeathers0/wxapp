@@ -11,7 +11,7 @@
 
   <!-- 二维码方框 -->
   <view class="qrcode-box">
-    <view class="qrcode-inner"></view>
+    <canvas class="qrcode" canvas-id="myQrcode" ></canvas>
   </view>
 
   <!-- 动态密码 -->

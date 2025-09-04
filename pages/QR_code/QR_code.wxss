@@ -35,7 +35,6 @@
     margin-top: 100rpx;
     width: 400rpx;
     height: 400rpx;
-    border: 10rpx solid #f3d88c; /* 外层蓝色边框 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -44,11 +43,10 @@
     position: relative;
   }
   
-  .qrcode-inner {
-    width: 360rpx;
-    height: 360rpx;
-    border: 10rpx solid #8198c2; /* 内层黄色边框 */
-    background-color: #ffffff;
+  .qrcode {
+    width: 100%;
+    height: 100%;
+    background-color: #fff9f5;
   }
   
   /* 动态密码 */
