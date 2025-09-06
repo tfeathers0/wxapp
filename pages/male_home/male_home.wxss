@@ -50,6 +50,7 @@ page {
     animation: fadeInUp 0.6s ease-out 0.4s both;
   }
   
+  
   .knowledge-title {
     font-size: 16px;
     line-height: 40rpx;
@@ -71,6 +72,7 @@ page {
     position: absolute;
     width: 100%;
     transition: transform 0.5s ease-out;
+    
   }
   
   .knowledge-item {
@@ -81,7 +83,7 @@ page {
     display: flex;
     align-items: center;
     padding: 5px 0;
-    color: #666;
+    color: #8198c2;
     background: transparent;
     margin: 5px 0;
     border-radius: 10rpx;

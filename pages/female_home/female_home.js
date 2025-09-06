@@ -33,38 +33,9 @@ Page({
       cycleLength: 28,
       periodLength: 5,
       lastPeriodStart: null
-    }
-  },
-
-  onLoad: function() {
-       // 从本地存储读取用户设置的周期天数
-    const savedCycleLength = wx.getStorageSync('userCycleLength');
-    if (savedCycleLength && typeof savedCycleLength === 'number') {
-      this.setData({
-        cycleLength: savedCycleLength
-      });
-    }
-    this.calculateCycleInfo();
-  },
-
-    // 格式化日期
-formatTodayDate: function () {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1;
-  const day = now.getDate();
-  const weekDays = ['周日','周一','周二','周三','周四','周五','周六'];
-  const weekday = weekDays[now.getDay()];
-
-  // 分开存储日期和星期
-  this.setData({
-    popupDateString: `${year}年${month}月${day}日`,
-    popupWeekdayString: weekday
-  });
-},
-
-  closePopup: function () {
-    this.setData({ showPopup: false });
+    },
+    // 用户最后一次经期开始日期
+    lastPeriodStart: null
   },
 
   onLoad: async function () {
@@ -92,6 +63,26 @@ formatTodayDate: function () {
     this.startKnowledgeScroll();
   },
 
+  // 格式化日期
+  formatTodayDate: function () {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const weekDays = ['周日','周一','周二','周三','周四','周五','周六'];
+    const weekday = weekDays[now.getDay()];
+
+    // 分开存储日期和星期
+    this.setData({
+      popupDateString: `${year}年${month}月${day}日`,
+      popupWeekdayString: weekday
+    });
+  },
+
+  closePopup: function () {
+    this.setData({ showPopup: false });
+  },
+
   // 从 LeanCloud 加载用户设置
   loadUserSettings: async function () {
     const currentUser = AV.User.current();
@@ -115,7 +106,8 @@ formatTodayDate: function () {
           'userCycleSettings.cycleLength': cycleLength,
           'userCycleSettings.periodLength': periodLength,
           'userCycleSettings.lastPeriodStart': lastPeriodStart,
-          cycleLength: cycleLength
+          cycleLength: cycleLength,
+          lastPeriodStart: lastPeriodStart
         });
       }
     } catch (err) {
@@ -151,12 +143,62 @@ formatTodayDate: function () {
       });
       return;
     }
-  
+
     try {
+      // 首先从用户自定义表中查询周期信息
+      const className = this.getUserClassName();
+      if (className) {
+        await this.ensureUserClass();
+        
+        const cycleInfoQuery = new AV.Query(className);
+        cycleInfoQuery.equalTo('type', 'cycleInfo');
+        const cycleInfoResult = await cycleInfoQuery.first();
+        
+        if (cycleInfoResult) {
+          const futurePeriod = cycleInfoResult.get('futurePeriod');
+          if (futurePeriod) {
+            const dateObj = new Date(futurePeriod);
+            const year = dateObj.getFullYear();
+            const month = dateObj.getMonth() + 1;
+            const day = dateObj.getDate();
+
+            // 计算距离下次月经的天数
+            const today = new Date();
+            const daysUntilNextPeriod = this.calculateDaysDifference(today, dateObj);
+
+            let message = `下次月经预计始于：${year}年${month}月${day}日`;
+
+            if (dateObj > today) {
+              message += `\n距离来月经还有 ${daysUntilNextPeriod} 天哦，记得做好准备～`;
+
+              // 添加卫生棉提醒
+              if (daysUntilNextPeriod <= 5) {
+                message += "\n小贴士：别忘了带上卫生棉，保持舒适和安心~";
+              }
+            } else if (
+              dateObj.getDate() === today.getDate() &&
+              dateObj.getMonth() === today.getMonth() &&
+              dateObj.getFullYear() === today.getFullYear()
+            ) {
+              message += "\n今天是预计的月经开始日\n温馨提示：注意休息，照顾好自己哦~";
+            } else {
+              message += `\n月经已经延迟 ${daysUntilNextPeriod} 天了，建议关注身体状况～`;
+            }
+
+            this.setData({
+              showPopup: true,
+              popupMessage: message
+            });
+            return;
+          }
+        }
+      }
+
+      // 如果用户自定义表中没有数据，再从 _User 表中查询
       const query = new AV.Query('_User');
       query.equalTo('objectId', currentUser.id);
       const result = await query.first();
-    
+
       if (result) {
         const nextPeriod = result.get('nextPeriod');
         if (nextPeriod) {
@@ -164,16 +206,16 @@ formatTodayDate: function () {
           const year = dateObj.getFullYear();
           const month = dateObj.getMonth() + 1;
           const day = dateObj.getDate();
-    
+
           // 计算距离下次月经的天数
           const today = new Date();
           const daysUntilNextPeriod = this.calculateDaysDifference(today, dateObj);
-    
+
           let message = `下次月经预计始于：${year}年${month}月${day}日`;
-    
+
           if (dateObj > today) {
             message += `\n距离来月经还有 ${daysUntilNextPeriod} 天哦，记得做好准备～`;
-    
+
             // 添加卫生棉提醒
             if (daysUntilNextPeriod <= 5) {
               message += "\n小贴士：别忘了带上卫生棉，保持舒适和安心~";
@@ -187,7 +229,7 @@ formatTodayDate: function () {
           } else {
             message += `\n月经已经延迟 ${daysUntilNextPeriod} 天了，建议关注身体状况～`;
           }
-    
+
           this.setData({
             showPopup: true,
             popupMessage: message
@@ -195,13 +237,13 @@ formatTodayDate: function () {
           return;
         }
       }
-    
+
       // 没有数据
       this.setData({
         showPopup: true,
         popupMessage: '还没有设置下次月经日呢～\n快来记录吧，让月伴更好地陪伴你~'
       });
-    
+
     } catch (err) {
       console.error('查询失败', err);
       this.setData({
@@ -210,7 +252,7 @@ formatTodayDate: function () {
       });
     }
   },  
-  
+
   // 显示自定义弹窗
   showCustomPopup: function(title, content) {
     this.setData({
@@ -219,14 +261,12 @@ formatTodayDate: function () {
       popupContent: content
     });
   },
-  
+
   // 隐藏弹窗
   hidePopup: function() {
-    this.setData({
-      showPopup: false
-    });
+    this.setData({ showPopup: false });
   },
-  
+
   // 弹窗确认事件
   onPopupConfirm: function() {
     console.log('弹窗确认按钮被点击');
@@ -257,35 +297,162 @@ formatTodayDate: function () {
       clearInterval(this.data.knowledgeTimer);
     }
   },
-  switchToMine() {
-    wx.navigateTo({ url: '/pages/my_homepage/my_homepage' })
+  
+  // 获取用户类名（与female_calendar.js中保持一致）
+  getUserClassName: function() {
+    if (!AV.User.current()) return null;
+    const username = AV.User.current().getUsername();
+    return `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
   },
-   // 计算并更新生理周期信息
-  calculateCycleInfo: function() {
+  
+  // 确保用户类存在
+  ensureUserClass: async function() {
+    const className = this.getUserClassName();
+    if (!className) return false;
+    const query = new AV.Query(className);
+    try {
+      await query.first();
+      return true;
+    } catch {
+      const UserClass = AV.Object.extend(className);
+      const userObj = new UserClass();
+      userObj.set('initialized', true);
+      await userObj.save();
+      return true;
+    }
+  },
+
+  // 计算并更新生理周期信息 - 改为基于用户实际记录的经期时间
+  calculateCycleInfo: async function() {
     const now = new Date();
     const cycleLength = this.data.cycleLength;
+    let lastPeriodStart = this.data.lastPeriodStart;
     
-    // 计算当前在周期中的天数 - 使用固定日期(2023年1月1日)作为参考点
-    // 这样可以确保不同日期访问时，周期位置是连续变化的
-    const referenceDate = new Date('2023-01-01');
-    const daysSinceReference = this.calculateDaysDifference(referenceDate, now);
-    const currentCycleDay = (daysSinceReference % cycleLength) + 1;
+    // 如果本地没有最后一次经期开始日期，尝试从云端获取
+    if (!lastPeriodStart) {
+      try {
+        const className = this.getUserClassName();
+        if (className) {
+          await this.ensureUserClass();
+          
+          // 从用户自定义类中获取周期信息
+          const CycleInfo = new AV.Query(className);
+          CycleInfo.equalTo('type', 'cycleInfo');
+          const cycleInfoObj = await CycleInfo.first();
+          
+          if (cycleInfoObj && cycleInfoObj.get('nowPeriod')) {
+            lastPeriodStart = cycleInfoObj.get('nowPeriod');
+            this.setData({ lastPeriodStart });
+          }
+        }
+      } catch (err) {
+        console.error('获取用户周期信息失败:', err);
+      }
+    }
     
-    // 设置当前生理周期
-    const currentPeriod = this.getMenstrualPeriod(currentCycleDay);
-
-    // 计算指示器位置（考虑UI中各周期段的实际宽度分布）
-    const indicatorPosition = this.calculateAccurateIndicatorPosition(currentCycleDay);
-    
-    this.setData({
-      currentPeriod: currentPeriod,
-      currentCycleDay: currentCycleDay,
-      indicatorPosition: indicatorPosition
-    });
+    // 如果有用户实际记录的经期开始日期，使用它来计算
+    if (lastPeriodStart) {
+      const lastPeriodDate = new Date(lastPeriodStart);
+      const daysSinceLastPeriod = this.calculateDaysDifference(lastPeriodDate, now);
+      const currentCycleDay = daysSinceLastPeriod + 1;
+      
+      // 设置当前生理周期
+      const currentPeriod = this.getMenstrualPeriod(currentCycleDay);
+      
+      // 计算指示器位置
+      const indicatorPosition = this.calculateAccurateIndicatorPosition(currentCycleDay);
+      
+      this.setData({
+        currentPeriod: currentPeriod,
+        currentCycleDay: currentCycleDay,
+        indicatorPosition: indicatorPosition
+      });
+      
+      // 更新到 LeanCloud 的 state 字段
+      await this.updateUserStateToCloud(currentPeriod);
+    } else {
+      // 如果没有用户实际记录的经期开始日期，使用原有的计算方式
+      const referenceDate = new Date('2023-01-01');
+      const daysSinceReference = this.calculateDaysDifference(referenceDate, now);
+      const currentCycleDay = (daysSinceReference % cycleLength) + 1;
+      
+      // 设置当前生理周期
+      const currentPeriod = this.getMenstrualPeriod(currentCycleDay);
+      
+      // 计算指示器位置
+      const indicatorPosition = this.calculateAccurateIndicatorPosition(currentCycleDay);
+      
+      this.setData({
+        currentPeriod: currentPeriod,
+        currentCycleDay: currentCycleDay,
+        indicatorPosition: indicatorPosition
+      });
+    }
   },
   
+  // 将用户当前生理周期状态更新到 LeanCloud
+  updateUserStateToCloud: async function(state) {
+    try {
+      const currentUser = AV.User.current();
+      if (!currentUser) {
+        console.log('用户未登录，无法更新状态');
+        return;
+      }
+      
+      // 将中文状态转换为英文状态
+      let englishState = '';
+      switch(state) {
+        case '月经期':
+          englishState = 'menstrual';
+          break;
+        case '卵泡期':
+          englishState = 'follicular';
+          break;
+        case '排卵期':
+          englishState = 'ovulation';
+          break;
+        case '黄体期':
+          englishState = 'luteal';
+          break;
+        default:
+          englishState = 'unknown';
+      }
+      
+      // 1. 更新 _User 表中的 state 字段
+      currentUser.set('state', englishState);
+      await currentUser.save();
+      console.log('用户状态已更新到 _User 表');
+      
+      // 2. 同时更新到用户自定义表中
+      const className = this.getUserClassName();
+      if (className) {
+        await this.ensureUserClass();
+        
+        // 查找或创建 state 记录
+        const StateQuery = new AV.Query(className);
+        StateQuery.equalTo('type', 'state');
+        let stateObj = await StateQuery.first();
+        
+        if (stateObj) {
+          stateObj.set('currentState', englishState);
+          stateObj.set('updateTime', new Date());
+          await stateObj.save();
+        } else {
+          const UserClass = AV.Object.extend(className);
+          const newStateObj = new UserClass();
+          newStateObj.set('type', 'state');
+          newStateObj.set('currentState', englishState);
+          newStateObj.set('updateTime', new Date());
+          await newStateObj.save();
+        }
+        console.log('用户状态已更新到自定义用户表');
+      }
+    } catch (err) {
+      console.error('更新用户状态失败:', err);
+    }
+  },
   
-   // 精确计算指示器位置，考虑各周期段在UI中的实际宽度分布
+  // 精确计算指示器位置，考虑各周期段在UI中的实际宽度分布
   calculateAccurateIndicatorPosition: function(day) {
     // 由于UI中的周期段宽度是固定百分比（20%, 30%, 20%, 30%），需要重新映射
     // 我们需要根据实际周期阶段的天数来计算在UI中的准确位置

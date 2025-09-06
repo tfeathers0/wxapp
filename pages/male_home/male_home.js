@@ -79,7 +79,8 @@ Page({
             nickname: followee.get('nickName') || '未命名',
             avatar: followee.get('avatar') ,
             objectId: followee.id,
-            relation: result.get('relation') || '朋友'
+            relation: result.get('relation') || '朋友',
+            gender: followee.get('gender') || 'unknown' // 获取性别信息
           };
         });
 
@@ -90,10 +91,13 @@ Page({
           ? contacts.filter(contact => authArray.includes(contact.objectId))
           : contacts;
         
-        // 如果没有授权联系人，显示提示信息
-        if (authorizedContacts.length === 0) {
+        // 只显示女性关联人的状态（gender=1表示女性）
+        const femaleAuthorizedContacts = authorizedContacts.filter(contact => contact.gender === 1);
+        
+        // 如果没有女性关联人，显示提示信息
+        if (femaleAuthorizedContacts.length === 0) {
           this.setData({
-            reminderText: "暂无关联人授权信息",
+            reminderText: "暂无女性关联人授权信息",
             statusIcon: "/images/icon_state_normal.png",
             statusType: 'normal',
             isCaringMessage: true,
@@ -103,10 +107,10 @@ Page({
           return;
         }
         
-        // 检查每个授权联系人的异常状况
+        // 检查每个女性关联人的异常状况
         const abnormalContacts = [];
         
-        for (const contact of authorizedContacts) {
+        for (const contact of femaleAuthorizedContacts) {
           // 获取权限设置（与relationship_information界面保持一致的权限获取方式）
           let permissions = await keyDaysManager.getUserPermissions(contact.objectId);
           
@@ -199,7 +203,7 @@ Page({
         }
         
         this.setData({
-          contactList: authorizedContacts,
+          contactList: femaleAuthorizedContacts,
           abnormalContacts: abnormalContacts
         }, () => {
           // 更新提醒信息

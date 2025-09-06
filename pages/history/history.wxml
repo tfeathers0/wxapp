@@ -24,17 +24,35 @@
       </view>
     </view>
     
-    <view class="section-title">
+    <!-- 周期历史部分 -->
+    <view class="section-title" wx:if="{{cycleDetails.length > 0}}">
       <text class="section-icon">📋</text>
-      <text class="section-text">历史月经开始日期</text>
+      <text class="section-text">周期历史记录</text>
+    </view>
+    
+    <view class="cycle-history-list" wx:if="{{cycleDetails.length > 0}}">
+      <view class="cycle-item" wx:for="{{cycleDetails}}" wx:key="index">
+        <text class="cycle-icon">🔄</text>
+        <view class="cycle-info">
+          <text class="cycle-days">{{item.cycleDays}}天周期</text>
+          <text class="cycle-date">{{item.dateRange}}</text>
+        </view>
+        <text class="period-length">{{item.periodDays}}天经期</text>
+      </view>
     </view>
     
     <!-- 历史记录列表 -->
+    <view class="section-title" wx:if="{{history.length > 0}}">
+      <text class="section-icon">📝</text>
+      <text class="section-text">详细记录</text>
+    </view>
+    
     <view class="history-list" wx:if="{{history.length > 0}}">
       <view class="history-item" wx:for="{{history}}" wx:key="index" wx:for-item="date">
         <text class="item-icon">●</text>
         <text class="item-date">{{date}}</text>
-        <text class="item-days" wx:if="{{periodDays[index]}}">{{periodDays[index]}}天</text>
+        <text class="item-days" wx:if="{{periodDays[index] !== '?'}}">{{periodDays[index]}}天</text>
+        <text class="item-days" wx:else>未知</text>
       </view>
     </view>
     
