@@ -1,7 +1,10 @@
 /* ================= Calendar Container ================= */
 .calendar {
-  padding: 20rpx;
-  background-color: #fff9f5;
+  padding: 40rpx 30rpx;
+  background: linear-gradient(135deg, #faf7f9 0%, #f5f2f6 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ================= Header ================= */
@@ -9,15 +12,31 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 40rpx;
+  padding: 0 15rpx;
 }
 
 .month-btn {
-  background-color: #dcb8ba;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #8c7b9d;
+  border: 2rpx solid #e8e0ee;
+  border-radius: 20rpx;
+  padding: 16rpx 30rpx;
+  font-size: 28rpx;
+  box-shadow: 0 4rpx 12rpx rgba(140, 123, 157, 0.1);
+  transition: all 0.3s ease;
+}
+
+.month-btn:active {
+  background: rgba(245, 240, 250, 0.9);
+  transform: scale(0.98);
+}
+
+.header text {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #7d6b8f;
+  letter-spacing: 1rpx;
 }
 
 /* ================= Weekdays ================= */
@@ -25,8 +44,18 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  font-weight: bold;
-  margin-bottom: 10rpx;
+  margin-bottom: 30rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25rpx;
+  padding: 22rpx 0;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
+}
+
+.week text {
+  color: #8c7b9d;
+  font-size: 28rpx;
+  font-weight: 500;
 }
 
 /* ================= Days Grid ================= */
@@ -34,190 +63,258 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  position: relative;
+  gap: 12rpx;
+  margin-bottom: 50rpx;
 }
 
 .day {
-  width: 80rpx;
-  height: 80rpx;
+  width: 84rpx;
+  height: 84rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  margin: 4rpx auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2rpx solid #f0ebf5;
+  transition: all 0.3s ease;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
 }
 
-/* Period days */
+.day text {
+  color: #7d6b8f;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.day:active {
+  background: rgba(250, 248, 252, 0.95);
+  transform: scale(0.95);
+}
+
+/* Period days - 生理期淡紫色圈 */
 .day.period {
-  border: 3rpx solid #8198c2;
-  border-radius: 50%;
+  border: 2.5rpx solid #b8a7cc;
+  background: rgba(184, 167, 204, 0.12);
+  box-shadow: 0 2rpx 10rpx rgba(184, 167, 204, 0.15);
 }
 
-
-/* Ovulation day - small pink circle above date */
-.day.ovulation::after {
-  content: '';
-  position: absolute;
-  top: 6rpx; /* above the number */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 16rpx;
-  height: 16rpx;
-  border-radius: 50%;
-  background-color: #d792a5;
-  z-index: 5;
+/* Ovulation day - 排卵日淡粉色圈 */
+.day.ovulation {
+  border: 2.5rpx solid #f4aeba;
+  background: rgba(244, 174, 186, 0.12);
+  box-shadow: 0 2rpx 10rpx rgba(244, 174, 186, 0.15);
 }
 
-/* Recorded days - light blue background */
+/* Recorded days - 已记录淡蓝色背景 */
 .day.recorded {
-  background-color: #daeaf6;
-  border-radius: 50%;
+  background: rgba(173, 216, 230, 0.15);
+  border: 2rpx solid #add8e6;
+  box-shadow: 0 2rpx 10rpx rgba(173, 216, 230, 0.15);
 }
 
-/* Support combinations */
+/* ================ 支持组合情况 ================ */
 
-/* Period + Recorded */
 .day.period.recorded {
-  border: 3rpx solid #8198c2;
-  background-color: #daeaf6;
+  border: 2.5rpx solid #b8a7cc;
+  background: rgba(184, 167, 204, 0.2);
 }
 
-/* First-period + Recorded */
-.day.first-period.recorded {
-  position: relative;
-  background-color: #daeaf6;
-}
-
-/* Ovulation + Recorded or Period + Ovulation + Recorded */
-.day.first-period.ovulation::after,
-.day.first-period.recorded.ovulation::after,
-.day.period.ovulation.recorded::after {
-  top: 6rpx;
-  width: 16rpx;
-  height: 16rpx;
-  background-color: #d792a5;
-  z-index: 5;
+.day.ovulation.recorded {
+  border: 2.5rpx solid #f4aeba;
+  background: rgba(244, 174, 186, 0.2);
 }
 
 /* ================= Legend ================= */
 .legend {
   display: flex;
-  justify-content: space-around;
-  margin-top: 20rpx;
+  justify-content: center;
+  margin: 35rpx 0;
+  flex-wrap: wrap;
+  gap: 25rpx;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30rpx;
+  border-radius: 25rpx;
+  margin-bottom: 45rpx;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
+  padding: 14rpx 22rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20rpx;
+  border: 2rpx solid #f0ebf5;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
 }
 
 .dot {
-  width: 20rpx;
-  height: 20rpx;
+  width: 26rpx;
+  height: 26rpx;
   border-radius: 50%;
-  margin-right: 10rpx;
+  margin-right: 16rpx;
+  border: 2rpx solid;
 }
 
 .dot.ovulation {
-  border: 3rpx solid #d792a5;
+  border-color: #f4aeba;
+  background: rgba(244, 174, 186, 0.2);
 }
 
 .dot.period {
-  border: 3rpx solid #8198c2;
+  border-color: #b8a7cc;
+  background: rgba(184, 167, 204, 0.2);
 }
 
 .dot.recorded {
-  background-color: #daeaf6;
+  background: rgba(173, 216, 230, 0.3);
+  border-color: #add8e6;
 }
 
-/* ================= Cycle Info Display ================= */
-.cycle-info-display {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin: 30rpx 0;
+.legend-item text {
+  font-size: 26rpx;
+  color: #7d6b8f;
+  font-weight: 500;
 }
 
-.info-card {
-  width: 48%;
-  background-color: #f8e6e7;
-  border-radius: 12rpx;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
-  text-align: center;
+/* ================= Info Panel ================= */
+.info-panel {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40rpx 35rpx;
+  border-radius: 30rpx;
+  color: #7d6b8f;
+  margin-top: auto;
+  box-shadow: 0 6rpx 20rpx rgba(140, 123, 157, 0.1);
+  border: 2rpx solid #f0ebf5;
 }
 
-.info-title {
-  font-size: 28rpx;
-  color: #8198c2;
-  margin-bottom: 10rpx;
-  font-weight: bold;
-}
-
-.info-value {
-  font-size: 32rpx;
-  color: #d792a5;
-  font-weight: bold;
-}
-
-/* ================= Red Box ================= */
-.red-box {
-  margin-top: 30rpx;
-  padding: 20rpx;
-  border: 2rpx solid #dcb8ba;
-  border-radius: 12rpx;
-  color: #dcb8ba;
-}
-
-.red-box .row {
-  margin-bottom: 20rpx;
+.info-panel .row {
+  margin-bottom: 28rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid rgba(140, 123, 157, 0.08);
 }
 
-.picker {
-  color: #dcb8ba;
-  margin-left: 10rpx;
+.info-panel .row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  justify-content: center;
+  padding-top: 22rpx;
 }
 
-.input {
-  border: 1rpx solid #dcb8ba;
-  padding: 5rpx 10rpx;
-  width: 100rpx;
-  text-align: center;
-  margin-left: 10rpx;
-  border-radius: 6rpx;
+.info-panel .row text:first-child {
+  font-weight: 600;
+  font-size: 30rpx;
+  color: #6c5b7e;
+}
+
+.info-panel .row text:last-child {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #8c7b9d;
 }
 
 .history-btn {
-  background-color: #dcb8ba;
-  color: #fff;
-  padding: 6rpx 12rpx;
-  border: none;
-  border-radius: 6rpx;
-  cursor: pointer;
-}
-
-/* ================= Record Box ================= */
-.record-box {
-  margin-top: 30rpx;
-  padding: 20rpx;
-  border: 2rpx solid #dcb8ba;
-  border-radius: 12rpx;
-  background-color: #fff9f5;
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.08);
-}
-
-.record-title {
-  font-weight: bold;
-  color: #dcb8ba;
-  margin-bottom: 15rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f5fc 100%);
+  color: #8c7b9d;
+  padding: 20rpx 40rpx;
+  border: 2rpx solid #e8e0ee;
+  border-radius: 25rpx;
+  font-weight: 600;
   font-size: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(140, 123, 157, 0.1);
+  transition: all 0.3s ease;
 }
 
-.record-row {
-  margin-bottom: 12rpx;
-  color: #555;
-  font-size: 28rpx;
+.history-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 6rpx rgba(140, 123, 157, 0.1);
+  background: linear-gradient(135deg, #f8f5fc 0%, #f3eff9 100%);
+}
+
+/* ================= 底部留白 ================= */
+.footer-space {
+  height: 50rpx;
+}
+
+/* ================= 响应式设计 ================= */
+@media (max-width: 480px) {
+  .calendar {
+    padding: 30rpx 20rpx;
+  }
+  
+  .header {
+    margin-bottom: 35rpx;
+  }
+  
+  .month-btn {
+    padding: 14rpx 25rpx;
+  }
+  
+  .legend {
+    gap: 20rpx;
+    padding: 25rpx;
+  }
+  
+  .info-panel {
+    padding: 35rpx 30rpx;
+  }
+}
+
+/* ================= 自定义滚动条 ================= */
+::-webkit-scrollbar {
+  width: 6rpx;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(240, 235, 245, 0.5);
+  border-radius: 10rpx;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(184, 167, 204, 0.5);
+  border-radius: 10rpx;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 167, 204, 0.7);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+}
+
+.step-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  border: 2rpx solid #d2c6e0;
+  background: #f9f6fc;
+  color: #7d6b8f;
+  font-size: 36rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 12rpx;
+  box-shadow: 0 2rpx 6rpx rgba(140, 123, 157, 0.1);
+}
+
+.step-btn:active {
+  background: #efe9f6;
+  transform: scale(0.9);
+}
+
+.step-value {
+  min-width: 60rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: #8c7b9d;
+  font-weight: 600;
 }

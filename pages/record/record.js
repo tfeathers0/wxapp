@@ -5,7 +5,7 @@ Page({
     date: '',
     bloodAmount: '中',
     symptoms: Array(9).fill(0),
-    record: '',
+    note: '',
     isFirstDay: false,
     isInPeriod: false,
     mood: '平静',
@@ -19,15 +19,65 @@ Page({
       { icon: '😡', label: '烦躁' },
       { icon: '😰', label: '焦虑' },
       { icon: '😴', label: '疲惫' }
-    ]
+    ],
+    existingRecord: null
   },
 
   async onLoad(options) {
     const date = options.date || this.getCurrentDate();
     this.setData({ date });
+    await this.loadRecord(date);
+  },
 
+  getCurrentDate() {
+    const date = new Date();
+    return this.formatDate(date);
+  },
+
+  formatDate(date) {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+  },
+
+  // ============ 用户类相关 ============
+  getUserClassName() {
+    const user = AV.User.current();
+    if (!user) {
+      wx.showToast({ title: '请先登录', icon: 'none', duration: 2000 });
+      setTimeout(() => wx.navigateBack(), 2000);
+      return null;
+    }
+    const username = user.getUsername();
+    return `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
+  },
+
+  async ensureUserClass() {
+    const className = this.getUserClassName();
+    if (!className) return false;
+    const query = new AV.Query(className);
     try {
-      const query = new AV.Query('PeriodRecords');
+      await query.first();
+      return true;
+    } catch {
+      const UserClass = AV.Object.extend(className);
+      const userObj = new UserClass();
+      userObj.set('initialized', true);
+      await userObj.save();
+      return true;
+    }
+  },
+
+  // ============ 加载记录 ============
+  async loadRecord(date) {
+    try {
+      const className = this.getUserClassName();
+      if (!className) return;
+
+      await this.ensureUserClass();
+
+      const query = new AV.Query(className);
       query.equalTo('date', date);
       const res = await query.first();
 
@@ -35,48 +85,46 @@ Page({
         this.setData({
           bloodAmount: res.get('bloodAmount') || '中',
           symptoms: res.get('symptoms') || Array(9).fill(0),
-          record: res.get('record') || '',
+          note: res.get('note') || '',
           isFirstDay: res.get('isFirstDay') || false,
           isInPeriod: res.get('isInPeriod') || false,
-          mood: res.get('mood') || '平静'
+          mood: res.get('mood') || '平静',
+          existingRecord: res
         });
+
+        if (res.get('isFirstDay')) {
+          await this.updateCycleInfo(date);
+        }
       }
     } catch (error) {
       console.error('加载记录失败:', error);
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      });
     }
   },
 
-  getCurrentDate() {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
-  },
-
+  // ============ 事件 ============
   onBloodAmountChange(e) {
-    const value = e.currentTarget.dataset.value;
-    this.setData({ bloodAmount: value });
+    this.setData({ bloodAmount: e.currentTarget.dataset.value });
   },
 
   onSymptomToggle(e) {
     const idx = Number(e.currentTarget.dataset.index);
-    const symptoms = this.data.symptoms.map((item, index) => 
+    const symptoms = this.data.symptoms.map((item, index) =>
       index === idx ? (item === 1 ? 0 : 1) : item
     );
     this.setData({ symptoms });
   },
 
-  onRecordInput(e) {
-    this.setData({ record: e.detail.value });
+  onNoteInput(e) {
+    this.setData({ note: e.detail.value });
   },
 
   onFirstDayChange(e) {
-    this.setData({ isFirstDay: e.detail.value });
+    const isFirstDay = e.detail.value;
+    this.setData({ 
+      isFirstDay,
+      // Automatically enable isInPeriod when isFirstDay is enabled
+      isInPeriod: isFirstDay ? true : this.data.isInPeriod
+    });
   },
 
   onInPeriodChange(e) {
@@ -84,58 +132,55 @@ Page({
   },
 
   onMoodSelect(e) {
-    const mood = e.currentTarget.dataset.mood;
-    this.setData({ mood });
+    this.setData({ mood: e.currentTarget.dataset.mood });
   },
 
+  // ============ 保存记录 ============
   async saveRecord() {
     if (this.data.isSaving) return;
-    
     this.setData({ isSaving: true });
-    
-    const { date, bloodAmount, symptoms, record, isFirstDay, isInPeriod, mood } = this.data;
+
+    const { date, bloodAmount, symptoms, note, isFirstDay, isInPeriod, mood, existingRecord } = this.data;
+    const className = this.getUserClassName();
+    if (!className) {
+      this.setData({ isSaving: false });
+      return;
+    }
 
     try {
-      const query = new AV.Query('PeriodRecords');
-      query.equalTo('date', date);
-      let existing = await query.first();
+      await this.ensureUserClass();
 
-      if (existing) {
-        existing.set('bloodAmount', bloodAmount);
-        existing.set('symptoms', symptoms);
-        existing.set('record', record);
-        existing.set('isFirstDay', isFirstDay);
-        existing.set('isInPeriod', isInPeriod);
-        existing.set('mood', mood);
-        await existing.save();
+      let obj;
+      if (existingRecord) {
+        obj = existingRecord;
       } else {
-        const PeriodRecords = AV.Object.extend('PeriodRecords');
-        const newRecord = new PeriodRecords();
-        newRecord.set('date', date);
-        newRecord.set('bloodAmount', bloodAmount);
-        newRecord.set('symptoms', symptoms);
-        newRecord.set('record', record);
-        newRecord.set('isFirstDay', isFirstDay);
-        newRecord.set('isInPeriod', isInPeriod);
-        newRecord.set('mood', mood);
-        await newRecord.save();
+        const UserClass = AV.Object.extend(className);
+        obj = new UserClass();
+        obj.set('date', date);
       }
 
-      // 更新日历页面
-      const pages = getCurrentPages();
-      const prevPage = pages[pages.length - 2];
-      if (prevPage && prevPage.updateLastPeriod) {
-        if (isFirstDay) {
-          prevPage.updateLastPeriod(date);
-        } else {
-          const allQuery = new AV.Query('PeriodRecords');
-          allQuery.equalTo('isFirstDay', true);
-          allQuery.ascending('date');
-          const all = await allQuery.find();
-          const latestFirstDay = all.length > 0 ? all[all.length - 1].get('date') : '';
-          prevPage.updateLastPeriod(latestFirstDay || '');
-        }
+      // Check if isFirstDay status changed
+      const wasFirstDay = existingRecord ? existingRecord.get('isFirstDay') : false;
+      
+      obj.set('bloodAmount', bloodAmount);
+      obj.set('symptoms', symptoms);
+      obj.set('note', note);
+      obj.set('isFirstDay', isFirstDay);
+      obj.set('isInPeriod', isInPeriod);
+      obj.set('mood', mood);
+
+      await obj.save();
+
+      if (isFirstDay && !wasFirstDay) {
+        // Added first day
+        await this.updateCycleInfo(date);
+        await this.addToHistoryPeriods(date);
+      } else if (!isFirstDay && wasFirstDay) {
+        // Removed first day
+        await this.removeFromHistoryPeriods(date);
       }
+
+      await this.updateCalendarPage();
 
       wx.showToast({
         title: '保存成功',
@@ -149,12 +194,132 @@ Page({
         }
       });
     } catch (error) {
-      console.error('保存记录失败:', error);
+      console.error('保存失败:', error);
       this.setData({ isSaving: false });
-      wx.showToast({
-        title: '保存失败',
-        icon: 'none'
-      });
     }
-  }
+  },
+
+  // ============ 添加到历史经期记录 ============
+  async addToHistoryPeriods(dateStr) {
+    try {
+      const className = this.getUserClassName();
+      if (!className) return;
+      
+      // 获取或创建历史记录对象
+      const HistoryQuery = new AV.Query(className);
+      HistoryQuery.equalTo('type', 'historyPeriods');
+      let historyObj = await HistoryQuery.first();
+      
+      if (historyObj) {
+        // 更新现有记录
+        let historyPeriods = historyObj.get('dates') || [];
+        if (!historyPeriods.includes(dateStr)) {
+          historyPeriods.push(dateStr);
+          // 按日期排序（最新的在前）
+          historyPeriods.sort((a, b) => new Date(b) - new Date(a));
+          historyObj.set('dates', historyPeriods);
+          await historyObj.save();
+        }
+      } else {
+        // 创建新记录
+        const UserClass = AV.Object.extend(className);
+        const newHistoryObj = new UserClass();
+        newHistoryObj.set('type', 'historyPeriods');
+        newHistoryObj.set('dates', [dateStr]);
+        await newHistoryObj.save();
+      }
+    } catch (err) {
+      console.error('更新历史经期记录失败:', err);
+    }
+  },
+
+  // ============ 从历史经期记录中移除 ============
+  async removeFromHistoryPeriods(dateStr) {
+    try {
+      const className = this.getUserClassName();
+      if (!className) return;
+      
+      // 获取历史记录对象
+      const HistoryQuery = new AV.Query(className);
+      HistoryQuery.equalTo('type', 'historyPeriods');
+      let historyObj = await HistoryQuery.first();
+      
+      if (historyObj) {
+        let historyPeriods = historyObj.get('dates') || [];
+        // 移除指定日期
+        historyPeriods = historyPeriods.filter(d => d !== dateStr);
+        historyObj.set('dates', historyPeriods);
+        await historyObj.save();
+      }
+    } catch (err) {
+      console.error('从历史经期记录中移除失败:', err);
+    }
+  },
+
+  // ============ 更新周期信息 ============
+  async updateCycleInfo(dateStr) {
+    try {
+      const className = this.getUserClassName();
+      if (!className) return;
+      await this.ensureUserClass();
+
+      const CycleInfo = new AV.Query(className);
+      CycleInfo.equalTo('type', 'cycleInfo');
+      const cycleInfoObj = await CycleInfo.first();
+
+      let cycleLength = 28;
+      let periodDays = 5;
+
+      if (cycleInfoObj) {
+        cycleLength = cycleInfoObj.get('cycleLength') || 28;
+        periodDays = cycleInfoObj.get('periodDays') || 5;
+
+        const nextDate = new Date(dateStr);
+        nextDate.setDate(nextDate.getDate() + cycleLength);
+        const nextPeriodStr = this.formatDate(nextDate);
+
+        cycleInfoObj.set('lastPeriod', dateStr);
+        cycleInfoObj.set('nextPeriod', nextPeriodStr);
+        await cycleInfoObj.save();
+      } else {
+        const UserClass = AV.Object.extend(className);
+        const obj = new UserClass();
+        obj.set('type', 'cycleInfo');
+        obj.set('lastPeriod', dateStr);
+
+        const nextDate = new Date(dateStr);
+        nextDate.setDate(nextDate.getDate() + cycleLength);
+        const nextPeriodStr = this.formatDate(nextDate);
+
+        obj.set('nextPeriod', nextPeriodStr);
+        obj.set('cycleLength', cycleLength);
+        obj.set('periodDays', periodDays);
+        await obj.save();
+      }
+    } catch (err) {
+      console.error('更新周期信息失败:', err);
+    }
+  },
+
+  async updateCalendarPage() {
+    try {
+      const pages = getCurrentPages();
+      if (pages.length > 1) {
+        const prevPage = pages[pages.length - 2];
+        if (prevPage) {
+          // Refresh calendar normally
+          if (typeof prevPage.refreshPage === 'function') {
+            await prevPage.refreshPage();
+          }
+  
+          // If this record is the first day, update lastPeriod
+          if (this.data.isFirstDay && typeof prevPage.updateLastPeriod === 'function') {
+            prevPage.updateLastPeriod(this.data.date); // update calendar page
+          }
+        }
+      }
+    } catch (err) {
+      console.error('更新日历页面失败:', err);
+    }
+  }  
 });

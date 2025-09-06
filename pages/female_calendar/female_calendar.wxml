@@ -1,4 +1,3 @@
-<!-- calendar.wxml -->
 <view class="calendar">
   <!-- 顶部月份切换 -->
   <view class="header">
@@ -37,41 +36,47 @@
       <view class="dot period"></view>
       <text>生理期</text>
     </view>
-    <view class="legend-item">
-      <view class="dot recorded"></view>
-      <text>已记录</text>
+  </view>
+
+  <!-- 信息面板 -->
+  <view class="info-panel">
+    <!-- 上一次月经 -->
+    <view class="row">
+      <text>这次月经：</text>
+      <text>{{cycleInfo.nowPeriod || '请点击日历选择'}}</text>
+    </view>
+
+    <!-- 下一次月经 -->
+    <view class="row">
+      <text>下次月经：</text>
+      <text>{{cycleInfo.futurePeriod || '未计算'}}</text>
+    </view>
+
+    <!-- 周期天数 -->
+    <view class="row">
+      <text>周期天数：</text>
+      <text>{{cycleInfo.cycleLength}}</text>
+    </view>
+
+    <!-- 经期长度 -->
+    <!-- 经期长度 -->
+<view class="row">
+  <text>经期长度：</text>
+  <view class="stepper">
+    <button class="step-btn" bindtap="decreasePeriodDays">-</button>
+    <text class="step-value">{{cycleInfo.periodDays}}</text>
+    <button class="step-btn" bindtap="increasePeriodDays">+</button>
+  </view>
+  <text>天</text>
+</view>
+
+
+    <!-- 历史记录按钮 -->
+    <view class="row">
+      <button bindtap="goHistoryPage" class="history-btn">查看历史记录</button>
     </view>
   </view>
 
- <!-- 红色板块 -->
-<view class="red-box">
-  <!-- 上一次月经 -->
-  <view class="row">
-    <text>这次月经：</text>
-      <text>{{cycleInfo.lastPeriod || '请点击日历选择'}}</text>
-  </view>
-
-  <!-- 下一次月经 -->
-  <view class="row">
-    <text>下次月经：</text>
-    <text>{{cycleInfo.nextPeriod || '未计算'}}</text>
-  </view>
-
-  <!-- 周期天数 -->
-  <view class="row">
-    <text>周期天数：</text>
-    <input type="number" value="{{cycleInfo.cycleLength}}" bindinput="onCycleLengthChange" class="input"/>
-  </view>
-
-  <!-- 经期长度 -->
-  <view class="row">
-    <text>经期长度：</text>
-    <input type="number" value="{{cycleInfo.periodDays}}" bindinput="onPeriodDaysChange" class="input"/>
-  </view>
-
-  <!-- 历史记录按钮 -->
-  <view class="row">
-    <button bindtap="goHistoryPage" class="history-btn">查看历史记录</button>
-  </view>
-</view>
+  <!-- 底部留白 -->
+  <view class="footer-space"></view>
 </view>

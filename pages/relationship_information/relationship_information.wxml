@@ -60,6 +60,9 @@
       <view class="tip-content">{{contactInfo.moodTip}}</view>
     </view>
   </view>
+  
+  <!-- 底部占位元素，确保页面有足够的长度 -->
+  <view class="bottom-placeholder"></view>
 
 </view>
        

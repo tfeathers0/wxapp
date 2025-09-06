@@ -214,13 +214,41 @@ Page({
             
             // 根据canViewMood权限决定是否显示心情信息
             if (permissions.canViewMood) {
-              contactInfo.mood = user.get('mood') || '未设置';
+              // 先设置默认值
+              contactInfo.mood = '未设置';
+              // 获取关联人的用户名，用于构建自定义类名
+              const username = user.getUsername();
+              if (username) {
+                // 构建用户自定义类名，参考record.js中的方式
+                const className = `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                // 查询自定义类中最新的记录，获取心情信息
+                const customClassQuery = new AV.Query(className);
+                customClassQuery.descending('date'); // 按日期降序排列，获取最新记录
+                customClassQuery.limit(1); // 只获取一条记录
+                customClassQuery.find().then(results => {
+                  if (results && results.length > 0) {
+                    const latestRecord = results[0];
+                    // 更新心情信息
+                    contactInfo.mood = latestRecord.get('mood') || '未设置';
+                    // 如果有权限查看状态，在心情更新后重新生成关怀提示
+                    if (permissions.canViewStatus) {
+                      const tipsObj = this.generateTips(user.get('state') || 'unknown', contactInfo.mood, contactInfo.relation);
+                      contactInfo.statusTip = tipsObj.statusTip;
+                      contactInfo.moodTip = tipsObj.moodTip;
+                    }
+                    // 更新页面数据
+                    this.setData({ contactInfo: contactInfo });
+                  }
+                }).catch(error => {
+                  console.error('获取心情信息失败:', error);
+                });
+              }
             }
             
             // 根据canViewStatus权限决定是否显示提示信息
             if (permissions.canViewStatus) {
               // 同时传递状态、心情和关系参数
-            const tipsObj = this.generateTips(user.get('state') || 'unknown', user.get('mood'), contactInfo.relation);
+            const tipsObj = this.generateTips(user.get('state') || 'unknown', contactInfo.mood, contactInfo.relation);
             contactInfo.statusTip = tipsObj.statusTip;
             contactInfo.moodTip = tipsObj.moodTip;
             }
@@ -301,9 +329,9 @@ Page({
         unknown: '她的状态信息暂不可用'
       };
       
-      // 心情特定提示
+      // 心情特定提示 - 使用中文标签与record.js保持一致
       const moodModifiers = {
-        low: {
+        '低落': {
           general: '她今天心情低落',
           suggestions: {
             '恋人': ['可以给她一个温暖的拥抱', '带她出去散散心', '为她准备小惊喜'],
@@ -311,7 +339,7 @@ Page({
             '朋友': ['约她出去喝杯奶茶', '给她讲个笑话', '陪她做喜欢的事']
           }
         },
-        anxious: {
+        '焦虑': {
           general: '她今天有点焦虑',
           suggestions: {
             '恋人': ['给她安全感', '耐心倾听她的担忧', '带她做放松的活动'],
@@ -319,7 +347,7 @@ Page({
             '朋友': ['避免让她感到压力', '陪她一起做能让她放松的事']
           }
         },
-        happy: {
+        '开心': {
           general: '她今天心情很好',
           suggestions: {
             '恋人': ['可以一起出去约会', '分享一些好消息', '安排一个惊喜活动'],
@@ -327,12 +355,28 @@ Page({
             '朋友': ['约她一起做些活动', '分享生活中的趣事', '一起庆祝她的好心情']
           }
         },
-        tired: {
+        '疲惫': {
           general: '她今天感觉疲惫',
           suggestions: {
             '恋人': ['让她多休息', '为她准备舒适的环境', '主动承担家务'],
             '家人': ['让她多休息', '帮她分担一些事情', '准备一些有营养的食物'],
             '朋友': ['不要过多打扰她', '提醒她注意休息', '必要时提供帮助']
+          }
+        },
+        '烦躁': {
+          general: '她今天有些烦躁',
+          suggestions: {
+            '恋人': ['多些耐心和理解', '避免和她发生争执', '带她去做能让她放松的事'],
+            '家人': ['多理解她的情绪', '避免让她感到压力', '给她一些独处的空间'],
+            '朋友': ['不要在她面前抱怨', '保持适度的社交距离', '如果她需要可以倾听']
+          }
+        },
+        '平静': {
+          general: '她今天心情平静',
+          suggestions: {
+            '恋人': ['可以一起做些轻松的事情', '享受彼此的陪伴', '聊聊近况'],
+            '家人': ['可以一起做些家务', '聊聊日常生活', '保持轻松氛围'],
+            '朋友': ['可以约她喝杯茶', '聊聊天', '做些轻松的活动']
           }
         }
       };
@@ -384,20 +428,22 @@ Page({
       }
       
       // 处理心情提示
-      if (mood && mood !== '未设置' && mood !== 'normal') {
+      if (mood && mood !== '未设置') {
         const moodModifier = moodModifiers[mood] || { general: '', suggestions: {} };
         
-        if (moodModifier.suggestions && relation) {
-          // 获取当前关系对应的心情建议，如果没有则使用默认关系（朋友）的建议
-          const relationSuggestions = moodModifier.suggestions[relation] || moodModifier.suggestions['朋友'] || [];
-          if (relationSuggestions.length > 0) {
-            const randomMoodSuggestion = relationSuggestions[Math.floor(Math.random() * relationSuggestions.length)];
-            result.moodTip = moodModifier.general + '，' + randomMoodSuggestion;
+        if (moodModifier.general) {
+          if (moodModifier.suggestions && relation) {
+            // 获取当前关系对应的心情建议，如果没有则使用默认关系（朋友）的建议
+            const relationSuggestions = moodModifier.suggestions[relation] || moodModifier.suggestions['朋友'] || [];
+            if (relationSuggestions.length > 0) {
+              const randomMoodSuggestion = relationSuggestions[Math.floor(Math.random() * relationSuggestions.length)];
+              result.moodTip = moodModifier.general + '，' + randomMoodSuggestion;
+            } else {
+              result.moodTip = moodModifier.general;
+            }
           } else {
             result.moodTip = moodModifier.general;
           }
-        } else {
-          result.moodTip = moodModifier.general;
         }
       }
       
@@ -439,6 +485,48 @@ Page({
     
     // 获取上次月经日期
     getLastMenstruation(user) {
+      // 优先从lastPeriod字段获取上次月经时间
+      const lastPeriod = user.get('lastPeriod');
+      if (lastPeriod) {
+        try {
+          // 处理可能的日期格式
+          let date;
+          if (typeof lastPeriod === 'string') {
+            // 尝试直接解析字符串
+            date = new Date(lastPeriod);
+          } else {
+            // 假设是Date对象或可以转换为日期的对象
+            date = new Date(lastPeriod);
+          }
+          
+          if (!isNaN(date.getTime())) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            return `${year}年${month}月${day}日`;
+          }
+        } catch (error) {
+          console.error('解析lastPeriod失败:', error);
+        }
+      }
+      
+      // 如果lastPeriod不存在或解析失败，尝试从lastPeriodStart字段获取
+      const lastPeriodStart = user.get('lastPeriodStart');
+      if (lastPeriodStart) {
+        try {
+          const date = new Date(lastPeriodStart);
+          if (!isNaN(date.getTime())) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            return `${year}年${month}月${day}日`;
+          }
+        } catch (error) {
+          console.error('解析lastPeriodStart失败:', error);
+        }
+      }
+      
+      // 如果都没有，尝试从myear、mmonth和mday获取
       const myear = user.get('myear');
       const mmonth = user.get('mmonth');
       const mday = user.get('mday');
