@@ -132,32 +132,33 @@ Page({
     switchToKnowledge() {
       wx.navigateTo({ url: '/pages/knowledge_base/knowledge_base' }) // change to your "知识库" page
     },
-    switchToCenter() {
-      wx.navigateTo({ url: '/pages/QR_code/QR_code' }) // middle "+"
-    },
-    goScan() {
-      wx.scanCode({
-        onlyFromCamera: true, // 只允许从相机扫码
-        success: (res) => {
-          console.log('扫码结果:', res.result);
-          // 这里可以处理扫码成功后的逻辑
+
+  // 扫码功能
+  goScan: function() {
+    wx.scanCode({
+      onlyFromCamera: true, // 只允许从相机扫码
+      success: (res) => {
+        console.log('扫码结果:', res.result);
+        wx.navigateTo({
+          url: `../relationship/relationship?scanResult=${encodeURIComponent(res.result)}`
+        });
+        wx.showToast({
+          title: '扫码成功',
+          icon: 'success'
+        });
+      },
+      fail: (err) => {
+        console.log('扫码失败:', err);
+        // 取消扫码不会弹出提示
+        if (err.errMsg !== 'scanCode:fail cancel') {
           wx.showToast({
-            title: '扫码成功',
-            icon: 'success'
+            title: '扫码失败',
+            icon: 'none'
           });
-        },
-        fail: (err) => {
-          console.log('扫码失败:', err);
-          // 取消扫码不会弹出提示
-          if (err.errMsg !== 'scanCode:fail cancel') {
-            wx.showToast({
-              title: '扫码失败',
-              icon: 'none'
-            });
-          }
         }
-      });
-    },
+      }
+    });
+  },
      // 显示删除账号确认对话框
     showDeleteAccountConfirm() {
       wx.showModal({

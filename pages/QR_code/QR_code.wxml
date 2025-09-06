@@ -3,7 +3,6 @@
   <view class="header">
     <!-- 返回按钮 -->
     <text class="icon back" bindtap="goBack">←</text>
-
   </view>
 
   <!-- 标题 -->
@@ -11,9 +10,7 @@
 
   <!-- 二维码方框 -->
   <view class="qrcode-box">
-    <canvas class="qrcode" canvas-id="myQrcode" ></canvas>
+    <canvas class="qrcode" canvas-id="myQrcode"></canvas>
   </view>
 
-  <!-- 动态密码 -->
-  <view class="password">动态密码： Xxxxx</view>
 </view>

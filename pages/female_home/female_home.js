@@ -449,7 +449,9 @@ formatTodayDate: function () {
       onlyFromCamera: true, // 只允许从相机扫码
       success: (res) => {
         console.log('扫码结果:', res.result);
-        // 这里可以处理扫码成功后的逻辑
+        wx.navigateTo({
+          url: `../relationship/relationship?scanResult=${encodeURIComponent(res.result)}`
+        });
         wx.showToast({
           title: '扫码成功',
           icon: 'success'

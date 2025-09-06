@@ -31,7 +31,7 @@ Page({
     isAcceptingRequest: false
   },
 
-  onLoad() {
+  onLoad(options) {
     console.log("关联人列表页面加载");
     // 从本地存储获取上次选中的关联人
     const lastSelected = wx.getStorageSync('selectedContact');
@@ -45,6 +45,17 @@ Page({
     const currentUserGender = userInfo.gender !== undefined ? userInfo.gender : 1; // 默认1（女性）
     console.log('当前登录用户性别:', currentUserGender);
     
+    if (options.scanResult) {
+      const scanResult = decodeURIComponent(options.scanResult);
+      console.log('从扫码获取到的结果:', scanResult);
+      
+      // 将扫码结果设置为当前搜索关键词
+      this.setData({ searchQuery: scanResult }, () => {
+        // 自动触发搜索
+        this.searchUser();
+      });
+    }
+
     this.setData({
       currentUserGender: currentUserGender
     });

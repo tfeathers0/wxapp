@@ -1,58 +1,57 @@
 .page {
-    background-color: #fff9f5;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  /* 顶部栏 */
-  .header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20rpx;
-    box-sizing: border-box;
-  }
-  
-  /* 左上角返回 */
-  .back {
-    font-size: 48rpx;
-    color: #8198c2;
-  }
-  
-  
-  /* 标题 */
-  .title {
-    margin-top: 60rpx;
-    font-size: 48rpx;
-    color: #8198c2;
-  }
-  
-  /* 二维码外边框 */
-  .qrcode-box {
-    margin-top: 100rpx;
-    width: 400rpx;
-    height: 400rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fff9f5;
-    box-sizing: border-box;
-    position: relative;
-  }
-  
-  .qrcode {
-    width: 100%;
-    height: 100%;
-    background-color: #fff9f5;
-  }
-  
-  /* 动态密码 */
-  .password {
-    margin-top: 50rpx;
-    font-size: 40rpx;
-    color: #8198c2;
-  }
-  
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 水平居中对齐 */
+  justify-content: flex-start; /* 垂直居中对齐 */
+  background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+}
+
+/* 顶部栏 */
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* 左上角返回 */
+.back {
+  font-size: 48rpx;
+  color: #8198c2;
+}
+
+/* 标题 */
+.title {
+  font-size: 48rpx;
+  color: #d792a5;
+  display: flex;
+  font-weight: bold;
+  justify-content: center; /* 水平居中对齐 */
+  align-items: center; /* 垂直居中对齐 */
+  width: 100%; /* 全宽确保在 flex 容器的中间位置 */
+  text-align: center; /* 文字对齐中心 */
+}
+
+/* 二维码外边框 */
+.qrcode-box {
+  margin-top: 100rpx;
+  width: 400rpx;
+  height: 400rpx;
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  justify-content: center; /* 水平居中对齐 */
+  background-color: #fff9f5;
+  box-sizing: border-box;
+}
+
+.qrcode {
+  width: 100%;
+  height: 100%;
+  display: flex; /* 使用 flexbox 在内部居中 */
+  align-items: center; /* 内部垂直居中 */
+  justify-content: center; /* 内部水平居中 */
+  background-color: #fff9f5;
+}
