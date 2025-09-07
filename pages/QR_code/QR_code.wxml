@@ -1,16 +1,32 @@
 <view class="page">
   <!-- 顶部栏 -->
   <view class="header">
-    <!-- 返回按钮 -->
-    <text class="icon back" bindtap="goBack">←</text>
+    
   </view>
 
   <!-- 标题 -->
   <view class="title">我的月亮码</view>
 
-  <!-- 二维码方框 -->
-  <view class="qrcode-box">
-    <canvas class="qrcode" canvas-id="myQrcode"></canvas>
-  </view>
+  <!-- 主体内容 -->
+    <view class="main">
+      <!-- 二维码卡片 -->
+      <view class="qrcode-card">
+        <!-- 二维码区域 -->
+        <view class="qrcode-box">
+          <canvas class="qrcode" canvas-id="myQrcode"></canvas>
+        </view>
+        
+        <!-- 提示文本 -->
+        <view class="qrcode-tip">
+          请让对方扫描此二维码，
+          建立关联
+        </view>
+      </view>
+      <!-- 操作按钮 -->
+      <view class="action-buttons">
+        <button class="action-btn" open-type="share">分享给朋友</button>
+        <button class="action-btn">保存到相册</button>
+      </view>
+</view>
 
 </view>

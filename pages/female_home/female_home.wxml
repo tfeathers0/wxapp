@@ -1,6 +1,6 @@
 <!-- dashboard.wxml -->
 <view class="container">
-  <!-- 状态相关图片 -->
+   <!-- 状态相关图片 -->
   <image wx:if="{{currentPeriod === '月经期'}}" class="period-image" src="/images/menstrual_background.png"></image>
   <image wx:elif="{{currentPeriod === '卵泡期'}}" class="period-image" src="/images/follicular-background.png"></image>
   <image wx:elif="{{currentPeriod === '排卵期'}}" class="period-image" src="/images/ovulation_background.png"></image>
@@ -23,7 +23,7 @@
         <view class="cycle-segment segment-4"></view>
         
         <!-- 当前位置指示器 -->
-        <view class="current-indicator" style="left: {{indicatorPosition}}"></view>
+         <view class="current-indicator" style="left: {{indicatorPosition}};"></view>
       </view>
       
       <!-- 生理周期标签 -->

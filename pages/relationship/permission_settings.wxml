@@ -18,6 +18,7 @@
           checked="{{canViewStatus}}" 
           bindchange="onStatusPermissionChange" 
           disabled="{{loading}}"
+          color="#d899b6"
         />
       </view>
 
@@ -30,6 +31,7 @@
           checked="{{canViewMenstruation}}" 
           bindchange="onMenstruationPermissionChange" 
           disabled="{{loading}}"
+          color="#d899b6"
         />
       </view>
 
@@ -42,6 +44,7 @@
           checked="{{canViewMood}}" 
           bindchange="onMoodPermissionChange" 
           disabled="{{loading}}"
+          color="#d899b6"
         />
       </view>
 
@@ -54,6 +57,7 @@
           checked="{{canViewPassdays}}" 
           bindchange="onPassdaysPermissionChange" 
           disabled="{{loading}}"
+          color="#d899b6"
         />
       </view>
     </view>

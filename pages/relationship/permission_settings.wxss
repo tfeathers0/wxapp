@@ -1,7 +1,7 @@
 .container {
   width: 100%;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -57,7 +57,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f9f0ff 0%, #f0f7ff 100%);
+  background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
   border-radius: 50%;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
@@ -115,8 +115,8 @@
 
 .content {
   flex: 1;
-  padding-top: 120rpx;
-  padding-bottom: 40rpx;
+  padding-top: 60rpx; /* reduced from 120rpx */
+  padding-bottom: 20rpx; /* reduced from 40rpx */
   position: relative;
   z-index: 1;
   animation: fadeInUp 0.5s ease-out;
@@ -278,7 +278,7 @@
 }
 
 .save-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #8198c2 0%,rgb(255, 183, 201) 100%);
   color: #ffffff;
   font-size: 32rpx;
   border-radius: 50rpx;

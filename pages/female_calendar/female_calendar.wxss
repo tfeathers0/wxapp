@@ -114,6 +114,11 @@
   box-shadow: 0 2rpx 10rpx rgba(173, 216, 230, 0.15);
 }
 
+.day.recorded text {
+  color: #4682b4; /* 文字蓝色 */
+  font-weight: 600;
+}
+
 /* ================ 支持组合情况 ================ */
 
 .day.period.recorded {
@@ -170,8 +175,8 @@
 }
 
 .dot.recorded {
-  background: rgba(173, 216, 230, 0.3);
-  border-color: #add8e6;
+  border-color: #4682b4;
+  background: rgba(173, 216, 230, 0.2);
 }
 
 .legend-item text {

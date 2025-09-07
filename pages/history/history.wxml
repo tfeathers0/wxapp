@@ -1,10 +1,11 @@
+<!-- pages/history/history.wxml -->
 <view class="container">
   <view class="header">
     <view class="header-content">
       <text class="header-icon">📅</text>
       <text class="header-title">历史月经记录</text>
     </view>
-    <view class="history-count">共 {{history.length}} 条记录</view>
+    <view class="history-count">共 {{totalRecords}} 条记录</view>
   </view>
   
   <view class="content">
@@ -16,7 +17,7 @@
       </view>
       <view class="stat-card">
         <text class="stat-value">{{avgPeriodDays || '--'}}</text>
-        <text class="stat-label">平均经期(天)</text>
+        <text class="stat-label">经期天数(天)</text>
       </view>
       <view class="stat-card">
         <text class="stat-value">{{nextPrediction || '--'}}</text>
@@ -24,45 +25,40 @@
       </view>
     </view>
     
-    <!-- 周期历史部分 -->
-    <view class="section-title" wx:if="{{cycleDetails.length > 0}}">
-      <text class="section-icon">📋</text>
-      <text class="section-text">周期历史记录</text>
+    <!-- Starting Days List -->
+    <view class="section-title" wx:if="{{startingDaysList.length > 0}}">
+      <text class="section-icon">🔴</text>
+      <text class="section-text">经期第一天记录</text>
     </view>
     
-    <view class="cycle-history-list" wx:if="{{cycleDetails.length > 0}}">
-      <view class="cycle-item" wx:for="{{cycleDetails}}" wx:key="index">
-        <text class="cycle-icon">🔄</text>
-        <view class="cycle-info">
-          <text class="cycle-days">{{item.cycleDays}}天周期</text>
-          <text class="cycle-date">{{item.dateRange}}</text>
-        </view>
-        <text class="period-length">{{item.periodDays}}天经期</text>
+    <view class="history-list" wx:if="{{startingDaysList.length > 0}}">
+      <view class="history-item" wx:for="{{startingDaysList}}" wx:key="index" 
+            bindtap="navigateToDateRecord" data-date="{{item.date}}">
+        <text class="item-icon">{{item.icon}}</text>
+        <text class="item-date">{{item.date}}</text>
+        <text class="item-type">{{item.displayText}}</text>
       </view>
     </view>
     
-    <!-- 历史记录列表 -->
-    <view class="section-title" wx:if="{{history.length > 0}}">
-      <text class="section-icon">📝</text>
-      <text class="section-text">详细记录</text>
+    <!-- During Days List -->
+    <view class="section-title" wx:if="{{duringDaysList.length > 0}}">
+      <text class="section-icon">🟣</text>
+      <text class="section-text">经期日期记录</text>
     </view>
     
-    <view class="history-list" wx:if="{{history.length > 0}}">
-      <view class="history-item" wx:for="{{history}}" wx:key="index" wx:for-item="date">
-        <text class="item-icon">●</text>
-        <text class="item-date">{{date}}</text>
-        <text class="item-days" wx:if="{{periodDays[index] !== '?'}}">{{periodDays[index]}}天</text>
-        <text class="item-days" wx:else>未知</text>
+    <view class="history-list" wx:if="{{duringDaysList.length > 0}}">
+      <view class="history-item" wx:for="{{duringDaysList}}" wx:key="index" 
+            bindtap="navigateToDateRecord" data-date="{{item.date}}">
+        <text class="item-icon">{{item.icon}}</text>
+        <text class="item-date">{{item.date}}</text>
+        <text class="item-type">{{item.displayText}}</text>
       </view>
     </view>
     
     <!-- 空状态 -->
-    <view class="empty-state" wx:else>
+    <view class="empty-state" wx:if="{{history.length === 0 && startingDaysList.length === 0 && duringDaysList.length === 0}}">
       <text class="empty-icon">📭</text>
       <text class="empty-text">暂无历史记录</text>
-      <button class="add-button" bindtap="navigateToRecord">
-        <text>添加记录</text>
-      </button>
     </view>
   </view>
 </view>

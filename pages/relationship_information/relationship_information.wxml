@@ -10,18 +10,46 @@
     <image wx:if="{{permissions.canViewStatus}}" class="state" src="{{contactInfo.state || '/images/icon_state_follicular.png'}}"></image>
   </view>
 
-  <!-- 自定义日历组件，只有当有周期数据查看权限时显示 -->
-  <view class="calendar-section">
-  <calendar wx:if="{{permissions.canViewPassdays}}"
-    defaultDate="{{ defaultDate }}" 
-    bind:dateSelect="onCalendarDateSelect"
-    showDayNums="true"
-    showWeekDays="true"
-    showLunar="false"
-    showMark="true"
-    markType="dot"
-    markedDates="{{markedDates}}"
-  ></calendar>
+  <!-- 自定义日历板块，只有当有周期数据查看权限时显示 -->
+  <view class="calendar-section" wx:if="{{permissions.canViewPassdays}}">
+    <!-- 顶部月份切换 -->
+    <view class="custom-calendar-header">
+      <button class="month-btn" bindtap="prevMonth">上个月</button>
+      <text>{{currentYear}}年 {{currentMonth+1}}月</text>
+      <button class="month-btn" bindtap="nextMonth">下个月</button>
+    </view>
+
+    <!-- 星期标题 -->
+    <view class="custom-calendar-week">
+      <text>日</text>
+      <text>一</text>
+      <text>二</text>
+      <text>三</text>
+      <text>四</text>
+      <text>五</text>
+      <text>六</text>
+    </view>
+
+    <!-- 日期格子 -->
+    <view class="custom-calendar-days">
+      <block wx:for="{{days}}" wx:key="index">
+        <view class="custom-calendar-day {{item.type}}" bindtap="onCustomCalendarDayTap" data-day="{{item.day}}" data-year="{{item.year}}" data-month="{{item.month}}">
+          <text>{{item.day}}</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- 图例 -->
+    <view class="custom-calendar-legend">
+      <view class="legend-item">
+        <view class="dot ovulation"></view>
+        <text>排卵日</text>
+      </view>
+      <view class="legend-item">
+        <view class="dot period"></view>
+        <text>生理期</text>
+      </view>
+    </view>
   </view>
 
 

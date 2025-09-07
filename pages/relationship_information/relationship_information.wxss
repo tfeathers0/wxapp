@@ -13,6 +13,161 @@
   padding-bottom: 100rpx; /* 添加底部 padding 增加页面长度 */
 }
 
+/* ======== 自定义日历样式 ======== */
+.calendar-section {
+  width: 90%;
+  max-width: 400px;
+  margin: 20rpx auto;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 20rpx;
+  padding: 30rpx;
+  border: 2px solid rgba(165, 205, 215, 0.2);
+  box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12);
+}
+
+/* 日历头部 */
+.custom-calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+  padding: 0 10rpx;
+}
+
+.month-btn {
+  background: rgba(255, 255, 255, 0.9);
+  color: #8c7b9d;
+  border: 2rpx solid #e8e0ee;
+  border-radius: 20rpx;
+  padding: 16rpx 30rpx;
+  font-size: 28rpx;
+  box-shadow: 0 4rpx 12rpx rgba(140, 123, 157, 0.1);
+  transition: all 0.3s ease;
+}
+
+.month-btn:active {
+  background: rgba(245, 240, 250, 0.9);
+  transform: scale(0.98);
+}
+
+.custom-calendar-header text {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #7d6b8f;
+  letter-spacing: 1rpx;
+}
+
+/* 星期标题 */
+.custom-calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  margin-bottom: 20rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25rpx;
+  padding: 22rpx 0;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
+}
+
+.custom-calendar-week text {
+  color: #8c7b9d;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+/* 日期格子 */
+.custom-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  gap: 12rpx;
+  margin-bottom: 30rpx;
+}
+
+.custom-calendar-day {
+  width: 84rpx;
+  height: 84rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 4rpx auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2rpx solid #f0ebf5;
+  transition: all 0.3s ease;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+}
+
+.custom-calendar-day text {
+  color: #7d6b8f;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.custom-calendar-day:active {
+  background: rgba(250, 248, 252, 0.95);
+  transform: scale(0.95);
+}
+
+/* 生理期样式 */
+.custom-calendar-day.period {
+  border: 2.5rpx solid #b8a7cc;
+  background: rgba(184, 167, 204, 0.12);
+  box-shadow: 0 2rpx 10rpx rgba(184, 167, 204, 0.15);
+}
+
+/* 排卵日样式 */
+.custom-calendar-day.ovulation {
+  border: 2.5rpx solid #77c8a6;
+  background: rgba(119, 200, 166, 0.12);
+  box-shadow: 0 2rpx 10rpx rgba(119, 200, 166, 0.15);
+}
+
+
+/* 图例样式 */
+.custom-calendar-legend {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 20rpx;
+  padding: 15rpx;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin: 10rpx 15rpx;
+}
+
+.dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  margin-right: 10rpx;
+}
+
+.dot.ovulation {
+  background: #77c8a6;
+}
+
+.dot.period {
+  background: #b8a7cc;
+}
+
+.dot.recorded {
+  background: #ffab91;
+}
+
+.legend-item text {
+  color: #7d6b8f;
+  font-size: 26rpx;
+}
+
 
 /* 柔和光晕效果 */
 .soft-glow {
@@ -44,12 +199,11 @@
   display: flex;
   align-items: center;
   height:100px;
-  width: 90%; /* 将宽度改为响应式，占屏幕90% */
+  width: 100%; /* 将宽度改为响应式，占屏幕90% */
   max-width: 400px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(8px);
   margin: 40rpx auto;
-  border-radius: 10px;
   border: 2px solid rgba(165, 205, 215, 0.2);
   box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
   position: relative;
@@ -69,7 +223,8 @@
   width: 140rpx;
   height: 140rpx;
   border-radius: 50%;
-  margin-right: 30rpx;
+  margin-right: 50rpx;
+  margin-left:50rpx;
   border: 5rpx solid #fff;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
   transition: all 0.3s ease;
@@ -85,7 +240,7 @@
 .state {
   width: 80rpx;
   height: 80rpx;
-  margin-right: 20rpx;
+  margin-right: 50rpx;
 }
 
 .user-info {
@@ -108,64 +263,7 @@
 
 .relation {
   font-size: 28rpx;
-  color: #666;
-}
-
-/* 状态标签 */
-.status-tag {
-  margin: 20rpx auto;
-  padding: 15rpx 24rpx;
-  border-radius: 30rpx;
-  font-size: 28rpx;
-  display: block;
-  text-align: center;
-  width: fit-content;
-  font-weight: 500;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.status-tag::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: all 0.6s ease;
-}
-
-.status-tag:active::before {
-  left: 100%;
-}
-
-.status-tag:active {
-  transform: scale(0.95);
-  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.08);
-}
-
-.status-menstrual {
-  background: linear-gradient(135deg, #ffcdd2 0%, #ef5350 100%);
-  color: #fff;
-}
-
-.status-follicular {
-  background: linear-gradient(135deg, #c8e6c9 0%, #4caf50 100%);
-  color: #fff;
-}
-
-.status-ovulation {
-  background: linear-gradient(135deg, #bbdefb 0%, #2196f3 100%);
-  color: #fff;
-}
-
-.status-luteal {
-  background: linear-gradient(135deg, #ffe0b2 0%, #ff9800 100%);
-  color: #fff;
+  color: #7d6b8f;
 }
 
 /* 增加底部占位元素，确保页面足够长 */
@@ -178,11 +276,11 @@
 .section-title {
   font-size: 34rpx;
   font-weight: bold;
-  color: #333;
+  color: #7d6b8f;
   width: 85%; /* 将宽度改为响应式 */
   max-width: 350px;
   height:40px;
-  margin: 40rpx auto 0 auto;
+  margin: 20rpx auto 0 auto;
   border-radius: 20rpx 20rpx 0 0;
   position: relative;
   z-index: 1;
@@ -201,7 +299,7 @@
   left: 30rpx;
   width: 40rpx;
   height: 4rpx;
-  background: linear-gradient(90deg, #84fab0 0%, #8fd3f4 100%);
+  background: linear-gradient(90deg, #8198c2 0%, #d792a5 100%);
   border-radius: 2rpx;
 }
 
@@ -232,13 +330,13 @@
 
 /* 授权信息区域 */
 .authorized-info {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(0);
-  margin: 30rpx auto;
-  width: 90%; /* 将宽度改为响应式 */
+  margin: 15rpx auto;
+  width: 100%; /* 将宽度改为响应式 */
   max-width: 400px;
   border-radius: 10px;
-  border: 2px solid rgba(165, 205, 215, 0.1);
+  border: 2px solid rgba(165, 100, 215, 0.1);
   border-top: none;
   box-shadow: none;
   position: relative;
@@ -263,6 +361,8 @@
   position: relative;
   overflow: hidden;
   height:40px;
+  width:80%;
+  margin: 0 auto;
 }
 
 .info-item:last-child {
@@ -293,7 +393,7 @@
 
 .info-label {
   font-size: 28rpx;
-  color: #666;
+  color: #7d6b8f;
   font-weight: 500;
   min-width: 120rpx;
   position: relative;
@@ -302,7 +402,7 @@
 
 .info-value {
   font-size: 28rpx;
-  color: #333;
+  color: #7d6b8f;
   text-align: right;
   flex: 1;
   padding-left: 30rpx;
@@ -358,14 +458,14 @@
 
 /* TIPs区域样式 */
 .tips-section {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(8px);
   margin: 30rpx auto;
-  width: 90%; /* 将宽度改为响应式 */
+  width: 100%; /* 将宽度改为响应式 */
   max-width: 400px;
   border-radius: 10px;
-  border: 2px solid rgba(165, 205, 215, 0.2);
-  box-shadow: 0 6px 20px rgba(129, 152, 194, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(165, 100, 215, 0.2);
+  box-shadow: 0 6px 20px rgba(156, 112, 199, 0.12), 0 3px 8px rgba(0, 0, 0, 0.05);
   position: relative;
   transition: all 0.3s ease;
   overflow: hidden;
@@ -381,11 +481,13 @@
   display: flex;
   flex-direction: column;
   padding: 30rpx;
-  height:80px;
+  height:85px;
+  width:85%;
   border-bottom: 1rpx solid #f0f0f0;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .tip-item:last-child {
@@ -416,17 +518,17 @@
 
 .tip-label {
   font-size: 28rpx;
-  color: #666;
+  color: #7d6b8f;
   font-weight: 500;
-  margin-bottom: 10rpx;
+  margin-bottom: 25rpx;
   position: relative;
   z-index: 1;
 }
 
 .tip-content {
   font-size: 28rpx;
-  color: #333;
-  line-height: 1.5;
+  color: #7d6b8f;
+  line-height: 2.0;
   position: relative;
   z-index: 1;
   text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.03);

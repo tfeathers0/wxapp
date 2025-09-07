@@ -39,8 +39,13 @@ Page({
   },
 
   onLoad: async function () {
+    // 设置一个默认的指示器位置作为后备
+    this.setData({
+      indicatorPosition: '30%'
+    });
+    
     await this.loadUserSettings();
-    this.calculateCycleInfo();
+    await this.calculateCycleInfo(); // 添加await确保指示器位置计算完成
     this.formatTodayDate();
 
     // 检查是否是首次使用应用
@@ -356,17 +361,27 @@ Page({
       const daysSinceLastPeriod = this.calculateDaysDifference(lastPeriodDate, now);
       const currentCycleDay = daysSinceLastPeriod + 1;
       
+      console.log('有实际记录 - 周期天数:', currentCycleDay);
+      console.log('周期分布 - 月经期:', this.data.periodDistribution[1].start, '-', this.data.periodDistribution[1].end);
+      console.log('周期分布 - 卵泡期:', this.data.periodDistribution[2].start, '-', this.data.periodDistribution[2].end);
+      console.log('周期分布 - 排卵期:', this.data.periodDistribution[3].start, '-', this.data.periodDistribution[3].end);
+      console.log('周期分布 - 黄体期:', this.data.periodDistribution[4].start, '-', this.data.periodDistribution[4].end);
+      
       // 设置当前生理周期
       const currentPeriod = this.getMenstrualPeriod(currentCycleDay);
+      console.log('当前生理周期:', currentPeriod);
       
       // 计算指示器位置
       const indicatorPosition = this.calculateAccurateIndicatorPosition(currentCycleDay);
       
+      console.log('有实际记录 - 指示器位置:', indicatorPosition);
       this.setData({
         currentPeriod: currentPeriod,
         currentCycleDay: currentCycleDay,
         indicatorPosition: indicatorPosition
       });
+      
+      console.log('设置数据后 - 指示器位置:', this.data.indicatorPosition);
       
       // 更新到 LeanCloud 的 state 字段
       await this.updateUserStateToCloud(currentPeriod);
@@ -376,17 +391,27 @@ Page({
       const daysSinceReference = this.calculateDaysDifference(referenceDate, now);
       const currentCycleDay = (daysSinceReference % cycleLength) + 1;
       
+      console.log('无实际记录 - 周期天数:', currentCycleDay, '周期长度:', cycleLength);
+      console.log('周期分布 - 月经期:', this.data.periodDistribution[1].start, '-', this.data.periodDistribution[1].end);
+      console.log('周期分布 - 卵泡期:', this.data.periodDistribution[2].start, '-', this.data.periodDistribution[2].end);
+      console.log('周期分布 - 排卵期:', this.data.periodDistribution[3].start, '-', this.data.periodDistribution[3].end);
+      console.log('周期分布 - 黄体期:', this.data.periodDistribution[4].start, '-', this.data.periodDistribution[4].end);
+      
       // 设置当前生理周期
       const currentPeriod = this.getMenstrualPeriod(currentCycleDay);
+      console.log('当前生理周期:', currentPeriod);
       
       // 计算指示器位置
       const indicatorPosition = this.calculateAccurateIndicatorPosition(currentCycleDay);
       
+      console.log('无实际记录 - 指示器位置:', indicatorPosition);
       this.setData({
         currentPeriod: currentPeriod,
         currentCycleDay: currentCycleDay,
         indicatorPosition: indicatorPosition
       });
+      
+      console.log('设置数据后 - 指示器位置:', this.data.indicatorPosition);
     }
   },
   
@@ -454,36 +479,42 @@ Page({
   
   // 精确计算指示器位置，考虑各周期段在UI中的实际宽度分布
   calculateAccurateIndicatorPosition: function(day) {
-    // 由于UI中的周期段宽度是固定百分比（20%, 30%, 20%, 30%），需要重新映射
-    // 我们需要根据实际周期阶段的天数来计算在UI中的准确位置
+    // 使用与getMenstrualPeriod相同的数据源，确保周期阶段判断一致
     const cycleLength = this.data.cycleLength;
     let accumulatedPercentage = 0;
     
-    // 根据用户的周期长度调整各阶段的天数范围
-    // 注意这里要使用与UI标签顺序对应的阶段范围
-    const uiOrderRanges = [
-      {start: 1, end: 5},   // 月经期 (5天) - UI顺序第1位
-      {start: 6, end: 13},  // 卵泡期 (8天) - UI顺序第2位
-      {start: 14, end: 18}, // 排卵期 (5天) - UI顺序第3位
-      {start: 19, end: 28}  // 黄体期 (10天) - UI顺序第4位
+    // 对日期进行归一化处理，确保与getMenstrualPeriod方法判断一致
+    const normalizedDay = (day - 1) % cycleLength + 1;
+    console.log('原始日期:', day, '归一化日期:', normalizedDay, '周期长度:', cycleLength);
+    
+    // 使用与UI显示顺序一致的周期阶段
+    const periodStages = [
+      this.data.periodDistribution[1], // 月经期
+      this.data.periodDistribution[2], // 卵泡期
+      this.data.periodDistribution[3], // 排卵期
+      this.data.periodDistribution[4]  // 黄体期
     ];
     
     // 当前UI中各周期段的百分比宽度
-    const uiWidths = [17.86, 28.57, 17.86, 35.71]; // 对应新的UI顺序：月经期(17.86%), 卵泡期(28.57%), 排卵期(17.86%), 黄体期(35.71%)
+    const uiWidths = [17.86, 28.57, 17.86, 35.71]; // 对应UI顺序：月经期(17.86%), 卵泡期(28.57%), 排卵期(17.86%), 黄体期(35.71%)
     
     // 找到当前日期所在的周期阶段
-    for (let i = 0; i < uiOrderRanges.length; i++) {
-      const baseRange = uiOrderRanges[i];
+    for (let i = 0; i < periodStages.length; i++) {
+      const stage = periodStages[i];
       // 基于用户的周期长度调整阶段范围
-      const start = Math.round((baseRange.start / 28) * cycleLength);
-      const end = Math.round((baseRange.end / 28) * cycleLength);
+      const start = Math.round((stage.start / 28) * cycleLength);
+      const end = Math.round((stage.end / 28) * cycleLength);
       
-      if (day >= start && day <= end) {
+      console.log('阶段', i+1, ':', stage.name, '范围:', start, '-', end);
+      if (normalizedDay >= start && normalizedDay <= end) {
+        console.log('当前日期在阶段', i+1, '-', stage.name);
         // 计算在当前阶段内的相对位置
         const daysInStage = end - start + 1;
-        const relativePosition = (day - start) / daysInStage;
+        const relativePosition = (normalizedDay - start) / daysInStage;
+        console.log('阶段天数:', daysInStage, '相对位置:', relativePosition);
         // 计算在UI中的绝对位置
         const positionPercentage = accumulatedPercentage + (relativePosition * uiWidths[i]);
+        console.log('计算位置百分比:', positionPercentage);
         // 返回带有%符号的字符串，确保CSS正确解析为百分比
         return positionPercentage + '%';
       }
@@ -491,6 +522,7 @@ Page({
       accumulatedPercentage += uiWidths[i];
     }
     
+    console.log('未找到匹配的周期阶段，返回默认位置');
     return '0%'; // 默认位置
   },
   
@@ -499,6 +531,8 @@ Page({
     // 使用用户设置的周期长度来计算当前生理周期
     const cycleLength = this.data.cycleLength;
     const normalizedDay = (day - 1) % cycleLength + 1;
+    
+    console.log('getMenstrualPeriod - 原始日期:', day, '归一化日期:', normalizedDay, '周期长度:', cycleLength);
     
     // 根据用户的周期长度调整各阶段的天数范围
     // 使用数组确保遍历顺序与UI显示顺序一致
@@ -515,10 +549,15 @@ Page({
       const start = Math.round((stage.start / 28) * cycleLength);
       const end = Math.round((stage.end / 28) * cycleLength);
       
+      console.log('getMenstrualPeriod - 阶段', i+1, ':', stage.name, '范围:', start, '-', end);
       if (normalizedDay >= start && normalizedDay <= end) {
+        console.log('getMenstrualPeriod - 当前日期在阶段', i+1, '-', stage.name);
         return stage.name;
       }
     }
+    
+    console.log('getMenstrualPeriod - 未找到匹配的周期阶段');
+    return null;
   },
 
   // 点击关联切换按钮

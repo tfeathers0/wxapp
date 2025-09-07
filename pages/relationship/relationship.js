@@ -1,6 +1,4 @@
 const AV = require('../../libs/av-core-min.js');
-
-// 引入权限管理模块
 const keyDaysManager = require('../../utils/keyDaysManager.js');
 
 Page({
@@ -258,13 +256,6 @@ Page({
             try {
               // 尝试多种可能的数据结构获取state信息
               state = followee.get('state') || followee.get('cycleStage') || '';
-              
-              // 如果没有直接的state字段，尝试从healthData获取
-              if (!state) {
-                const healthData = followee.get('healthData') || {};
-                state = healthData.state || healthData.cycleStage || '';
-              }
-              
               console.log(`${nickname}的状态信息:`, state);
             } catch (e) {
               console.log('获取状态信息失败', e);
@@ -281,14 +272,6 @@ Page({
             avatarUrl = touxiangFile.get('url') || avatarUrl;
           }
           
-          // 如果touxiang不存在，尝试从avatarUrl字段获取
-          if (avatarUrl === defaultAvatarUrl) {
-            const directAvatarUrl = followee.get('avatarUrl');
-            if (directAvatarUrl) {
-              avatarUrl = directAvatarUrl;
-            }
-          }
-          
           return {
             id: followee.id,
             nickname: nickname,
@@ -299,7 +282,6 @@ Page({
             gender: gender, // 添加性别信息
             state: state, // 使用state字段存储状态信息
             cycleStage: state, // 保持向后兼容
-            isOnline: Math.random() > 0.3, // 模拟在线状态
             createdAt: new Date().toLocaleString(),
             permissions: permissions // 保存权限设置，方便页面上使用
           };
@@ -357,14 +339,6 @@ Page({
           }
         }
         
-        // 如果有选中的联系人，检查是否在好友列表中
-        if (this.data.selectedContact) {
-          const contactExists = friends.some(friend => friend.id === this.data.selectedContact.id);
-          if (!contactExists) {
-            this.setData({ selectedContact: null });
-            wx.removeStorageSync('selectedContact');
-          }
-        }
       }).catch((error) => {
         console.error('加载好友列表失败', error);
         wx.hideLoading();

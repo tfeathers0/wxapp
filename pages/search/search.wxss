@@ -3,15 +3,17 @@
  .page {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+    min-height: 100vh;
+    background: linear-gradient(135deg, #faf7f9 0%, #f5f2f6 100%);
   }
 
 /* 顶部栏背景 */
 .header {
   width: 100%;
-  background: rgb(255, 255, 255, 0);
+  background: rgba(255, 255, 255, 0.9);
   padding: 40rpx 0;
+  border-bottom: 2rpx solid #f0ebf5;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.05);
 }
 
 .nav {
@@ -38,13 +40,33 @@
 .search-input {
   width: 100%;
   height: 70rpx;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 10rpx;
-  padding: 0 70rpx 0 20rpx;
+  background-color: #ffffff;
+  border-radius: 35rpx;
+  padding: 0 70rpx 0 30rpx;
   font-size: 32rpx;
-  color: #8198c2;
-  border: 1px solid rgba(129, 152, 194, 0.2);
+  color: #7d6b8f;
+  border: 2rpx solid #e8e0ee;
   box-sizing: border-box;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #b8a7cc;
+  box-shadow: 0 4rpx 16rpx rgba(184, 167, 204, 0.15);
+}
+
+/* 搜索框占位符样式 */
+.search-input::-webkit-input-placeholder {
+  color: #b8a7cc;
+}
+
+.search-input::-moz-placeholder {
+  color: #b8a7cc;
+}
+
+.search-input:-ms-input-placeholder {
+  color: #b8a7cc;
 }
 
 /* 清除搜索按钮 */
@@ -55,17 +77,30 @@
   transform: translateY(-50%);
   width: 30rpx;
   height: 20rpx;
-  opacity: 0.6;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.clear-icon:active {
+  opacity: 1;
 }
 
 /* 搜索按钮 */
 .search-btn {
   font-size: 32rpx;
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.2);
+  color: #7d6b8f;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 10rpx 20rpx;
-  border-radius: 10rpx;
+  border-radius: 20rpx;
   font-weight: 500;
+  border: 2rpx solid #e8e0ee;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+  transition: all 0.3s ease;
+}
+
+.search-btn:active {
+  background-color: rgba(245, 240, 250, 0.9);
+  transform: scale(0.98);
 }
 
 /* 上传按钮 */
@@ -74,14 +109,21 @@
   height: 40rpx;
   margin-left: 20rpx;
   opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.upload-icon:active {
+  opacity: 1;
 }
 
 /* 标签筛选区域 */
 .tags-section {
   padding: 20rpx;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.95);
   margin: 20rpx;
-  border-radius: 15rpx;
+  border-radius: 25rpx;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
 }
 
 /* 区域标题 */
@@ -95,16 +137,24 @@
 .section-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: #ffffff;
+  color: #7d6b8f;
 }
 
 /* 清除标签按钮 */
 .clear-tags-btn {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #7d6b8f;
   padding: 5rpx 15rpx;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 10rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 20rpx;
+  border: 2rpx solid #e8e0ee;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+  transition: all 0.3s ease;
+}
+
+.clear-tags-btn:active {
+  background-color: rgba(245, 240, 250, 0.9);
+  transform: scale(0.98);
 }
 
 /* 标签列表 */
@@ -117,25 +167,33 @@
 /* 标签样式 */
 .tag {
   padding: 10rpx 20rpx;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 20rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 30rpx;
   font-size: 28rpx;
-  color: #ffffff;
+  color: #7d6b8f;
   margin-bottom: 10rpx;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 2rpx solid #e8e0ee;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+  transition: all 0.3s ease;
+}
+
+.tag:active {
+  background-color: rgba(245, 240, 250, 0.9);
+  transform: scale(0.98);
 }
 
 /* 选中的标签 */
 .tag-selected {
-  background-color: rgba(255, 255, 255, 0.6);
-  color: #8198c2;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  background-color: #b8a7cc;
+  color: #ffffff;
+  border: 2rpx solid #a590c0;
+  box-shadow: 0 4rpx 12rpx rgba(184, 167, 204, 0.2);
 }
 
 /* 暂无标签文本 */
 .no-tags-text {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.6);
+  color: #b8a7cc;
   padding: 20rpx;
 }
 
@@ -143,7 +201,7 @@
 .selected-tags {
   margin-top: 15rpx;
   padding-top: 15rpx;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 2rpx solid #f0ebf5;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -153,7 +211,7 @@
 /* 已选标签标签 */
 .selected-tags-label {
   font-size: 28rpx;
-  color: #ffffff;
+  color: #7d6b8f;
 }
 
 /* 已选标签项 */
@@ -162,28 +220,32 @@
   align-items: center;
   gap: 8rpx;
   padding: 5rpx 10rpx;
-  background-color: rgba(255, 255, 255, 0.4);
-  border-radius: 15rpx;
+  background-color: #b8a7cc;
+  border-radius: 20rpx;
   font-size: 26rpx;
-  color: #8198c2;
+  color: #ffffff;
+  border: 2rpx solid #a590c0;
+  box-shadow: 0 2rpx 8rpx rgba(184, 167, 204, 0.2);
 }
 
 /* 移除标签按钮 */
 .remove-tag-btn {
   font-size: 32rpx;
   line-height: 1;
-  color: rgba(129, 152, 194, 0.7);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* 搜索结果提示信息 */
 .search-result-info {
   padding: 20rpx;
   margin: 0 20rpx 20rpx;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 15rpx;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 25rpx;
   font-size: 28rpx;
-  color: #ffffff;
+  color: #7d6b8f;
   text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
 }
 
 /* 主体内容 */
@@ -195,9 +257,9 @@
 
 /* 高亮文本样式 */
 .highlight-text {
-  color: #ff6b6b;
+  color: #7d6b8f;
   font-weight: bold;
-  background-color: rgba(255, 107, 107, 0.1);
+  background-color: rgba(184, 167, 204, 0.1);
   padding: 0 2rpx;
   border-radius: 4rpx;
 }
@@ -220,8 +282,8 @@
 .loading-spinner {
   width: 50rpx;
   height: 50rpx;
-  border: 6rpx solid rgba(255, 255, 255, 0.3);
-  border-top: 6rpx solid #ffffff;
+  border: 6rpx solid rgba(184, 167, 204, 0.3);
+  border-top: 6rpx solid #b8a7cc;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20rpx;
@@ -235,27 +297,30 @@
 /* 加载文本 */
 .loading-text {
   font-size: 30rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #7d6b8f;
 }
 
 /* 文档项 */
 .doc-item {
-  background-color: rgba(255, 255, 255, 0);
-  border-radius: 15rpx;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 25rpx;
   padding: 25rpx;
   margin-bottom: 20rpx;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
 }
 
 .doc-item:active {
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(250, 248, 252, 0.95);
   transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
 }
 
 /* 文档内容预览 */
 .doc-content-preview {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #7d6b8f;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -272,7 +337,7 @@
 .content-label {
   font-size: 24rpx;
   font-weight: bold;
-  color: rgba(255, 255, 255, 0.9);
+  color: #7d6b8f;
   display: block;
   margin-bottom: 8rpx;
 }
@@ -280,10 +345,10 @@
 /* 段落样式 */
 .paragraph {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #7d6b8f;
   line-height: 1.6;
   padding: 12rpx 0;
-  border-bottom: 1rpx solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1rpx solid #f0ebf5;
 }
 
 /* 最后一段不要底边框 */
@@ -308,22 +373,23 @@
 
 .doc-tag {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.7);
-  background-color: rgba(255, 255, 255, 0.2);
+  color: #7d6b8f;
+  background-color: rgba(184, 167, 204, 0.1);
   padding: 2rpx 10rpx;
-  border-radius: 10rpx;
+  border-radius: 15rpx;
+  border: 1rpx solid #e8e0ee;
 }
 
 /* 无标签提示 */
 .no-tags {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.5);
+  color: #b8a7cc;
 }
 
 /* 文档日期 */
 .doc-date {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.6);
+  color: #b8a7cc;
   margin-left: 10rpx;
   white-space: nowrap;
 }
@@ -341,15 +407,25 @@
 /* 无结果文本 */
 .no-results-text {
   font-size: 32rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #7d6b8f;
   margin-bottom: 30rpx;
 }
 
 /* 上传提示按钮 */
 .upload-hint-btn {
-  background-color: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #7d6b8f;
+  border: 2rpx solid #e8e0ee;
+  padding: 15rpx 30rpx;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  transition: all 0.3s ease;
+}
+
+.upload-hint-btn:active {
+  background-color: rgba(245, 240, 250, 0.9);
+  transform: scale(0.98);
 }
 
 /* 加载更多 */
@@ -361,12 +437,22 @@
 
 /* 加载更多按钮 */
 .load-more-btn {
-  background-color: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #7d6b8f;
+  border: 2rpx solid #e8e0ee;
+  padding: 15rpx 30rpx;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  transition: all 0.3s ease;
 }
 
-/* 匹配段落区域样式 - 统一优化版，适配深色主题 */
+.load-more-btn:active {
+  background-color: rgba(245, 240, 250, 0.9);
+  transform: scale(0.98);
+}
+
+/* 匹配段落区域样式 - 统一优化版，适配淡紫色主题 */
 .matching-paragraphs-section {
   margin-top: 20rpx;
   padding-top: 20rpx;
@@ -377,30 +463,31 @@
   display: block;
   font-size: 32rpx;
   font-weight: bold;
-  color: #ffffff;
+  color: #7d6b8f;
   margin-bottom: 15rpx;
 }
 
 .matching-paragraph {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.95);
   padding: 16rpx 20rpx;
   margin-bottom: 16rpx;
-  border-radius: 8rpx;
+  border-radius: 25rpx;
   font-size: 26rpx;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
+  color: #7d6b8f;
   overflow-wrap: break-word;
-  border-left: 4rpx solidrgb(255, 255, 255);
+  border-left: 4rpx solid #b8a7cc;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
 }
 
-/* 关键词高亮样式 - 增强版，在深色主题下更醒目 */
+/* 关键词高亮样式 - 增强版，在淡紫色主题下更醒目 */
 .keyword-highlight {
   color: #fff;
   font-weight: bold;
-  background-color: #ff6b6b;
-  padding: 2rpx 8rpx;
-  border-radius: 4rpx;
-  margin: 0 2rpx;
+  background-color: #b8a7cc;
+  padding: 2rpx 6rpx;
+  border-radius: 8rpx;
 }
 
 

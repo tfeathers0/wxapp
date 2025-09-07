@@ -1,4 +1,6 @@
 {
-  "navigationBarTitleText": "月伴",
-  "usingComponents": {}
-}
+    "navigationBarTitleText": "月伴",
+    "usingComponents": {
+      "calendar": "/components/calendar/calendar" 
+    }
+  }

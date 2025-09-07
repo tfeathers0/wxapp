@@ -1,72 +1,103 @@
 .page {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
-    overflow: hidden;
-  }
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #faf7f9 0%, #f5f2f6 100%);
 
+}
+
+/* 主容器 */
+.container {
+  flex: 1;
+  padding: 60rpx 30rpx;
+}
+
+/* 顶部标题 */
+.header {
+  text-align: center;
+  margin-bottom: 60rpx;
+}
+
+.header-title {
+  font-size: 46rpx;
+  font-weight: 600;
+  color: #7d6b8f;
+  letter-spacing: 2rpx;
+}
+
+/* 主体内容 */
+.main {
+  margin-bottom: 500rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40rpx;
+}
+
+/* 功能卡片 */
+.menu-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30rpx;
+  padding: 45rpx;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
+  transition: all 0.3s ease;
+}
+
+.menu-card:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+}
+
+/* 菜单按钮 */
+.menu-btn {
+  width: 100%;
+  height: 140rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f5fc 100%);
+  color: #8c7b9d;
+  font-size: 36rpx;
+  border-radius: 25rpx;
+  border: 2rpx solid #e8e0ee;
+  box-shadow: 0 4rpx 12rpx rgba(140, 123, 157, 0.1);
+  transition: all 0.3s ease;
   
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 140rpx;
-    height: 100%;
-  }
-  
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .menu-btn {
-    width: 800rpx;
-    height: 300rpx;
-    margin: 50rpx 0;
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-    font-size: 56rpx;
-    border-radius: 30rpx;
-    border: none;
-    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.1);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 50rpx;
-  }
-  
-  .menu-btn:active {
-    background: rgba(129, 152, 194, 0.3);
-    color: #d792a5;
-  }
-  
-  .icon {
-    width: 100rpx;
-    height: 100rpx;
-    margin-right: 40rpx;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 20rpx;
-    padding: 15rpx;
-  }
-  
-  .label {
-    color: #ffffff;
-    font-weight: 500;
-  }
-  
-  .tab-bar-line {
-    display: none;
-  }
-  
-  /* Bottom Tab Bar */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 35rpx;
+  margin-bottom: 25rpx;
+}
+
+.menu-btn:last-child {
+  margin-bottom: 0;
+}
+
+.menu-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 6rpx rgba(140, 123, 157, 0.1);
+  background: linear-gradient(135deg, #f8f5fc 0%, #f3eff9 100%);
+}
+
+/* 图标 */
+.icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 30rpx;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 16rpx;
+  padding: 15rpx;
+  border: 2rpx solid #f0ebf5;
+}
+
+/* 标签文本 */
+.label {
+  color: #7d6b8f;
+  font-weight: 500;
+  font-size: 36rpx;
+}
+
+/* Bottom Tab Bar */
   .tab-bar {
     position: fixed;
     bottom: 0;
@@ -102,5 +133,3 @@
     color: #ffffff;
     font-weight: 500;
   }
-  
-  

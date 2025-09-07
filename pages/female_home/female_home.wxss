@@ -128,18 +128,20 @@ page {
    }
    /* 当前位置指示器 - 条状样式 */
    .current-indicator {
-    position: absolute;
-    top: -10rpx;
-    width: 8rpx;
-    height: 350rpx;
-    background: linear-gradient(to bottom, #d792a5 0%, #cc7b8f 100%);
-    border-radius: 4rpx;
-    transform: translateX(-50%);
-    box-shadow: 0 2rpx 12rpx rgba(215, 146, 165, 0.5);
-    z-index: 2;
-    animation: pulse 2s infinite;
+    position: absolute !important;
+    top: 2rpx !important;
+    width: 25rpx !important;
+    height: 33rpx !important; /* 调整为适合容器高度 */
+    background: linear-gradient(to bottom,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%);
+    border-radius: 10rpx;
+    border: 2rpx solid white !important;
+     transform: translateX(-50%);
+    z-index: 999 !important;
+    animation: pulse 2s infinite !important;
    }
    
+   
+
    /* 指示器脉冲动画 */
    @keyframes pulse {
     0% {

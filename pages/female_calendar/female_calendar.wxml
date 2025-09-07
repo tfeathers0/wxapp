@@ -36,6 +36,10 @@
       <view class="dot period"></view>
       <text>生理期</text>
     </view>
+    <view class="legend-item">
+      <view class="dot recorded"></view>
+      <text>已记录</text>
+    </view>
   </view>
 
   <!-- 信息面板 -->

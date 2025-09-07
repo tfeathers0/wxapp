@@ -1,40 +1,52 @@
 .page {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* 水平居中对齐 */
-  justify-content: flex-start; /* 垂直居中对齐 */
-  background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
-}
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    align-items: center; /* 水平居中对齐 */
+    background: linear-gradient(135deg, #faf7f9 0%, #f5f2f6 100%);
+  }
+
 
 /* 顶部栏 */
-.header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20rpx;
-  box-sizing: border-box;
-}
+  .header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60rpx;
+    box-sizing: border-box;
+  }
 
-/* 左上角返回 */
-.back {
-  font-size: 48rpx;
-  color: #8198c2;
-}
+
 
 /* 标题 */
-.title {
-  font-size: 48rpx;
-  color: #d792a5;
+  .title {
+    font-size: 46rpx;
+    font-weight: 600;
+    color: #7d6b8f;
+    letter-spacing: 2rpx;
+    text-align: center;
+    margin-bottom: 60rpx;
+  }
+/* 二维码卡片 */
+.qrcode-card {
+  width: 100%;
+  max-width: 500rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30rpx;
+  padding: 60rpx;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
   display: flex;
-  font-weight: bold;
-  justify-content: center; /* 水平居中对齐 */
-  align-items: center; /* 垂直居中对齐 */
-  width: 100%; /* 全宽确保在 flex 容器的中间位置 */
-  text-align: center; /* 文字对齐中心 */
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
 }
 
+.qrcode-card:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+}
 /* 二维码外边框 */
 .qrcode-box {
   margin-top: 100rpx;
@@ -54,4 +66,45 @@
   align-items: center; /* 内部垂直居中 */
   justify-content: center; /* 内部水平居中 */
   background-color: #fff9f5;
+}
+
+/* 提示文本 */
+.qrcode-tip {
+  font-size: 28rpx;
+  color: #8c7b9d;
+  text-align: center;
+  margin-top: 80rpx;
+  line-height: 1.6;
+  padding: 0 20rpx;
+}
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 30rpx;
+  margin-top: 50rpx;
+  margin-left:50rpx;
+  width: 100%;
+  max-width: 500rpx;
+  justify-content: center;
+}
+
+.action-btn {
+  flex: 1;
+  height: 100rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f5fc 100%);
+  color: #8c7b9d;
+  font-size: 28rpx;
+  border-radius: 25rpx;
+  border: 2rpx solid #e8e0ee;
+  box-shadow: 0 4rpx 12rpx rgba(140, 123, 157, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 6rpx rgba(140, 123, 157, 0.1);
+  background: linear-gradient(135deg, #f8f5fc 0%, #f3eff9 100%);
 }

@@ -7,18 +7,26 @@ Page({
       currentDay: '',
       currentWeekday: '',
       contactInfo: null,
-      defaultDate: '',       // 日历默认日期
-      markedDates: {},       // 标记日期数据
+      markedDates: {},       // 标记日期数据（保留以兼容旧逻辑）
       statusText: '',        // 状态文本
       statusClass: '',       // 状态样式类
       statusIcon: '',        // 存储状态图标路径
       hasPermission: false,  // 是否有权限查看详细信息
-      selectedFullDate: '',  // 当前选中的日期
       permissions: {         // 细粒度权限设置
         canViewStatus: true,
         canViewMenstruation: true,
         canViewMood: true,
         canViewPassdays: true
+      },
+      // 日历相关数据
+      currentYear: new Date().getFullYear(),
+      currentMonth: new Date().getMonth(),
+      days: [],
+      cycleInfo: {
+        nowPeriod: '',    // string YYYY-MM-DD
+        futurePeriod: '', // string YYYY-MM-DD
+        cycleLength: 28,  // 自动计算更新
+        periodDays: 5     // 默认 5 天
       }
     },
   
@@ -27,17 +35,6 @@ Page({
       const contactId = options.contactId;
       
       this.updateDate();
-
-      // 初始化默认日期
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      const defaultDate = `${year}-${month}-${day}`;
-      this.setData({
-        defaultDate: defaultDate,
-        selectedFullDate: defaultDate
-      });
 
       // 初始化时间
       this.updateCurrentTime();
@@ -48,6 +45,166 @@ Page({
       
       // 获取联系人详情并处理日历数据
       this.getContactDetails(contactId);
+    },
+    
+    /* ---------- 日期工具函数 ---------- */
+    toYMD(dateOrStr) {
+      if (!dateOrStr) return '';
+      if (typeof dateOrStr === 'string') {
+        const m = dateOrStr.match(/^(\d{4}-\d{2}-\d{2})/);
+        if (m) return m[1];
+        const dd = new Date(dateOrStr);
+        return this.formatDate(dd);
+      }
+      return this.formatDate(dateOrStr);
+    },
+
+    dateFromYMD(ymd) {
+      if (!ymd) return null;
+      const [yy, mm, dd] = ymd.split('-').map(n => parseInt(n, 10));
+      return new Date(yy, mm - 1, dd);
+    },
+
+    isSameDay(a, b) {
+      return a.getFullYear() === b.getFullYear()
+        && a.getMonth() === b.getMonth()
+        && a.getDate() === b.getDate();
+    },
+
+    /* ---------- 格式化日期为YYYY-MM-DD字符串 ---------- */
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+
+    /* ---------- 核心：生成日历 ---------- */
+    generateCalendar(periodStartStr, cycleLength, year, month, records = []) {
+    console.log('开始生成日历:', { year, month: month + 1, recordsCount: records.length });
+    
+    let days = [];
+    let firstDay = new Date(year, month, 1).getDay();
+    let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) days.push({ day: '', type: '' });
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push({ day: i, type: '', year: year, month: month + 1 });
+    }
+
+    if (periodStartStr) {
+      const startYMD = this.toYMD(periodStartStr);
+      if (startYMD) {
+        let start = this.dateFromYMD(startYMD);
+        const maxIterations = 12;
+        let iterations = 0;
+
+        while (iterations < maxIterations) {
+
+          const periodEnd = new Date(start.getFullYear(), start.getMonth(), start.getDate() + (this.data.cycleInfo.periodDays - 1));
+          const ovulationDay = new Date(start.getFullYear(), start.getMonth(), start.getDate() + (cycleLength - 14));
+
+          const startTime = start.getTime();
+          const periodEndTime = periodEnd.getTime();
+          const ovulationTime = ovulationDay.getTime();
+        
+          // 先处理排卵期预测，确保任何情况下都正常预测排卵期
+          for (let i = 0; i < days.length; i++) {
+            if (!days[i].day) continue;
+            let d = new Date(year, month, days[i].day);
+            let dTime = d.getTime();
+
+            if (dTime === ovulationTime) {
+              days[i].type = days[i].type ? days[i].type + ' ovulation' : 'ovulation';
+            }
+          }
+
+        
+
+          start = new Date(start.getFullYear(), start.getMonth(), start.getDate() + cycleLength);
+          iterations++;
+        }
+      }
+    }
+
+    // 处理实际记录，添加更详细的日志
+    if (records && records.length > 0) {
+      records.forEach(r => {
+        if (!r.year || !r.month || !r.day) {
+          console.log('跳过无效记录:', r);
+          return;
+        }
+        
+        // 检查记录是否属于当前显示的月份
+        if (r.year === year && r.month === (month + 1)) {
+          let index = firstDay + r.day - 1;
+          
+          if (index >= 0 && index < days.length && days[index] && days[index].day === r.day) {
+            console.log('处理记录:', {
+              date: r.date,
+              isInPeriod: r.isInPeriod,
+              index: index,
+              currentType: days[index].type,
+              shouldHavePeriod: r.isInPeriod
+            });
+            
+            // 将所有isInPeriod字段为true或type为menstrual的日期标记为生理期
+            if (r.isInPeriod === true || r.type === 'menstrual') {
+              console.log('✅ 标记为生理期:', r.date, 'isInPeriod:', r.isInPeriod, 'type:', r.type);
+              days[index].type = days[index].type ? days[index].type + ' period' : 'period';
+              
+            } else {
+              console.log('❌ 不是生理期:', r.date);
+            }
+            
+            console.log('最终类型:', days[index].type);
+          }
+        }
+      });
+    }
+
+    // 调试输出
+    const periodDays = days.filter(d => d.type && d.type.includes('period'));
+    const recordedDays = days.filter(d => d.type && d.type.includes('recorded'));
+    console.log('生理期天数:', periodDays.length);
+    console.log('已标记记录的天数:', recordedDays.length);
+    
+    this.setData({ days: days, currentYear: year, currentMonth: month });
+  },
+
+    /* ---------- 月份切换 ---------- */
+    prevMonth() {
+      let { currentYear, currentMonth } = this.data;
+      if (currentMonth === 0) {
+        currentYear -= 1;
+        currentMonth = 11;
+      } else currentMonth -= 1;
+      const { nowPeriod, cycleLength } = this.data.cycleInfo;
+      const { menstrualRecords } = this.data.contactInfo || {};
+      this.generateCalendar(nowPeriod, cycleLength, currentYear, currentMonth, menstrualRecords);
+    },
+
+    nextMonth() {
+      let { currentYear, currentMonth } = this.data;
+      if (currentMonth === 11) {
+        currentYear += 1;
+        currentMonth = 0;
+      } else currentMonth += 1;
+      const { nowPeriod, cycleLength } = this.data.cycleInfo;
+      const { menstrualRecords } = this.data.contactInfo || {};
+      this.generateCalendar(nowPeriod, cycleLength, currentYear, currentMonth, menstrualRecords);
+    },
+
+    /* ---------- 日历日期点击事件 ---------- */
+    onCustomCalendarDayTap(e) {
+      const { day, year, month } = e.currentTarget.dataset;
+      if (!day) return;
+      
+      // 构建完整日期字符串
+      const dateStr = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      
+      // 调用现有的日期选择处理逻辑
+      this.onDateSelect({detail: {date: dateStr}});
     },
     
     // 检查是否有访问权限
@@ -164,104 +321,261 @@ Page({
         });
       },
   
-    // 获取联系人详情
-    getContactDetails(contactId) {
-      wx.showLoading({ title: '加载中...' });
+    // 确保用户类存在（与female_calendar.js保持一致）
+    async ensureUserClass(className) {
+      console.log('ensureUserClass - 开始检查类是否存在:', className);
+      if (!className) {
+        console.log('ensureUserClass - 类名为空');
+        return false;
+      }
       
-      // 先检查访问权限
-      this.checkAccessPermission(contactId).then(followeeRelation => {
+      const query = new AV.Query(className);
+      try {
+        console.log('ensureUserClass - 执行查询以检查类是否存在');
+        const result = await query.first();
+        console.log('ensureUserClass - 类存在，查询结果:', result ? '找到了记录' : '未找到记录但类存在');
+        return true;
+      } catch (error) {
+        console.log('ensureUserClass - 类可能不存在，错误:', error.message);
+        try {
+          console.log('ensureUserClass - 尝试创建类:', className);
+          const UserClass = AV.Object.extend(className);
+          const userObj = new UserClass();
+          userObj.set('initialized', true);
+          await userObj.save();
+          console.log('ensureUserClass - 类创建成功');
+          return true;
+        } catch (createError) {
+          console.error('ensureUserClass - 类创建失败:', createError);
+          return false;
+        }
+      }
+    },
+
+    // 获取联系人生理周期的实际记录，保持与female_calendar.js一致的格式
+    async getContactMenstrualRecords(contactId) {
+      try {
+        const user = AV.User.current();
+        if (!user) {
+          throw new Error('用户未登录');
+        }
+        
+        console.log('开始获取联系人生理周期记录，contactId:', contactId);
+        
         // 获取关联人的用户信息
         const userQuery = new AV.Query('_User');
-        return userQuery.get(contactId).then(user => {
-          // 获取联系人头像 - 从LeanCloud user类的touxiang字段（File对象）获取
-          const defaultAvatarUrl = '/images/wechatdefaultpic.png';
-          let avatarUrl = defaultAvatarUrl;
+        const targetUser = await userQuery.get(contactId);
+        
+        // 直接从用户对象获取username，用于构建自定义类名
+        const username = targetUser.getUsername();
+        
+        console.log('成功获取关联人信息，username:', username);
+        
+        if (!username) {
+          throw new Error('无法获取对方用户名');
+        }
+        
+        // 构建用户自定义类名（确保与record.js中的命名规则一致）
+        const className = `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        console.log('构建的自定义类名:', className);
+        
+        // 确保类存在（与female_calendar.js保持一致）
+        console.log('调用ensureUserClass确保类存在');
+        const ensureResult = await this.ensureUserClass(className);
+        console.log('ensureUserClass结果:', ensureResult);
+        
+        // 查看类是否存在的详细检查
+        const checkQuery = new AV.Query(className);
+        try {
+          const checkResult = await checkQuery.first();
+          console.log('类存在检查结果:', checkResult ? '存在' : '不存在');
+        } catch (checkError) {
+          console.error('类存在检查错误:', checkError);
+        }
+        
+        const customClassQuery = new AV.Query(className);
+        
+        // 方法1：尝试使用与female_calendar.js一致的查询条件
+        customClassQuery.containedIn('type', ['record', 'menstrual']);
+        
+        // 添加额外的日志记录查询条件
+        console.log('查询条件 - 类名:', className, '类型:', ['record', 'menstrual']);
+        
+        customClassQuery.ascending('date');
+        
+        // 获取记录
+        console.log('执行查询...');
+        let results = await customClassQuery.find();
+        
+        // 如果第一次查询没有结果，尝试更通用的查询策略
+        if (results.length === 0) {
+          console.log('第一次查询无结果，尝试更通用的查询策略（不限制type字段）');
+          const fallbackQuery = new AV.Query(className);
+          fallbackQuery.exists('date'); // 只要有date字段的记录都查询
+          fallbackQuery.ascending('date');
           
-          // 优先从touxiang字段获取头像
-          const touxiangFile = user.get('touxiang');
-          if (touxiangFile && typeof touxiangFile.get === 'function') {
-            avatarUrl = touxiangFile.get('url') || avatarUrl;
+          results = await fallbackQuery.find();
+          console.log('备用查询结果数量:', results.length);
+        }
+        
+        console.log('查询结果数量:', results.length);
+        if (results.length > 0) {
+          console.log('查询结果示例:', results[0].toJSON());
+        }
+        
+        // 格式化记录数据，确保与female_calendar.js返回的格式完全一致
+        const records = results.map(record => {
+          const rawDate = record.get('date');
+          const dateStr = this.toYMD(rawDate);
+          
+          let year = null, month = null, day = null;
+          if (dateStr) {
+            const parts = dateStr.split('-');
+            year = parseInt(parts[0], 10);
+            month = parseInt(parts[1], 10); // 1-12
+            day = parseInt(parts[2], 10);
           }
           
-          // 如果touxiang不存在，尝试从avatarUrl字段获取
-          if (avatarUrl === defaultAvatarUrl) {
-            const directAvatarUrl = user.get('avatarUrl');
-            if (directAvatarUrl) {
-              avatarUrl = directAvatarUrl;
-            }
-          }
-          
-          // 基础信息，无论是否有权限都显示
-          const contactInfo = {
-            id: user.id,
-            nickname: user.get('nickName') || user.get('username') || '未命名',
-            // 从LeanCloud user类的avatar字段（File对象）获取头像URL
-            avatar: avatarUrl,
-            relation: followeeRelation.get('relation') || '朋友',
-            lastUpdate: new Date().toISOString().split('T')[0]
+          const formattedRecord = {
+            date: dateStr,
+            year: year,
+            month: month,
+            day: day,
+            type: record.get('type') || 'record',
+            isInPeriod: !!record.get('isInPeriod'),
+            note: record.get('note') || '',
+            symptoms: record.get('symptoms') || [],
+            flow: record.get('flow') || 'medium',
+            mood: record.get('mood') || '',
+            rawData: rawDate // 用于调试
           };
           
-          // 获取权限设置
-          const permissions = followeeRelation.permissions || this.data.permissions;
+          if (formattedRecord.isInPeriod) {
+            console.log('找到isInPeriod=true的记录:', formattedRecord.date);
+          }
           
-          // 根据权限设置获取详细信息
-          if (followeeRelation.hasPermission) {
-            // 根据canViewStatus权限决定是否显示状态信息
-            if (permissions.canViewStatus) {
-              contactInfo.status = user.get('state') || 'unknown';
-              contactInfo.state = this.getStatusIcon(user.get('state') || 'unknown');
-            }
-            
-            // 根据canViewMood权限决定是否显示心情信息
-            if (permissions.canViewMood) {
-              // 先设置默认值
-              contactInfo.mood = '未设置';
-              // 获取关联人的用户名，用于构建自定义类名
-              const username = user.getUsername();
-              if (username) {
-                // 构建用户自定义类名，参考record.js中的方式
-                const className = `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
-                // 查询自定义类中最新的记录，获取心情信息
-                const customClassQuery = new AV.Query(className);
-                customClassQuery.descending('date'); // 按日期降序排列，获取最新记录
-                customClassQuery.limit(1); // 只获取一条记录
-                customClassQuery.find().then(results => {
-                  if (results && results.length > 0) {
-                    const latestRecord = results[0];
-                    // 更新心情信息
-                    contactInfo.mood = latestRecord.get('mood') || '未设置';
-                    // 如果有权限查看状态，在心情更新后重新生成关怀提示
-                    if (permissions.canViewStatus) {
-                      const tipsObj = this.generateTips(user.get('state') || 'unknown', contactInfo.mood, contactInfo.relation);
-                      contactInfo.statusTip = tipsObj.statusTip;
-                      contactInfo.moodTip = tipsObj.moodTip;
-                    }
-                    // 更新页面数据
-                    this.setData({ contactInfo: contactInfo });
+          return formattedRecord;
+        });
+        
+        console.log('加载的联系人生理周期记录总数:', records.length);
+        console.log('其中isInPeriod=true的记录数:', records.filter(r => r.isInPeriod).length);
+        return records;
+      } catch (error) {
+        console.error('获取联系人生理周期记录失败:', error);
+        return [];
+      }
+    },
+    
+
+    onShow() {
+      // 页面显示时刷新数据
+      const contactId = this.data.contactInfo?.id;
+      if (contactId) {
+        this.getContactDetails(contactId);
+      }
+    },
+    
+    // 获取联系人详情
+    async getContactDetails(contactId) {
+      wx.showLoading({ title: '加载中...' });
+      
+      try {
+        // 先检查访问权限
+        const followeeRelation = await this.checkAccessPermission(contactId);
+        
+        // 获取关联人的用户信息
+        const userQuery = new AV.Query('_User');
+        const user = await userQuery.get(contactId);
+        // 获取联系人头像 - 从LeanCloud user类的touxiang字段（File对象）获取
+        const defaultAvatarUrl = '/images/wechatdefaultpic.png';
+        let avatarUrl = defaultAvatarUrl;
+        
+        // 优先从touxiang字段获取头像
+        const touxiangFile = user.get('touxiang');
+        if (touxiangFile && typeof touxiangFile.get === 'function') {
+          avatarUrl = touxiangFile.get('url') || avatarUrl;
+        }
+        
+        // 如果touxiang不存在，尝试从avatarUrl字段获取
+        if (avatarUrl === defaultAvatarUrl) {
+          const directAvatarUrl = user.get('avatarUrl');
+          if (directAvatarUrl) {
+            avatarUrl = directAvatarUrl;
+          }
+        }
+          
+        // 基础信息，无论是否有权限都显示
+        const contactInfo = {
+          id: user.id,
+          nickname: user.get('nickName') || user.get('username') || '未命名',
+          // 从LeanCloud user类的avatar字段（File对象）获取头像URL
+          avatar: avatarUrl,
+          relation: followeeRelation.get('relation') || '朋友',
+          lastUpdate: new Date().toISOString().split('T')[0]
+        };
+        
+        // 获取权限设置
+        const permissions = followeeRelation.permissions || this.data.permissions;
+        
+        // 根据权限设置获取详细信息
+        if (followeeRelation.hasPermission) {
+          // 根据canViewStatus权限决定是否显示状态信息
+          if (permissions.canViewStatus) {
+            contactInfo.status = user.get('state') || 'unknown';
+            contactInfo.state = this.getStatusIcon(user.get('state') || 'unknown');
+          }
+          
+          // 根据canViewMood权限决定是否显示心情信息
+          if (permissions.canViewMood) {
+            // 先设置默认值
+            contactInfo.mood = '未设置';
+            // 获取关联人的用户名，用于构建自定义类名
+            const username = user.getUsername();
+            if (username) {
+              // 构建用户自定义类名，参考record.js中的方式
+              const className = `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
+              // 查询自定义类中最新的记录，获取心情信息
+              const customClassQuery = new AV.Query(className);
+              customClassQuery.descending('date'); // 按日期降序排列，获取最新记录
+              customClassQuery.limit(1); // 只获取一条记录
+              customClassQuery.find().then(results => {
+                if (results && results.length > 0) {
+                  const latestRecord = results[0];
+                  // 更新心情信息
+                  contactInfo.mood = latestRecord.get('mood') || '未设置';
+                  // 如果有权限查看状态，在心情更新后重新生成关怀提示
+                  if (permissions.canViewStatus) {
+                    const tipsObj = this.generateTips(user.get('state') || 'unknown', contactInfo.mood, contactInfo.relation);
+                    contactInfo.statusTip = tipsObj.statusTip;
+                    contactInfo.moodTip = tipsObj.moodTip;
                   }
-                }).catch(error => {
-                  console.error('获取心情信息失败:', error);
-                });
-              }
+                  // 更新页面数据
+                  this.setData({ contactInfo: contactInfo });
+                }
+              }).catch(error => {
+                console.error('获取心情信息失败:', error);
+              })};
             }
-            
-            // 根据canViewStatus权限决定是否显示提示信息
-            if (permissions.canViewStatus) {
-              // 同时传递状态、心情和关系参数
+          }
+          
+          // 根据canViewStatus权限决定是否显示提示信息
+          if (permissions.canViewStatus) {
+            // 同时传递状态、心情和关系参数
             const tipsObj = this.generateTips(user.get('state') || 'unknown', contactInfo.mood, contactInfo.relation);
             contactInfo.statusTip = tipsObj.statusTip;
             contactInfo.moodTip = tipsObj.moodTip;
-            }
-            
-            // 根据canViewMenstruation权限决定是否显示上次月经日期
-            if (permissions.canViewMenstruation) {
-              contactInfo.lastMenstruation = this.getLastMenstruation(user);
-            }
-            
-            // 根据canViewCycleData权限决定是否显示周期数据
-            if (permissions.canViewPassdays) {
-              contactInfo.cycleData = this.getPassDays(user);
-            }
+          }
+          
+          // 根据canViewMenstruation权限决定是否显示上次月经日期
+          if (permissions.canViewMenstruation) {
+            contactInfo.lastMenstruation = await this.getLastMenstruation(user);
+          }
+          
+          // 根据canViewPassdays权限决定是否显示周期数据
+          if (permissions.canViewPassdays) {
+            contactInfo.cycleData = await this.getPassDays(user);
+            // 设置passdays，用于generateMarkedDates方法
+            contactInfo.passdays = contactInfo.cycleData;
           }
           
           // 状态配置（与male_home保持一致的状态体系）
@@ -273,9 +587,97 @@ Page({
             unknown: { text: "未知", class: "status-unknown" }
           };
           
-          // 根据canViewCycleData权限决定是否生成日历标记
-          const markedDates = followeeRelation.hasPermission && permissions.canViewPassdays && contactInfo.cycleData ? 
-            this.generateMarkedDates(contactInfo.passdays) : {};
+          // 根据canViewPassdays权限决定是否生成日历标记
+          let markedDates = {};
+          
+          // 添加详细日志确认权限状态
+          console.log('权限检查 - followeeRelation.hasPermission:', followeeRelation.hasPermission);
+          console.log('权限检查 - permissions.canViewPassdays:', permissions.canViewPassdays);
+          console.log('准备调用getContactMenstrualRecords的contactId:', contactId);
+          
+          if (followeeRelation.hasPermission && permissions.canViewPassdays) {
+              // 先尝试获取对方的实际生理周期记录
+              console.log('调用getContactMenstrualRecords，contactId:', contactId);
+              console.log('当前用户:', AV.User.current().getUsername());
+              this.getContactMenstrualRecords(contactId).then(menstrualRecords => {
+                console.log('获取到的生理周期记录数量:', menstrualRecords.length);
+                contactInfo.menstrualRecords = menstrualRecords;
+                
+                // 设置周期信息（从contactInfo或默认值）
+                let nowPeriod = '';
+                let cycleLength = 28;
+                
+                // 从lastMenstruation中提取YYYY-MM-DD格式的日期
+                if (contactInfo.lastMenstruation) {
+                  const match = contactInfo.lastMenstruation.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+                  if (match) {
+                    const [, year, month, day] = match;
+                    nowPeriod = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                  }
+                  console.log('提取的经期日期:', nowPeriod);
+                }
+                
+                if (contactInfo.cycleData && contactInfo.cycleData.cycleLength) {
+                  cycleLength = contactInfo.cycleData.cycleLength;
+                }
+                console.log('使用的周期长度:', cycleLength);
+                
+                // 更新周期信息，包括经期天数
+                let periodDays = 5; // 默认5天
+                if (contactInfo.cycleData && contactInfo.cycleData.periodLength) {
+                  periodDays = contactInfo.cycleData.periodLength;
+                }
+                console.log('使用的经期天数:', periodDays);
+                
+                this.setData({
+                  'cycleInfo.nowPeriod': nowPeriod,
+                  'cycleInfo.cycleLength': cycleLength,
+                  'cycleInfo.periodDays': periodDays
+                });
+                
+                // 设置contactInfo中的menstrualRecords
+                contactInfo.menstrualRecords = menstrualRecords;
+                
+                // 使用实际记录生成日历
+                // 使用当前日期的年月，确保即使data中没有初始化也能正常工作
+                const now = new Date();
+                const year = this.data.currentYear || now.getFullYear();
+                const month = this.data.currentMonth !== undefined ? this.data.currentMonth : now.getMonth();
+                
+                // 生成日历，传入所有需要的数据
+                console.log('调用generateCalendar，参数:', { nowPeriod, cycleLength, year, month, recordsCount: menstrualRecords.length });
+                this.generateCalendar(nowPeriod, cycleLength, year, month, menstrualRecords);
+                
+                // 生成markedDates
+                console.log('调用generateMarkedDates，是否有passdays数据:', !!contactInfo.passdays);
+                markedDates = this.generateMarkedDates(contactInfo.passdays || {});
+                console.log('generateMarkedDates生成的标记数量:', Object.keys(markedDates).length);
+                
+                // 一次性更新所有数据，避免多次setData造成的性能问题和数据不一致
+                this.setData({
+                  contactInfo: contactInfo,
+                  markedDates: markedDates
+                });
+                console.log('已更新contactInfo和markedDates数据');
+              }).catch(error => {
+                console.error('获取或生成生理周期记录失败:', error);
+              // 如果获取记录失败，使用默认的周期数据
+              this.generateCalendar('', 28, this.data.currentYear, this.data.currentMonth, []);
+              markedDates = contactInfo.cycleData ? this.generateMarkedDates(contactInfo.passdays) : {};
+              
+              // 在同一个setData调用中更新所有相关数据
+              this.setData({
+                markedDates: markedDates,
+                contactInfo: contactInfo
+              });
+            });
+          } else {
+            // 没有权限查看生理周期数据
+            this.setData({ 
+              markedDates: {},
+              days: [] 
+            });
+          }
           
           // 根据canViewStatus权限决定状态文本
           let statusText = '未开放';
@@ -295,16 +697,15 @@ Page({
             statusText: statusText,
             statusClass: statusClass
           });
-        });
-      }).catch(error => {
+      } catch (error) {
         console.error('获取联系人详情失败', error);
         wx.showToast({
           title: '加载失败：' + error.message,
           icon: 'none'
         });
-      }).finally(() => {
+      } finally {
         wx.hideLoading();
-      });
+      }
     },
     
     // 获取状态对应的图标
@@ -451,89 +852,132 @@ Page({
     },
     
     
-    // 从用户数据中提取周期数据
-    getPassDays(user) {
+    // 从User_username类中获取周期数据
+    async getPassDays(user) {
       const Passdays = {};
       
-      // 尝试获取月经相关信息
-      const myear = user.get('myear');
-      const mmonth = user.get('mmonth');
-      const mday = user.get('mday');
-      const cycleLength = user.get('cycleLength') || 28;
-      const periodLength = user.get('periodLength') || 5;
-      
-      if (myear && mmonth && mday) {
-        // 计算当前月份中的日期
-        const today = new Date();
-        const currentMonth = today.getMonth() + 1;
-        const currentYear = today.getFullYear();
+      try {
+        // 获取关联人的用户名，用于构建自定义类名
+        const username = user.getUsername();
+        if (!username) {
+          console.error('无法获取对方用户名');
+          // 返回默认值
+          return {
+            menstrual: { start: 1, end: 5 },
+            ovulation: { start: 13, end: 15 },
+            cycleLength: 28,
+            periodLength: 5
+          };
+        }
         
-        // 计算排卵期（通常是下次月经前14天）
-        const ovulationDay = cycleLength - 14;
+        // 构建用户自定义类名
+        const className = `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
         
-        // 生成周期数据
-        Passdays.menstrual = { start: 1, end: periodLength }; 
-        Passdays.ovulation = { 
-          start: Math.max(1, ovulationDay - 1), 
-          end: Math.min(cycleLength, ovulationDay + 1) 
+        // 确保类存在
+        await this.ensureUserClass(className);
+        
+        // 查询自定义类中最新的周期设置记录
+        const customClassQuery = new AV.Query(className);
+        customClassQuery.descending('updatedAt'); // 按更新时间降序排列
+        customClassQuery.limit(1); // 只获取最新的一条记录
+        
+        const result = await customClassQuery.first();
+        
+        if (result) {
+          // 从记录中获取周期相关信息
+          const cycleLength = result.get('cycleLength') || 28;
+          const periodLength = result.get('periodLength') || 5;
+          
+          // 计算排卵期（通常是下次月经前14天）
+          const ovulationDay = cycleLength - 14;
+          
+          // 生成周期数据
+          Passdays.menstrual = { start: 1, end: periodLength }; 
+          Passdays.ovulation = { 
+            start: Math.max(1, ovulationDay - 1), 
+            end: Math.min(cycleLength, ovulationDay + 1) 
+          }; 
+          Passdays.cycleLength = cycleLength; 
+          Passdays.periodLength = periodLength;
+        }
+      } catch (error) {
+        console.error('获取周期数据失败:', error);
+        // 返回默认值
+        return {
+          menstrual: { start: 1, end: 5 },
+          ovulation: { start: 13, end: 15 },
+          cycleLength: 28,
+          periodLength: 5
         };
-        Passdays.cycleLength = cycleLength;
-      }
-      
-      return Passdays;
+      } 
+    
+    return Passdays; 
     },
     
-    // 获取上次月经日期
-    getLastMenstruation(user) {
-      // 优先从lastPeriod字段获取上次月经时间
-      const lastPeriod = user.get('lastPeriod');
-      if (lastPeriod) {
-        try {
-          // 处理可能的日期格式
-          let date;
-          if (typeof lastPeriod === 'string') {
-            // 尝试直接解析字符串
-            date = new Date(lastPeriod);
-          } else {
-            // 假设是Date对象或可以转换为日期的对象
-            date = new Date(lastPeriod);
+    // 获取上次月经日期 - 从User_username类中获取
+    async getLastMenstruation(user) {
+      try {
+        // 获取关联人的用户名，用于构建自定义类名
+        const username = user.getUsername();
+        if (!username) {
+          console.error('无法获取对方用户名');
+          return '暂无数据';
+        }
+        
+        // 构建用户自定义类名
+        const className = `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        
+        // 确保类存在
+        await this.ensureUserClass(className);
+        
+        // 查询自定义类中最新的月经记录
+        // 注意：equalTo和exists是AV.Query实例的方法，不是静态方法
+        const query1 = new AV.Query(className);
+        query1.equalTo('type', 'menstrual');
+        
+        const query2 = new AV.Query(className);
+        query2.exists('lastPeriod');
+        
+        // 使用静态方法组合查询，然后设置排序和限制条件
+        const customClassQuery = AV.Query.or(query1, query2);
+        customClassQuery.descending('date'); // 按日期降序排列
+        customClassQuery.limit(1); // 只获取最新的一条记录
+        
+        const result = await customClassQuery.first();
+        
+        if (result) {
+          // 尝试从lastPeriod字段获取
+          let lastPeriod = result.get('lastPeriod');
+          
+          // 如果没有lastPeriod，尝试从date字段获取
+          if (!lastPeriod && result.get('date')) {
+            lastPeriod = result.get('date');
           }
           
-          if (!isNaN(date.getTime())) {
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            return `${year}年${month}月${day}日`;
+          if (lastPeriod) {
+            try {
+              let date;
+              if (typeof lastPeriod === 'string') {
+                date = new Date(lastPeriod);
+              } else {
+                date = new Date(lastPeriod);
+              }
+              
+              if (!isNaN(date.getTime())) {
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                return `${year}年${month}月${day}日`;
+              }
+            } catch (error) {
+              console.error('解析上次月经日期失败:', error);
+            }
           }
-        } catch (error) {
-          console.error('解析lastPeriod失败:', error);
         }
+      } catch (error) {
+        console.error('获取上次月经日期失败:', error);
       }
       
-      // 如果lastPeriod不存在或解析失败，尝试从lastPeriodStart字段获取
-      const lastPeriodStart = user.get('lastPeriodStart');
-      if (lastPeriodStart) {
-        try {
-          const date = new Date(lastPeriodStart);
-          if (!isNaN(date.getTime())) {
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            return `${year}年${month}月${day}日`;
-          }
-        } catch (error) {
-          console.error('解析lastPeriodStart失败:', error);
-        }
-      }
-      
-      // 如果都没有，尝试从myear、mmonth和mday获取
-      const myear = user.get('myear');
-      const mmonth = user.get('mmonth');
-      const mday = user.get('mday');
-      
-      if (myear && mmonth && mday) {
-        return `${myear}年${mmonth}月${mday}日`;
-      }
       return '暂无数据';
     },
   
@@ -541,19 +985,20 @@ Page({
     generateMarkedDates(Passdays) {
       const markedDates = {};
       
-      // 获取当前月份的第一天和最后一天
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth();
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
+      // 使用组件中保存的当前年月，而不是当前日期
+      const { currentYear, currentMonth, contactInfo } = this.data;
+      const firstDay = new Date(currentYear, currentMonth, 1);
+      const lastDay = new Date(currentYear, currentMonth + 1, 0);
       const daysInMonth = lastDay.getDate();
       
-      // 如果有cycleData，则根据cycleData生成标记
+      // 获取生理周期记录
+      const menstrualRecords = contactInfo && contactInfo.menstrualRecords ? contactInfo.menstrualRecords : [];
+      
+      // 先初始化所有日期的默认标记
       if (Passdays && Passdays.menstrual && Passdays.ovulation) {
-        // 生成当月的标记数据
+        // 如果有cycleData，则根据cycleData生成默认标记
         for (let day = 1; day <= daysInMonth; day++) {
-          const currentDate = new Date(year, month, day);
+          const currentDate = new Date(currentYear, currentMonth, day);
           const dateKey = currentDate.toISOString().split('T')[0];
           
           if (day >= Passdays.menstrual.start && day <= Passdays.menstrual.end) {
@@ -593,7 +1038,7 @@ Page({
       } else {
         // 如果没有cycleData，生成默认的标记
         for (let day = 1; day <= daysInMonth; day++) {
-          const currentDate = new Date(year, month, day);
+          const currentDate = new Date(currentYear, currentMonth, day);
           const dateKey = currentDate.toISOString().split('T')[0];
           
           // 默认简单周期：1-5天为月经期，14-16天为排卵期，其余根据位置分配
@@ -629,6 +1074,25 @@ Page({
         }
       }
       
+      // 覆盖实际记录中isInPeriod为true或type为menstrual的日期，确保所有经期记录都被标记为生理期
+      if (menstrualRecords && menstrualRecords.length > 0) {
+        menstrualRecords.forEach(record => {
+          if ((record.isInPeriod === true || record.type === 'menstrual') && record.date) {
+            const dateKey = record.date;
+            
+            // 覆盖标记为生理期
+            markedDates[dateKey] = {
+              dotColor: '#ff6b81',
+              type: 'dot',
+              text: '经期',
+              textColor: '#ff6b81'
+            };
+            
+            console.log('在markedDates中标记经期:', dateKey, 'isInPeriod:', record.isInPeriod, 'type:', record.type);
+          }
+        });
+      }
+      
       return markedDates;
     },
     
@@ -646,7 +1110,49 @@ Page({
         return;
       }
       
-      // 显示选中日期的详细信息
+      const { contactInfo } = this.data;
+      
+      // 优先从实际生理周期记录中查找
+      if (contactInfo && contactInfo.menstrualRecords && contactInfo.menstrualRecords.length > 0) {
+        // 解析选中日期
+        const [year, month, day] = selectedDate.split('-').map(Number);
+        
+        // 查找匹配的记录
+        const matchingRecord = contactInfo.menstrualRecords.find(record => 
+          record.year === year && 
+          record.month === month && 
+          record.day === day
+        );
+        
+        if (matchingRecord) {
+          // 构建显示内容
+          let content = '';
+          
+          // 根据记录类型添加不同信息
+          if (matchingRecord.isInPeriod || matchingRecord.type === 'menstrual') {
+            content = '状态: 经期\n';
+            if (matchingRecord.isLastDay) {
+              content += '今天是经期最后一天\n';
+            }
+          } else if (matchingRecord.type === 'record') {
+            content = '已记录日期\n';
+          }
+          
+          // 如果有心情信息，添加心情
+          if (matchingRecord.mood && matchingRecord.mood !== '未设置') {
+            content += `心情: ${matchingRecord.mood}`;
+          }
+          
+          wx.showModal({
+            title: selectedDate,
+            content: content,
+            showCancel: false
+          });
+          return;
+        }
+      }
+      
+      // 如果没有实际记录或没有匹配的记录，使用原来的逻辑
       if (selectedDate && this.data.markedDates[selectedDate]) {
         const dateInfo = this.data.markedDates[selectedDate];
         wx.showModal({
@@ -657,18 +1163,7 @@ Page({
       }
     },
     
-    // 日历日期选择事件（针对组件）
-    onCalendarDateSelect(e) {
-      const selectedFullDate = e.detail.date;
-      this.setData({ selectedFullDate });
-      wx.setStorageSync('selectedDate', selectedFullDate);
-      this.onDateSelect({detail: {date: selectedFullDate}});
-    },
-    
-    onCalendarDayClick(e) {
-      console.log('选中的日期:', e.detail.date);
-      this.onDateSelect({detail: {date: e.detail.date}});
-    },
+
     
     // 更新当前时间
     updateCurrentTime() {

@@ -3,14 +3,13 @@ page {
   }
   
   .navigationline {
-    height: 40rpx;             /* thin band height */
-    background-color: #a5cdd7; /* line color */
+    height: 0rpx; 
     width: 100%;
-    position: absolute; /* or absolute if needed */
-    top: 0rpx; /* move up */
+    position: absolute;
+    top: 0rpx;
     left: 0;
     right: 0;
-    margin: 0 auto; /* center horizontally */
+    margin: 0 auto;
   }
   
   .container {
@@ -40,8 +39,8 @@ page {
     left: 0;
     right: 0;
     margin: 0 auto;
-    border: 5rpx solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 5rpx solid #f0ebf5;
+    box-shadow: 0 8rpx 25rpx rgba(140, 123, 157, 0.15);
   }
   
   .avatar {
@@ -54,8 +53,8 @@ page {
     left: 0;
     right: 0;
     margin: 0 auto;
-    border: 5rpx solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 5rpx solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 8rpx 25rpx rgba(140, 123, 157, 0.15);
     transition: all 0.3s ease;
   }
   
@@ -71,13 +70,13 @@ page {
     width: 70rpx;
     height: 70rpx;
     border-radius: 50%;
-    background-color: #d792a5;
+    background-color: #b8a7cc;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 40rpx;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4rpx 15rpx rgba(184, 167, 204, 0.3);
     transition: all 0.3s ease;
   }
   
@@ -92,10 +91,11 @@ page {
   
   .nickname {
     font-size: 56rpx;
-    color: #ffffff;
+    color: #7d6b8f;
     text-align: center;
     margin-top: 50rpx;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    letter-spacing: 1rpx;
   }
   
   .inp {
@@ -103,61 +103,82 @@ page {
     height: 100rpx;
     text-align: center;
     font-size: 44rpx;
-    color: #ffffff;
-    border: none;
+    color: #7d6b8f;
+    border: 2rpx solid #e8e0ee;
     border-radius: 50rpx;
     margin: 60rpx auto 0;
-    background-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 6px 20px rgba(129, 152, 194, 0.1);
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 6rpx 20rpx rgba(140, 123, 157, 0.05);
     padding: 0 30rpx;
+    transition: all 0.3s ease;
   }
-  
+
+  .inp:focus {
+    border-color: #b8a7cc;
+    box-shadow: 0 6rpx 20rpx rgba(184, 167, 204, 0.15);
+  }
+
   .inp::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: #c8bdd2;
+  }
+
+  .inp::-webkit-input-placeholder {
+    color: #c8bdd2;
+  }
+
+  .inp::-moz-placeholder {
+    color: #c8bdd2;
+  }
+
+  .inp:-ms-input-placeholder {
+    color: #c8bdd2;
   }
   
   .info-complete {
-    color: rgba(255, 255, 255, 0.8);
+    color: #8c7b9d;
     font-size: 26rpx;
     text-align: center;
     margin-top: 10rpx;
+    opacity: 0.8;
   }
     
   .menu {
-    width: 100%;
-    position: absolute;
-    top:  600rpx;
+    width: 80%;
+    position: relative;
+    top: 100rpx;
     left: 0;
     right: 0;
     margin: 0 auto;
-
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 25rpx;
+    box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+    border: 2rpx solid #f0ebf5;
   }
   
   .menu-item {
     text-align: center;
     font-size: 40rpx;
-    color:rgb(255, 255, 255,0.7);
+    color: #8c7b9d;
     padding: 45rpx 0;
     transition: all 0.3s ease;
   }
-  
+
   .menu-item:active {
-    background: rgba(129, 152, 194, 0.2);
-    color: #d792a5;
+    background: rgba(245, 240, 250, 0.9);
+    color: #b8a7cc;
   }
   
   /* Divider line */
   .menu-divider {
     height: 2rpx;
-    width:70%;
-    background-color: rgba(255, 255, 255, 0.2);
+    width:90%;
+    background-color: #f0ebf5;
     margin: 0 auto;
   }
   
   /* Logout button style */
   .logout-item {
-    color:rgb(188, 0, 0);
+    color: #c0392b;
     font-weight: bold;
   }
   
@@ -176,7 +197,8 @@ page {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
+    box-shadow: 0 -4rpx 20rpx rgba(140, 123, 157, 0.08);
+    border-top: 2rpx solid #f0ebf5;
   }
   
   .tab-plus {
