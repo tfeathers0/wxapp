@@ -1,1 +1,195 @@
-/* pages/document/detail.wxss */
+/* 页面容器 */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #faf7f9 0%, #f5f2f6 100%);
+}
+
+/* 顶部导航栏 */
+.header {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40rpx 0;
+  border-bottom: 2rpx solid #f0ebf5;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx 30rpx;
+  box-sizing: border-box;
+}
+
+/* 返回按钮 */
+.back-icon {
+  width: 40rpx;
+  height: 40rpx;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10rpx;
+  padding: 10rpx;
+  border: 2rpx solid #f0ebf5;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+  transition: all 0.3s ease;
+}
+
+.back-icon:active {
+  transform: scale(0.95);
+  box-shadow: 0 1rpx 4rpx rgba(140, 123, 157, 0.1);
+}
+
+/* 页面标题 */
+.page-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #7d6b8f;
+  letter-spacing: 2rpx;
+}
+
+/* 占位元素 */
+.placeholder {
+  width: 40rpx;
+}
+
+/* 主内容区 */
+.content {
+  flex: 1;
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+
+/* 加载中 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400rpx;
+}
+
+.loading-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border: 8rpx solid #f0ebf5;
+  border-top-color: #7d6b8f;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 30rpx;
+  font-size: 32rpx;
+  color: #8c7b9d;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 文档头部 */
+.document-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
+  margin-bottom: 30rpx;
+}
+
+/* 文档标题 */
+.document-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #7d6b8f;
+  margin-bottom: 20rpx;
+  line-height: 1.5;
+}
+
+/* 标签区域 */
+.tags-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  margin-bottom: 30rpx;
+}
+
+/* 标签样式 */
+.tag {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10rpx 25rpx;
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  color: #8c7b9d;
+  border: 2rpx solid #e8e0ee;
+  box-shadow: 0 2rpx 8rpx rgba(140, 123, 157, 0.05);
+  transition: all 0.3s ease;
+}
+
+.tag:active {
+  transform: scale(0.95);
+  box-shadow: 0 1rpx 4rpx rgba(140, 123, 157, 0.1);
+}
+
+/* 文档内容 */
+.document-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(140, 123, 157, 0.08);
+  border: 2rpx solid #f0ebf5;
+  min-height: 400rpx;
+}
+
+.document-content text {
+  font-size: 32rpx;
+  color: #666666;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 错误提示 */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400rpx;
+}
+
+.error text {
+  font-size: 32rpx;
+  color: #8c7b9d;
+  margin-bottom: 30rpx;
+}
+
+/* 返回按钮 */
+.back-btn {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f5fc 100%);
+  color: #7d6b8f;
+  font-size: 32rpx;
+  border-radius: 25rpx;
+  border: 2rpx solid #e8e0ee;
+  box-shadow: 0 4rpx 12rpx rgba(140, 123, 157, 0.1);
+  transition: all 0.3s ease;
+  padding: 20rpx 60rpx;
+}
+
+.back-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 6rpx rgba(140, 123, 157, 0.1);
+}
+
+/* 确保页面内容不被底部导航栏遮挡 */
+.content {
+  padding-bottom: 200rpx;
+}
+
+/* 隐藏的导航线 - 保持与知识库页面一致的风格 */
+.tab-bar-line {
+  position: fixed;
+  bottom: 150rpx;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2rpx solid rgba(140, 123, 157, 0.1);
+}

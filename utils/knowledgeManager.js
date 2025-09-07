@@ -193,7 +193,7 @@ class KnowledgeManager {
       // 特别处理URL不在域名白名单中的错误
       if (error.errMsg && error.errMsg.includes('url not in domain list')) {
         console.error('URL不在小程序域名白名单中，请在微信开发者工具中配置以下域名:', fileUrl);
-        return '文档加载失败：URL不在小程序域名白名单中。请在微信开发者工具中配置该域名后重试。';
+        return ''; // 返回空字符串，不在界面显示错误信息
       }
       
       // 返回友好的错误信息，而不是null
@@ -442,14 +442,14 @@ class KnowledgeManager {
               
               // 如果没有匹配片段，返回整个段落作为非匹配片段
               if (segments.length === 0) {
-                return [{ text: paragraph.substring(0, 200) + '...', isMatch: false }];
+                return [{ text: paragraph, isMatch: false }];
               }
               
               return segments;
             } catch (e) {
               console.error('提取文本片段错误:', e);
-              // 出错时，返回原始段落作为单个片段
-              return [{ text: paragraph.substring(0, 200) + '...', isMatch: false }];
+              // 出错时，返回完整的原始段落作为单个片段
+              return [{ text: paragraph, isMatch: false }];
             }
           });
           
@@ -512,9 +512,9 @@ class KnowledgeManager {
             matchingParagraphs = extractMatchingParagraphs(fullContent, keyword);
           } else {
             // 没有关键词时显示所有段落
-            console.log('无关键词，显示所有段落');
-            const paragraphs = fullContent.split(/[\n\r]+/).filter(p => p.trim().length > 0);
-            matchingParagraphs = paragraphs.map(p => p.substring(0, 100) + '...');
+          console.log('无关键词，显示所有段落');
+          const paragraphs = fullContent.split(/[\n\r]+/).filter(p => p.trim().length > 0);
+          matchingParagraphs = paragraphs;
           }
           
           console.log(`文档"${docTitle}"匹配段落数量: ${matchingParagraphs.length}`);
@@ -556,16 +556,8 @@ class KnowledgeManager {
       // 不再严格过滤没有匹配段落的文档，确保能返回所有符合条件的文档
       // 而是只对matchingParagraphs为空的文档添加一个预览段落
       console.log('开始处理文档结果...');
-      const finalResults = baseResults.map(result => {
-        // 如果没有匹配段落，但文档有内容，添加一个内容预览
-        if (result.matchingParagraphs.length === 0 && result.content && result.content.length > 0) {
-          console.log(`文档"${result.title}"没有匹配段落，添加内容预览`);
-          // 添加内容预览作为匹配段落
-          const previewText = result.content.substring(0, 200) + (result.content.length > 200 ? '...' : '');
-          result.matchingParagraphs = [[{ text: previewText, isMatch: false }]];
-        }
-        return result;
-      });
+      // 不进行文档预览，保持原始匹配段落
+      const finalResults = baseResults;
       
       console.log('最终处理后结果数量:', finalResults.length);
       
@@ -657,10 +649,10 @@ class KnowledgeManager {
           // 合并文档内容和文件内容
           const fullContent = content + '\n' + fileContent;
           
-          // 提取前几个段落作为预览
+          // 提取前几个段落作为完整预览
           const paragraphs = fullContent.split(/[\n\r]+/).filter(p => p.trim().length > 0);
           const previewParagraphs = paragraphs.slice(0, 2).map(p => [{
-            text: p.substring(0, 150) + (p.length > 150 ? '...' : ''),
+            text: p,
             isMatch: false
           }]);
           

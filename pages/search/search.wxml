@@ -2,9 +2,7 @@
   <!-- 顶部导航栏 -->
   <view class="header">
     <view class="nav">
-      <!-- 返回箭头 -->
-      <image src="/images/back.png" class="back-icon" bindtap="goBack"></image>
-      
+     
       <!-- 搜索输入框 -->
       <view class="search-input-container">
         <input 
@@ -131,17 +129,7 @@
         </text>
       </view>
       
-      <!-- 加载更多 -->
-      <view wx:if="{{hasMore && documents.length > 0}}" class="load-more">
-        <button 
-          class="load-more-btn"
-          bindtap="loadMore"
-          loading="{{isLoading}}"
-          disabled="{{isLoading}}"
-        >
-          {{isLoading ? '加载中...' : '加载更多'}}
-        </button>
-      </view>
+      
     </view>
   </view>
 </view>

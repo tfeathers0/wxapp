@@ -23,20 +23,7 @@ Page({
     }
   },
 
-  // 下载原始文件
-  downloadOriginalFile: function() {
-    if (this.data.document.fileUrl) {
-      wx.downloadFile({
-        url: this.data.document.fileUrl,
-        success: function(res) {
-          wx.openDocument({
-            filePath: res.tempFilePath,
-            showMenu: true
-          });
-        }
-      });
-    }
-  },
+
   
   // 返回上一页
   goBack: function() {
