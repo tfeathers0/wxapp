@@ -391,6 +391,20 @@ Page({
       this.setData({
         currentTime: `${hours}:${minutes}`
       });
+    },
+    
+    // 页面显示时自动刷新数据
+    onShow: function() {
+      console.log('male_home页面显示，开始刷新数据');
+      
+      // 更新日期
+      this.updateDate();
+      
+      // 更新当前时间
+      this.updateCurrentTime();
+      
+      // 重新加载关联人列表并检查异常状况
+      this.loadContactListAndCheckAbnormal();
     }
 });
     

@@ -2,15 +2,7 @@ page {
     background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
   }
   
-  .navigationline {
-    height: 0rpx; 
-    width: 100%;
-    position: absolute;
-    top: 0rpx;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-  }
+
   
   .container {
     display: flex;
@@ -198,7 +190,7 @@ page {
     justify-content: space-around;
     align-items: center;
     box-shadow: 0 -4rpx 20rpx rgba(140, 123, 157, 0.08);
-    border-top: 2rpx solid #f0ebf5;
+
   }
   
   .tab-plus {

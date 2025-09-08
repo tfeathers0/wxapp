@@ -62,6 +62,9 @@ Page({
         // 保存用户信息到本地存储
         wx.setStorageSync('userInfo', userInfo);
         
+        // 清除弹窗显示标志，确保登录后进入主页能显示弹窗
+        wx.removeStorageSync('hasShownPopup');
+        
         wx.showToast({
           title: '登录成功',
           icon: 'success'

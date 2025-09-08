@@ -187,7 +187,7 @@ Page({
     }
   },
     
-  // 加载好友列表
+  // 加载好友列表 - 优化版，减少请求压力
   loadFriendList() {
     wx.showLoading({ title: '加载中...' });
     
@@ -197,47 +197,27 @@ Page({
     query.equalTo('friendStatus', true);
     query.include('followee');
     
-    query.find().then((results) => {
-      // 保存当前好友列表，用于后续检测关系变化
-      const previousFriendIds = this.data.contactList ? this.data.contactList.map(friend => friend.id) : [];
-      
-      // 创建一个数组来存储所有需要查询的好友关系
-      const mutualCheckPromises = results.map(result => {
-        const followee = result.get('followee');
-        const followeeId = followee.id;
+    // 增加分页限制，避免一次性查询过多数据
+    query.limit(100);
+    
+    // 增加错误重试机制
+    this._executeWithRetry(() => query.find())
+      .then((results) => {
+        // 保存当前好友列表，用于后续检测关系变化
+        const previousFriendIds = this.data.contactList ? this.data.contactList.map(friend => friend.id) : [];
         
-        // 查询对方是否也将当前用户标记为好友
-        const reverseQuery = new AV.Query('_Followee');
-        reverseQuery.equalTo('user', AV.Object.createWithoutData('_User', followeeId));
-        reverseQuery.equalTo('followee', currentUser);
-        reverseQuery.equalTo('friendStatus', true);
-        
-        return reverseQuery.find().then(reverseResults => ({
-          result: result,
-          isMutualFriend: reverseResults.length > 0
-        }));
-      });
-      
-      // 并行执行所有双向关系检查
-      return Promise.all(mutualCheckPromises).then(mutualResults => ({
-        mutualResults: mutualResults,
-        previousFriendIds: previousFriendIds
-      }));
-    }).then(({ mutualResults, previousFriendIds }) => {
-      // 先获取所有联系人的权限设置
-      const getPermissionsPromises = mutualResults
-        .filter(item => item.isMutualFriend) // 只保留双向都是好友的关系
-        .map(item => {
-          const followee = item.result.get('followee');
-          // 获取当前用户对这个联系人的权限设置
-          return keyDaysManager.getUserPermissions(followee.id).then(permissions => ({
-            result: item.result,
-            permissions: permissions
+        // 批量查询双向好友关系，减少请求次数
+        return this._batchCheckMutualFriends(results, currentUser)
+          .then(mutualResults => ({
+            mutualResults: mutualResults,
+            previousFriendIds: previousFriendIds
           }));
-        });
-
-      // 等待所有权限设置获取完成
-      return Promise.all(getPermissionsPromises).then(permissionResults => {
+      }).then(({ mutualResults, previousFriendIds }) => {
+        // 只保留双向都是好友的关系
+        const mutualFriends = mutualResults.filter(item => item.isMutualFriend);
+        
+        // 批量获取权限设置，减少请求次数
+        return this._batchGetUserPermissions(mutualFriends).then(permissionResults => {
         const friends = permissionResults.map(item => {
           const result = item.result;
           const followee = result.get('followee');
@@ -347,6 +327,119 @@ Page({
           icon: 'none'
         });
       });
+    },
+    
+    // 带重试的请求执行函数
+    _executeWithRetry(fn, maxRetries = 3, delay = 1000) {
+      return new Promise((resolve, reject) => {
+        let attempts = 0;
+        
+        const tryRequest = () => {
+          fn().then(resolve).catch(error => {
+            attempts++;
+            
+            // 如果是429错误（Too many requests）或网络错误，尝试重试
+            if (attempts < maxRetries && 
+                (error.code === 429 || error.code === 100 || error.code === 101)) {
+              console.warn(`请求失败，${delay}ms后重试（${attempts}/${maxRetries}）:`, error);
+              setTimeout(tryRequest, delay * Math.pow(2, attempts - 1)); // 指数退避
+            } else {
+              reject(error);
+            }
+          });
+        };
+        
+        tryRequest();
+      });
+    },
+    
+    // 批量检查双向好友关系
+    _batchCheckMutualFriends(results, currentUser) {
+      const currentUserId = currentUser.id;
+      
+      // 获取所有followee的ID
+      const followeeIds = results.map(result => result.get('followee').id);
+      
+      // 创建一个查询来获取所有反向关系
+      const batchReverseQuery = new AV.Query('_Followee');
+      batchReverseQuery.containedIn('user', followeeIds.map(id => AV.Object.createWithoutData('_User', id)));
+      batchReverseQuery.equalTo('followee', currentUser);
+      batchReverseQuery.equalTo('friendStatus', true);
+      
+      // 使用_executeWithRetry进行带重试的查询
+      return this._executeWithRetry(() => batchReverseQuery.find())
+        .then(reverseResults => {
+          // 创建一个集合，用于快速查找
+          const mutualFriendIds = new Set(
+            reverseResults.map(reverseResult => reverseResult.get('user').id)
+          );
+          
+          // 返回包含是否是双向好友的结果
+          return results.map(result => {
+            const followeeId = result.get('followee').id;
+            return {
+              result: result,
+              isMutualFriend: mutualFriendIds.has(followeeId)
+            };
+          });
+        });
+    },
+    
+    // 批量获取用户权限设置
+    _batchGetUserPermissions(mutualFriends) {
+      if (!mutualFriends || mutualFriends.length === 0) {
+        return Promise.resolve([]);
+      }
+      
+      // 分批处理，每批最多10个请求
+      const batchSize = 10;
+      const batches = [];
+      
+      for (let i = 0; i < mutualFriends.length; i += batchSize) {
+        batches.push(mutualFriends.slice(i, i + batchSize));
+      }
+      
+      // 按顺序处理批次，避免同时发起过多请求
+      const processBatch = (batchIndex = 0, results = []) => {
+        if (batchIndex >= batches.length) {
+          return Promise.resolve(results);
+        }
+        
+        const currentBatch = batches[batchIndex];
+        const batchPromises = currentBatch.map(item => {
+          const followee = item.result.get('followee');
+          return this._executeWithRetry(() => keyDaysManager.getUserPermissions(followee.id))
+            .then(permissions => ({
+              result: item.result,
+              permissions: permissions
+            }))
+            .catch(error => {
+              console.warn(`获取用户${followee.id}权限失败，使用默认权限:`, error);
+              // 使用默认权限，避免因权限获取失败而中断整个流程
+              return {
+                result: item.result,
+                permissions: {
+                  canViewStatus: false,
+                  canViewMenstruation: false,
+                  canViewMood: false,
+                  canViewPassdays: false
+                }
+              };
+            });
+        });
+        
+        return Promise.all(batchPromises)
+          .then(batchResults => {
+            // 延迟下一批处理，减轻服务器压力
+            return new Promise(resolve => {
+              setTimeout(() => {
+                resolve(processBatch(batchIndex + 1, [...results, ...batchResults]));
+              }, 200);
+            });
+          });
+      }
+      
+      return processBatch();
     },
     
     // 加载待处理的好友请求
@@ -620,8 +713,18 @@ Page({
               return AV.Friendship.request(targetUser);
             });
           } else {
-            // 直接发送好友请求
-            return AV.Friendship.request(targetUser);
+            // 先发送好友请求
+            return AV.Friendship.request(targetUser).then(() => {
+              // 请求发送后再次查询，确保能获取到自动创建的_Followee记录
+              return followeeQuery.first();
+            }).then(followee => {
+              if (followee) {
+                // 更新自动创建的记录中的relation字段
+                followee.set('relation', relation);
+                return followee.save();
+              }
+              return Promise.resolve();
+            });
           }
         }).then(() => {
           console.log('好友请求发送成功');
@@ -740,16 +843,16 @@ Page({
             followee.set('relation', relation);
             return followee.save();
           } else {
-            // 如果仍然没有记录，手动创建一个关注关系
-            return currentUser.follow(request.fromUser.id).then(() => {
-              return followeeQuery.first().then(followee => {
-                if (followee) {
-                  followee.set('relation', relation);
-                  return followee.save();
-                }
-                return Promise.resolve();
-              });
-            });
+            // 确保创建关注关系并设置relation字段
+            console.log('手动创建关注关系并设置relation字段');
+            // 手动创建_Followee记录
+            const followeeObj = AV.Object.createWithoutData('_User', request.fromUser.id);
+            const followRelation = new AV.Object('_Followee');
+            followRelation.set('user', currentUser);
+            followRelation.set('followee', followeeObj);
+            followRelation.set('friendStatus', true);
+            followRelation.set('relation', relation);
+            return followRelation.save();
           }
         });
       }

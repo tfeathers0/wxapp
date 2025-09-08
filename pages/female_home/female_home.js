@@ -50,6 +50,8 @@ Page({
 
     // 检查是否是首次使用应用
     const isFirstTime = wx.getStorageSync('isFirstTime');
+    // 检查弹窗是否已经显示过 - 显式将存储值转换为布尔值
+    const hasShownPopup = wx.getStorageSync('hasShownPopup') === 'true';
     
     if (isFirstTime === '') {
       // 首次使用，显示欢迎弹窗
@@ -59,9 +61,13 @@ Page({
       });
       // 标记为已使用过
       wx.setStorageSync('isFirstTime', 'false');
-    } else {
-      // 老用户 -> 去 LeanCloud 取数据
+      // 标记弹窗已显示
+      wx.setStorageSync('hasShownPopup', 'true');
+    } else if (!hasShownPopup) {
+      // 老用户但弹窗尚未显示过，显示数据弹窗
       this.loadNextPeriodDate();
+      // 标记弹窗已显示
+      wx.setStorageSync('hasShownPopup', 'true');
     }
     
     // 启动知识内容自动滚动
@@ -681,5 +687,19 @@ Page({
     wx.navigateTo({
       url: '../my_homepage/my_homepage'
     });
+  },
+  
+  // 页面显示时自动刷新数据，但不重复显示弹窗
+  onShow: async function() {
+    console.log('female_home页面显示，开始刷新数据但不重复显示弹窗');
+    
+    // 重新加载用户设置
+    await this.loadUserSettings();
+    
+    // 重新计算周期信息（更新指示器位置和当前周期，从而更新背景图片）
+    await this.calculateCycleInfo();
+    
+    // 更新当天日期
+    this.formatTodayDate();
   }
 })
