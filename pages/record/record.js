@@ -851,6 +851,18 @@ Page({
                 // 保存更新
                 cycleInfoObj.save().then(() => {
                   console.log('更新周期信息成功:', { lastPeriod: dateStr, nextPeriod: nextPeriodStr, cycleLength, periodDays });
+                  
+                  // 同时更新LeanCloud用户表中的cycleLength字段
+                  const currentUser = AV.User.current();
+                  if (currentUser) {
+                    currentUser.set('cycleLength', cycleLength);
+                    currentUser.save().then(() => {
+                      console.log('更新用户表cycleLength字段成功:', cycleLength);
+                    }).catch(err => {
+                      console.error('更新用户表cycleLength字段失败:', err);
+                    });
+                  }
+                  
                   resolve();
                 }).catch(err => {
                   console.error('更新周期信息失败:', err);
@@ -868,6 +880,18 @@ Page({
                 // 保存新建
                 obj.save().then(() => {
                   console.log('更新周期信息成功:', { lastPeriod: dateStr, nextPeriod: nextPeriodStr, cycleLength, periodDays });
+                  
+                  // 同时更新LeanCloud用户表中的cycleLength字段
+                  const currentUser = AV.User.current();
+                  if (currentUser) {
+                    currentUser.set('cycleLength', cycleLength);
+                    currentUser.save().then(() => {
+                      console.log('更新用户表cycleLength字段成功:', cycleLength);
+                    }).catch(err => {
+                      console.error('更新用户表cycleLength字段失败:', err);
+                    });
+                  }
+                  
                   resolve();
                 }).catch(err => {
                   console.error('更新周期信息失败:', err);
