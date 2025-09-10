@@ -369,6 +369,9 @@ Page({
         // 直接从用户对象获取username，用于构建自定义类名
         const username = targetUser.getUsername();
         
+        // 获取用户类中的mood字段值
+        const userMood = targetUser.get('mood') || '';
+        
         console.log('成功获取关联人信息，username:', username);
         
         if (!username) {
@@ -446,7 +449,7 @@ Page({
             note: record.get('note') || '',
             symptoms: record.get('symptoms') || [],
             flow: record.get('flow') || 'medium',
-            mood: record.get('mood') || '',
+            mood: userMood || record.get('mood') || '', // 优先使用用户类中的mood字段
             rawData: rawDate // 用于调试
           };
           
@@ -527,36 +530,12 @@ Page({
           
           // 根据canViewMood权限决定是否显示心情信息
           if (permissions.canViewMood) {
-            // 先设置默认值
-            contactInfo.mood = '未设置';
-            // 获取关联人的用户名，用于构建自定义类名
-            const username = user.getUsername();
-            if (username) {
-              // 构建用户自定义类名，参考record.js中的方式
-              const className = `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
-              // 查询自定义类中最新的记录，获取心情信息
-              const customClassQuery = new AV.Query(className);
-              customClassQuery.descending('date'); // 按日期降序排列，获取最新记录
-              customClassQuery.limit(1); // 只获取一条记录
-              customClassQuery.find().then(results => {
-                if (results && results.length > 0) {
-                  const latestRecord = results[0];
-                  // 更新心情信息
-                  contactInfo.mood = latestRecord.get('mood') || '未设置';
-                  // 如果有权限查看状态，在心情更新后重新生成关怀提示
-                  if (permissions.canViewStatus) {
-                    const tipsObj = this.generateTips(user.get('state') || 'unknown', contactInfo.mood, contactInfo.relation);
-                    contactInfo.statusTip = tipsObj.statusTip;
-                    contactInfo.moodTip = tipsObj.moodTip;
-                  }
-                  // 更新页面数据
-                  this.setData({ contactInfo: contactInfo });
-                }
-              }).catch(error => {
-                console.error('获取心情信息失败:', error);
-              })};
-            }
+            // 从自定义类中获取当天心情数据
+            contactInfo.mood = await this.getTodayMoodFromCustomClass(user) || '未设置';
+            console.log('从自定义类获取的当天心情信息:', contactInfo.mood);
           }
+            }
+      
           
           // 根据canViewStatus权限决定是否显示提示信息
           if (permissions.canViewStatus) {
@@ -724,7 +703,7 @@ Page({
       // 基础状态提示
       const baseTips = {
         menstrual: '她今天处于月经期，可能会肚子疼',
-        follicular: '经期结束！状态回温！',
+        follicular: '经期结束！状态回温',
         ovulation: '她现在处于排卵期，可能有轻微身体不适',
         luteal: '由于雌激素和孕激素影响，她情绪可能会有些波动',
         unknown: '她的状态信息暂不可用'
@@ -735,9 +714,9 @@ Page({
         '低落': {
           general: '她今天心情低落',
           suggestions: {
-            '恋人': ['可以给她一个温暖的拥抱', '带她出去散散心', '为她准备小惊喜'],
+            '恋人': ['当她想聊天时：“我知道经期真的很难受，我可能无法完全理解，但我很愿意听你说说。或者你希望我 distraction 你一下？”', '当她不想说话时：“我就在隔壁房间，有任何需要随时叫我。这是温水/药/零食，我放这里了。”', '为她准备小惊喜'],
             '家人': ['多关心她的感受', '为她准备爱吃的饭菜', '陪她聊聊天'],
-            '朋友': ['约她出去喝杯奶茶', '给她讲个笑话', '陪她做喜欢的事']
+            '朋友': ['约她出去喝杯奶茶', '讲个笑话/分享个沙雕视频，分散一下注意力', '陪她做喜欢的事']
           }
         },
         '焦虑': {
@@ -759,15 +738,15 @@ Page({
         '疲惫': {
           general: '她今天感觉疲惫',
           suggestions: {
-            '恋人': ['让她多休息', '为她准备舒适的环境', '主动承担家务'],
+            '恋人': ['让她多休息', '为她准备舒适的环境', '主动承担家务劳动，特别是需要弯腰或体力活的事情，让她能多休息。'],
             '家人': ['让她多休息', '帮她分担一些事情', '准备一些有营养的食物'],
-            '朋友': ['不要过多打扰她', '提醒她注意休息', '必要时提供帮助']
+            '朋友': ['不要过多打扰她', '提醒她注意休息', '“别硬撑，不舒服就好好休息。工作/学习的事有需要就叫我。” 表示你理解她的不适，并给予她“可以休息”的支持，减轻她的心理压力。']
           }
         },
         '烦躁': {
           general: '她今天有些烦躁',
           suggestions: {
-            '恋人': ['多些耐心和理解', '避免和她发生争执', '带她去做能让她放松的事'],
+            '恋人': ['激素变化可能导致情绪波动。不要把她的情绪化个人化，也要记住这是暂时的生理反应。', '避免和她发生争执', '带她去做能让她放松的事'],
             '家人': ['多理解她的情绪', '避免让她感到压力', '给她一些独处的空间'],
             '朋友': ['不要在她面前抱怨', '保持适度的社交距离', '如果她需要可以倾听']
           }
@@ -785,9 +764,9 @@ Page({
       // 状态特定的建议
       const statusSuggestions = {
         menstrual: {
-          '恋人': ['可以为她准备热饮', '帮她按摩腹部', '主动承担家务'],
-          '家人': ['避免让她受凉', '准备清淡易消化的食物', '不要让她做重活'],
-          '朋友': ['不要和她开玩笑', '如果她需要可以陪她去买卫生用品', '给她提供温暖的关心']
+          '恋人': ['悄悄准备她常用的卫生用品、止痛药(如布洛芬)和喜欢的零食。', '当她表达不适时，不要说“多喝热水”就结束话题。而是认真倾听，回应：“听起来真的好难受，我能为你做点什么吗？”让她感到被理解。', '主动承担家务劳动，特别是需要弯腰或体力活的事情，让她能多休息。','当她表达不适时，不要说“多喝热水”就结束话题。而是认真倾听，回应：“听起来真的好难受，我能为你做点什么吗？”让她感到被理解。'],
+          '家人': ['避免让她受凉', '准备清淡易消化的食物', '不要否定她的感受：避免说“忍一忍就过去了”之类的话。承认她的不适是真实存在的。'],
+          '朋友': ['“这几天是不是不太舒服？需要我陪你吗？”不要笼统地问“你没事吧？”，而是具体地问“是不是肚子疼/腰酸？”，并提供具体的帮助选项（陪你聊天、帮你做事），这让她更容易接受。', '观察情绪：有些人经期时更需要安静，有些人则需要倾诉。观察她的状态，提供她最需要的关心。', '“外卖已点，热奶茶半小时后到！”直接为她点一杯热饮（她喜欢的奶茶、红糖姜茶）或她爱吃的东西。这种“不说就做”的举动非常暖心。']
         },
         follicular: {
           '恋人': ['可以和她一起做户外运动', '安排一些轻松的约会', '带她去做她喜欢的事情'],
@@ -914,7 +893,73 @@ Page({
     return Passdays; 
     },
     
-    // 获取上次月经日期 - 从User_username类中获取
+    // 从自定义类中获取当天心情数据
+    async getTodayMoodFromCustomClass(user) {
+      try {
+        // 获取关联人的用户名，用于构建自定义类名
+        const username = user.getUsername();
+        if (!username) {
+          console.error('无法获取对方用户名');
+          return null;
+        }
+        
+        // 构建用户自定义类名
+        const className = `User_${username.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        
+        // 确保类存在
+        await this.ensureUserClass(className);
+        
+        // 获取今天的日期（YYYY-MM-DD格式）
+        const today = new Date();
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        
+        // 查询自定义类中今天的记录
+        const customClassQuery = new AV.Query(className);
+        
+        // 尝试匹配日期（考虑不同的日期存储格式）
+        const dateConditions = [];
+        
+        // 条件1：date字段等于今天的字符串格式
+        const condition1 = new AV.Query(className);
+        condition1.equalTo('date', todayStr);
+        dateConditions.push(condition1);
+        
+        // 条件2：date字段是Date对象，日期部分等于今天
+        const condition2 = new AV.Query(className);
+        const startOfDay = new Date(todayStr);
+        const endOfDay = new Date(todayStr);
+        endOfDay.setHours(23, 59, 59, 999);
+        condition2.greaterThanOrEqualTo('date', startOfDay);
+        condition2.lessThanOrEqualTo('date', endOfDay);
+        dateConditions.push(condition2);
+        
+        // 组合查询条件
+        const todayQuery = AV.Query.or(...dateConditions);
+        
+        // 按更新时间降序，获取最新的一条记录
+        todayQuery.descending('updatedAt');
+        todayQuery.limit(1);
+        
+        const result = await todayQuery.first();
+        
+        if (result) {
+          // 尝试从记录中获取心情数据
+          const mood = result.get('mood');
+          if (mood && mood !== '') {
+            console.log(`找到${todayStr}的心情记录:`, mood);
+            return mood;
+          }
+        }
+        
+        console.log(`未找到${todayStr}的心情记录`);
+        return null;
+      } catch (error) {
+        console.error('获取当天心情数据失败:', error);
+        return null;
+      }
+    },
+    
+    // 获取上次月经日期 - 从User_username类中获取所有isFirstDay=true的记录，并返回最靠近当天的日期
     async getLastMenstruation(user) {
       try {
         // 获取关联人的用户名，用于构建自定义类名
@@ -930,48 +975,55 @@ Page({
         // 确保类存在
         await this.ensureUserClass(className);
         
-        // 查询自定义类中最新的月经记录
-        // 注意：equalTo和exists是AV.Query实例的方法，不是静态方法
-        const query1 = new AV.Query(className);
-        query1.equalTo('type', 'menstrual');
+        // 查询自定义类中所有isFirstDay=true的记录
+        const query = new AV.Query(className);
+        query.equalTo('isFirstDay', true);
         
-        const query2 = new AV.Query(className);
-        query2.exists('lastPeriod');
+        // 获取所有符合条件的记录
+        const results = await query.find();
         
-        // 使用静态方法组合查询，然后设置排序和限制条件
-        const customClassQuery = AV.Query.or(query1, query2);
-        customClassQuery.descending('date'); // 按日期降序排列
-        customClassQuery.limit(1); // 只获取最新的一条记录
-        
-        const result = await customClassQuery.first();
-        
-        if (result) {
-          // 尝试从lastPeriod字段获取
-          let lastPeriod = result.get('lastPeriod');
+        if (results && results.length > 0) {
+          // 计算每条记录与今天的时间差
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // 忽略时间部分
           
-          // 如果没有lastPeriod，尝试从date字段获取
-          if (!lastPeriod && result.get('date')) {
-            lastPeriod = result.get('date');
-          }
+          let closestDate = null;
+          let minDiff = Infinity;
           
-          if (lastPeriod) {
+          for (const result of results) {
             try {
-              let date;
-              if (typeof lastPeriod === 'string') {
-                date = new Date(lastPeriod);
-              } else {
-                date = new Date(lastPeriod);
-              }
-              
-              if (!isNaN(date.getTime())) {
-                const year = date.getFullYear();
-                const month = date.getMonth() + 1;
-                const day = date.getDate();
-                return `${year}年${month}月${day}日`;
+              const recordDate = result.get('date');
+              if (recordDate) {
+                let date;
+                if (typeof recordDate === 'string') {
+                  date = new Date(recordDate);
+                } else {
+                  date = new Date(recordDate);
+                }
+                
+                if (!isNaN(date.getTime())) {
+                  date.setHours(0, 0, 0, 0); // 忽略时间部分
+                  const diff = Math.abs(today - date);
+                  
+                  // 找到最靠近今天的日期
+                  if (diff < minDiff) {
+                    minDiff = diff;
+                    closestDate = date;
+                  }
+                }
               }
             } catch (error) {
-              console.error('解析上次月经日期失败:', error);
+              console.error('解析日期失败:', error);
             }
+          }
+          
+          // 如果找到最靠近的日期，格式化并返回
+          if (closestDate) {
+            const year = closestDate.getFullYear();
+            // 确保月份和日期都是两位数
+            const month = String(closestDate.getMonth() + 1).padStart(2, '0');
+            const day = String(closestDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
           }
         }
       } catch (error) {

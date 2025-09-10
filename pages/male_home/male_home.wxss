@@ -91,10 +91,7 @@ page {
   }
   
 
-  .tab-bar-line {
-    display: none;
-  }
-  
+  /* Bottom Tab Bar */
   .tab-bar {
     position: fixed;
     bottom: 0;
@@ -107,29 +104,20 @@ page {
     align-items: center;
     box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
   }
-  
-  .tab-plus {
-    width: 100rpx;
-    height: 100rpx;
-    margin-top: 0rpx;
-    justify-content: center;
-    align-items: center;
-    background: #ffffff;
-    border-radius: 50%;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 10rpx;
-  }
-  
-  .tab-item {
-    flex: 1;
-    text-align: center;
-  }
-  
-  .tab-text {
-    font-size: 40rpx;
-    color: #ffffff;
-    font-weight: 500;
-  }
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-icon {
+  width: 75rpx;
+  height: 75rpx;
+  margin-bottom: 8rpx;
+  transition: transform 0.2s ease;
+}
   
 /* 关联人提醒模块样式优化 - 月伴主题 */
 .reminder-section {

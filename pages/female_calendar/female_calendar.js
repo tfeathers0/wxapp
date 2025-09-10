@@ -370,6 +370,25 @@ Page({
     });
   },
 
+  // 更新AV.User对象中的cyclelength字段
+  async updateUserCycleLengthInAVUser(cycleLength) {
+    try {
+      const currentUser = AV.User.current();
+      if (!currentUser) {
+        console.error('当前用户未登录，无法更新用户信息');
+        return false;
+      }
+      
+      currentUser.set('cycleLength', cycleLength);
+      await currentUser.save();
+      console.log('AV.User中的cyclelength字段更新成功:', cycleLength);
+      return true;
+    } catch (err) {
+      console.error('更新AV.User中的cyclelength字段失败:', err);
+      return false;
+    }
+  },
+
   async saveUserCycleInfo() {
     try {
       const className = this.getUserClassName();
@@ -398,6 +417,9 @@ Page({
         cycleInfoObj.set('periodDays', cycleInfo.periodDays);
         await cycleInfoObj.save();
         console.log('经期长度更新成功:', cycleInfo.periodDays);
+        
+        // 同时更新AV.User中的cyclelength字段
+        await this.updateUserCycleLengthInAVUser(cycleInfo.cycleLength);
       } else {
         console.log('创建新的cycleInfo对象，设置periodDays字段');
         const UserClass = AV.Object.extend(className);
@@ -409,6 +431,9 @@ Page({
         obj.set('periodDays', cycleInfo.periodDays);
         await obj.save();
         console.log('新cycleInfo对象创建并保存成功，经期长度:', cycleInfo.periodDays);
+        
+        // 同时更新AV.User中的cyclelength字段
+        await this.updateUserCycleLengthInAVUser(cycleInfo.cycleLength);
       }
     } catch (err) {
       console.error('保存周期信息失败:', err);

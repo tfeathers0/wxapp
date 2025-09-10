@@ -24,8 +24,8 @@
 
       <view class="permission-item">
         <view class="permission-text">
-          <text class="permission-title">月经时间</text>
-          <text class="permission-desc">允许查看上次月经日期和日历标记</text>
+          <text class="permission-title">上次月经</text>
+          <text class="permission-desc">允许查看上次月经日期</text>
         </view>
         <switch 
           checked="{{canViewMenstruation}}" 
@@ -50,7 +50,7 @@
 
       <view class="permission-item">
         <view class="permission-text">
-          <text class="permission-title">关键日期</text>
+          <text class="permission-title">周期信息</text>
           <text class="permission-desc">允许查看过去月经时间和日历标记</text>
         </view>
         <switch 

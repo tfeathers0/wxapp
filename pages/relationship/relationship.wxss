@@ -1,9 +1,18 @@
-.container {
-  background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
-  min-height: 100vh;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-}
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #8198c2 0%, #d792a5 100%);
+   }
+   .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40rpx 40rpx 0 40rpx;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+   }
 
 /* 柔和光晕效果 */
 .soft-glow {
@@ -341,7 +350,7 @@
 
 .empty-text {
   font-size: 28rpx;
-  color: #999;
+  color: #ffffff;
   margin-bottom: 10rpx;
   font-weight: 500;
   letter-spacing: 1rpx;

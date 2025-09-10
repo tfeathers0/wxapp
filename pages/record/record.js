@@ -208,6 +208,16 @@ Page({
 
       return obj.save();
     }).then(() => {
+      // 同时更新LeanCloud用户表中的mood字段
+      const currentUser = AV.User.current();
+      if (currentUser) {
+        currentUser.set('mood', mood);
+        currentUser.save().then(() => {
+          console.log('更新用户表mood字段成功:', mood);
+        }).catch(err => {
+          console.error('更新用户表mood字段失败:', err);
+        });
+      }
       // 处理经期第一天状态变化
       if (isFirstDay && !wasFirstDay) {
         // Added first day
@@ -217,7 +227,10 @@ Page({
         ]);
       } else if (!isFirstDay && wasFirstDay) {
         // Removed first day
-        return this.removeFromHistoryPeriods(date);
+        // 先删除自动创建的后续经期记录，再从历史记录中移除该日期
+        return this.removeAutoCreatedPeriodRecords(date).then(() => {
+          return this.removeFromHistoryPeriods(date);
+        });
       }
       return Promise.resolve();
     }).then(() => {
@@ -739,7 +752,7 @@ Page({
     return this.formatDate(d);
   },
 
-  // ============ 从历史经期记录中移除 ============
+  // ============ 从历史经期记录中移除 ============  
   removeFromHistoryPeriods(dateStr) {
     return new Promise((resolve, reject) => {
       try {
@@ -806,7 +819,158 @@ Page({
     });
   },
 
-  // ============ 更新周期信息 ============
+  // ============ 删除自动创建的后续经期记录 ============  
+  removeAutoCreatedPeriodRecords(startDateStr) {  
+    return new Promise((resolve, reject) => {  
+      try {  
+        const className = this.getUserClassName();  
+        if (!className) {  
+          resolve();  
+          return;  
+        }  
+        
+        // 获取经期长度  
+        let periodDays = 5; // 默认值  
+        const CycleInfo = new AV.Query(className);  
+        CycleInfo.equalTo('type', 'cycleInfo');  
+        
+        CycleInfo.first().then(cycleInfoObj => {  
+          if (cycleInfoObj) {  
+            periodDays = cycleInfoObj.get('periodDays') || 5;  
+          }  
+          
+          // 确保经期长度为有效数字  
+          let validPeriodDays = parseInt(periodDays) || 5;  
+          if (validPeriodDays < 2) {  
+            validPeriodDays = 5;  
+          }  
+          
+          // 解析开始日期  
+          let startDate;  
+          try {  
+            startDate = new Date(startDateStr);  
+            if (isNaN(startDate.getTime())) {  
+              console.error('无效的开始日期:', startDateStr);  
+              resolve();  
+              return;  
+            }  
+          } catch (dateErr) {  
+            console.error('解析开始日期失败:', dateErr);  
+            resolve();  
+            return;  
+          }  
+          
+          console.log('开始删除自动创建的后续经期记录:', startDateStr, '经期长度:', validPeriodDays, '天');  
+          
+          // 创建查询以删除从第二天开始的经期记录  
+          const deletePromises = [];  
+          
+          for (let i = 1; i < validPeriodDays; i++) {  
+            const currentDate = new Date(startDate);  
+            currentDate.setDate(startDate.getDate() + i);  
+            const dateStr = this.formatDate(currentDate);  
+            
+            // 查询该日期的记录  
+            const RecordQuery = new AV.Query(className);  
+            RecordQuery.equalTo('date', dateStr);  
+            RecordQuery.equalTo('type', 'menstrual'); // 只删除自动创建的类型为menstrual的记录  
+            
+            const deletePromise = new Promise((dayResolve) => {  
+              RecordQuery.find().then(records => {  
+                if (records && records.length > 0) {  
+                  // 批量删除找到的记录  
+                  AV.Object.destroyAll(records).then(() => {  
+                    console.log(`成功删除日期 ${dateStr} 的自动创建经期记录，共 ${records.length} 条`);  
+                    
+                    // 同时从duringdays中移除该日期  
+                    this.removeFromDuringDays(dateStr).then(() => {  
+                      dayResolve();  
+                    }).catch(err => {  
+                      console.error(`从duringdays移除 ${dateStr} 失败:`, err);  
+                      dayResolve();  
+                    });  
+                  }).catch(err => {  
+                    console.error(`删除日期 ${dateStr} 的记录失败:`, err);  
+                    dayResolve();  
+                  });  
+                } else {  
+                  console.log(`未找到日期 ${dateStr} 的自动创建经期记录`);  
+                  dayResolve();  
+                }  
+              }).catch(err => {  
+                console.error(`查询日期 ${dateStr} 的记录失败:`, err);  
+                dayResolve();  
+              });  
+            });  
+            
+            deletePromises.push(deletePromise);  
+          }  
+          
+          Promise.all(deletePromises).then(() => {  
+            console.log('删除自动创建的后续经期记录完成，共处理', validPeriodDays - 1, '天');  
+            resolve();  
+          }).catch(err => {  
+            console.error('删除过程中发生错误:', err);  
+            resolve();  
+          });  
+        }).catch(err => {  
+          console.error('获取周期信息失败:', err);  
+          resolve();  
+        });  
+      } catch (err) {  
+        console.error('删除自动创建的后续经期记录失败:', err);  
+        resolve();  
+      }  
+    });  
+  },  
+  
+  // ============ 从duringdays数组中移除日期 ============  
+  removeFromDuringDays(dateStr) {  
+    return new Promise((resolve, reject) => {  
+      try {  
+        const className = this.getUserClassName();  
+        if (!className) {  
+          resolve();  
+          return;  
+        }  
+        
+        // 获取历史记录对象  
+        const HistoryQuery = new AV.Query(className);  
+        HistoryQuery.equalTo('type', 'historyPeriods');  
+        
+        HistoryQuery.first().then(historyObj => {  
+          if (historyObj) {  
+            let duringdays = historyObj.get('duringdays') || [];  
+            
+            // 检查并移除日期  
+            if (duringdays.includes(dateStr)) {  
+              duringdays = duringdays.filter(d => d !== dateStr);  
+              historyObj.set('duringdays', duringdays);  
+              
+              historyObj.save().then(() => {  
+                resolve();  
+              }).catch(err => {  
+                console.error('更新duringdays失败:', err);  
+                resolve();  
+              });  
+            } else {  
+              resolve();  
+            }  
+          } else {  
+            resolve();  
+          }  
+        }).catch(err => {  
+          console.error('获取历史记录对象失败:', err);  
+          resolve();  
+        });  
+      } catch (err) {  
+        console.error('从duringdays中移除失败:', err);  
+        resolve();  
+      }  
+    });  
+  },  
+  
+  // ============ 更新周期信息 ============  
   updateCycleInfo(dateStr) {
     return new Promise((resolve, reject) => {
       try {

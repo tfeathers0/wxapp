@@ -339,41 +339,6 @@ Page({
       // 如果没有关联人，不进行跳转
     },
 
-    switchToKnowledge() {
-      wx.navigateTo({ url: '/pages/knowledge_base/knowledge_base' })
-    },
-
-  // 扫码功能
-  switchToScan: function() {
-    wx.scanCode({
-      onlyFromCamera: true, // 只允许从相机扫码
-      success: (res) => {
-        console.log('扫码结果:', res.result);
-        wx.navigateTo({
-          url: `../relationship/relationship?scanResult=${encodeURIComponent(res.result)}`
-        });
-        wx.showToast({
-          title: '扫码成功',
-          icon: 'success'
-        });
-      },
-      fail: (err) => {
-        console.log('扫码失败:', err);
-        // 取消扫码不会弹出提示
-        if (err.errMsg !== 'scanCode:fail cancel') {
-          wx.showToast({
-            title: '扫码失败',
-            icon: 'none'
-          });
-        }
-      }
-    });
-  },
-
-    switchToMine() {
-      wx.navigateTo({ url: '/pages/my_homepage/my_homepage' })
-    },
-
     onCalendarDateSelect(e) {
       const selectedFullDate = e.detail.date;
       this.setData({ selectedFullDate });
@@ -405,6 +370,45 @@ Page({
       
       // 重新加载关联人列表并检查异常状况
       this.loadContactListAndCheckAbnormal();
-    }
+    },
+        // Bottom bar
+    switchToKnowledge() {
+      wx.navigateTo({ url: '/pages/knowledge_base/knowledge_base' })
+    },
+    
+    switchToMine() {
+      wx.navigateTo({ url: '/pages/my_homepage/my_homepage' })
+    },
+
+
+    
+
+    // 扫码功能
+  switchToScan: function() {
+    wx.scanCode({
+      onlyFromCamera: true, // 只允许从相机扫码
+      success: (res) => {
+        console.log('扫码结果:', res.result);
+        wx.navigateTo({
+          url: `../relationship/relationship?scanResult=${encodeURIComponent(res.result)}`
+        });
+        wx.showToast({
+          title: '扫码成功',
+          icon: 'success'
+        });
+      },
+      fail: (err) => {
+        console.log('扫码失败:', err);
+        // 取消扫码不会弹出提示
+        if (err.errMsg !== 'scanCode:fail cancel') {
+          wx.showToast({
+            title: '扫码失败',
+            icon: 'none'
+          });
+        }
+      }
+    });
+  },
+
 });
     

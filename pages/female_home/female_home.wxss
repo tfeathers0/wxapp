@@ -260,7 +260,7 @@ page {
     display: flex;
     flex-direction: column;
    }
-   .date-card {
+    .date-card {
     width: 200rpx;
     height: 200rpx;
     background-color: rgba(255, 255, 255, 0.7);
@@ -280,22 +280,18 @@ page {
     transform: translateY(-2px);
     border-color: rgba(165, 205, 215, 0.5);
    }
-   .date-number {
-    font-size: 80rpx;
-    font-weight: bold;
-    line-height: 1;
-    background: linear-gradient(90deg, #8198c2 0%, #a5cdd7 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-   }
-   .date-weekday {
-    font-size: 32rpx;
+   .data-text{
+     font-size: 30rpx;
     color: #8198c2;
-    margin-top: 10rpx;
-    opacity: 0.9;
+    font-weight: bold;
    }
+
+.cal-icon {
+    width: 120rpx;
+    height: 120rpx;
+    margin-bottom: 8rpx;
+    transition: transform 0.2s ease;
+  }
    .switch-button {
     background-color: rgba(255, 255, 255, 0.7);
     font-size: 18px;
@@ -377,57 +373,33 @@ page {
   display: flex;
   align-items: center;
 }
-   /* Tab Bar Styles */
-.tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 150rpx;
-  background: rgba(129, 152, 194, 0.95);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
-}
-
-.tab-plus {
-  width: 100rpx;
-  height: 100rpx;
-  margin-top: 0rpx;
-  justify-content: center;
-  align-items: center;
-  background: #ffffff;
-  border-radius: 50%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  padding: 10rpx;
-}
+/* Bottom Tab Bar */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 150rpx;
+    background: rgba(129, 152, 194, 0.95);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 20px rgba(129, 152, 194, 0.15);
+  }
 
 .tab-item {
-  flex: 1;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.tab-text {
-  font-size: 40rpx;
-  color: #ffffff;
-  font-weight: 500;
+.tab-icon {
+  width: 75rpx;
+  height: 75rpx;
+  margin-bottom: 8rpx;
+  transition: transform 0.2s ease;
 }
-   /* 增加交互效果 */
-   .date-card,
-   .switch-button,
-   .knowledge-card,
-   .tab-item {
-    transition: all 0.3s ease;
-   }
-   .date-card:active,
-   .switch-button:active,
-   .knowledge-card:active {
-    transform: scale(0.98);
-   }
-   .tab-item:active {
-    opacity: 0.8;
-   }
 
    /* 动画效果 */
    @keyframes fadeInUp {

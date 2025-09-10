@@ -6,7 +6,7 @@
     justify-content: flex-start;
     min-height: 100vh;
     padding: 100rpx 20rpx 20rpx 20rpx;
-    background-color: #fcf6f2;
+    background-color: #f0ebf5;
     box-sizing: border-box;
   }
   
@@ -37,13 +37,13 @@
   .box-text {
     font-family: "PingFang SC", "Arial", sans-serif;
     font-size: 36rpx;
-    color: #d792a5;
+    color: #bc83f5;
     font-weight: bold;
   }
   
   .details {
     overflow: hidden;
-    background-color: #dcb8ba;       /* make it visually distinct */
+    background-color: #dac5f3;       /* make it visually distinct */
     border-radius: 12rpx;            /* rounded corners for the inner box */
     margin: 10rpx 0 0 0;             /* space from the main box top/bottom */
     padding: 20rpx;                  /* space between walls and content */
@@ -66,7 +66,7 @@
   .big-bold-text {
     font-size: 30rpx;
     font-weight: bold;
-    color: #ff4a84;
+    color: #993cf7;
     display: block;
     margin: 30rpx 0 15rpx;
   }

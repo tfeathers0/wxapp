@@ -1,4 +1,9 @@
 <view class="container">
+
+  <view class="header">
+    <image class="scan-icon" src="/images/scan.png" bindtap="switchToScan" mode="widthFix"></image>
+  </view>
+
   <!-- Profile section -->
   <view class="profile" catchtap>
     <!-- Avatar -->
@@ -37,13 +42,23 @@
   </view>
 
   <!-- Bottom tab-bar -->
-  <view class="tab-bar">
-    <view class="tab-item" bindtap="switchToKnowledge">
-      <text class="tab-text">知识库</text>
-    </view>
-    <image class="tab-plus" src="/images/plus2.png" bindtap="goScan" mode="widthFix"></image>
-    <view class="tab-item" bindtap="switchToMine">
-      <text class="tab-text">我的</text>
-    </view>
+<view class="tab-bar">
+ <!-- Bottom tab-bar -->
+<view class="tab-bar">
+  <view class="tab-item" bindtap="switchToKnowledge">
+    <image class="tab-icon" src="/images/知识库.png" mode="widthFix"></image>
   </view>
+  
+  <view class="tab-item" bindtap="switchToHome">
+    <image class="tab-icon" src="/images/home.png" mode="widthFix"></image>
+  </view>
+  
+  <view class="tab-item" bindtap="switchToMine">
+    <image class="tab-icon" src="/images/me.png" mode="widthFix"></image>
+  </view>
+</view>
+
+
+</view>
+
 </view>

@@ -602,60 +602,33 @@ Page({
       url: '../female_calendar/female_calendar'
     });
   },
+  
+  // 页面显示时自动刷新数据，但不重复显示弹窗
+  onShow: async function() {
+    console.log('female_home页面显示，开始刷新数据但不重复显示弹窗');
+    
+    // 重新加载用户设置
+    await this.loadUserSettings();
+    
+    // 重新计算周期信息（更新指示器位置和当前周期，从而更新背景图片）
+    await this.calculateCycleInfo();
+    
+    // 更新当天日期
+    this.formatTodayDate();
+  },
+    // Bottom bar
+    switchToKnowledge() {
+      wx.navigateTo({ url: '/pages/knowledge_base/knowledge_base' })
+    },
+    
+    switchToMine() {
+      wx.navigateTo({ url: '/pages/my_homepage/my_homepage' })
+    },
 
-  // 点击选项卡
-  onTabClick: function(e) {
-    const tabIndex = e.currentTarget.dataset.index;
+
     
-    // 设置当前激活的选项卡
-    this.setData({
-      activeTab: tabIndex
-    });
-    
-    // 点击加号按钮时调用微信扫一扫
-    if (tabIndex === 1) {
-      wx.scanCode({
-        onlyFromCamera: true, // 只允许从相机扫码
-        success: (res) => {
-          console.log('扫码结果:', res.result);
-          // 这里可以处理扫码成功后的逻辑
-          wx.showToast({
-            title: '扫码成功',
-            icon: 'success'
-          });
-        },
-        fail: (err) => {
-          console.log('扫码失败:', err);
-          // 取消扫码不会弹出提示
-          if (err.errMsg !== 'scanCode:fail cancel') {
-            wx.showToast({
-              title: '扫码失败',
-              icon: 'none'
-            });
-          }
-        }
-      });
-    } else if (tabIndex === 0) {
-      // 点击知识库选项卡
-      wx.navigateTo({
-        url: '../knowledge_base/knowledge_base'
-      });
-    } else if (tabIndex === 2) {
-      // 点击我的选项卡
-      wx.navigateTo({
-        url: '../my_homepage/my_homepage'
-      });
-    }
-  },
-  
-  // 导航到知识库
-  switchToKnowledge: function() {
-    wx.navigateTo({
-      url: '../knowledge_base/knowledge_base'
-    });
-  },
-  
-  // 扫码功能
+
+    // 扫码功能
   switchToScan: function() {
     wx.scanCode({
       onlyFromCamera: true, // 只允许从相机扫码
@@ -681,25 +654,5 @@ Page({
       }
     });
   },
-  
-  // 导航到我的页面
-  switchToMine: function() {
-    wx.navigateTo({
-      url: '../my_homepage/my_homepage'
-    });
-  },
-  
-  // 页面显示时自动刷新数据，但不重复显示弹窗
-  onShow: async function() {
-    console.log('female_home页面显示，开始刷新数据但不重复显示弹窗');
-    
-    // 重新加载用户设置
-    await this.loadUserSettings();
-    
-    // 重新计算周期信息（更新指示器位置和当前周期，从而更新背景图片）
-    await this.calculateCycleInfo();
-    
-    // 更新当天日期
-    this.formatTodayDate();
-  }
-})
+
+  })

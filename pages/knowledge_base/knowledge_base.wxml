@@ -18,31 +18,24 @@
       </button>
     </view>
     
-    <!-- 功能卡片2 -->
-    <view class="menu-card">
-      <!-- 智能体按钮 -->
-      <button class="menu-btn" bindtap="goToAgent">
-        <image src="/images/AI.png" class="icon"></image>
-        <text class="label">AI问答助手</text>
-      </button>
-    </view>
+
   </view>
 </view>
 
-<!-- 隐藏的导航线 -->
-<view class="tab-bar-line"></view>
-
-<!-- 底部导航栏 -->
+<!-- Bottom tab-bar -->
 <view class="tab-bar">
   <view class="tab-item" bindtap="switchToKnowledge">
-    <text class="tab-text">知识库</text>
+    <image class="tab-icon" src="/images/知识库.png" mode="widthFix"></image>
   </view>
-
-  <!-- 中心按钮 -->
-  <image class="tab-plus" src="/images/plus2.png" bindtap="goAdd" mode="widthFix"></image>
-
+  
+  <view class="tab-item" bindtap="switchToHome">
+    <image class="tab-icon" src="/images/home.png" mode="widthFix"></image>
+  </view>
+  
   <view class="tab-item" bindtap="switchToMine">
-    <text class="tab-text">我的</text>
+    <image class="tab-icon" src="/images/me.png" mode="widthFix"></image>
   </view>
 </view>
+
+
 </view>

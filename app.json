@@ -20,7 +20,6 @@
     "pages/female_calendar/female_calendar",
     "pages/history/history",
     "pages/record/record",
-    "pages/agent/agent",
     "pages/document/detail",
     "pages/upload_document/upload_document"
   ],

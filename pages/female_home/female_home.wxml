@@ -49,15 +49,14 @@
     <view class="info-container">
       <!-- 左侧区域：日期卡片和关联切换 -->
       <view class="left-panel">
-        <!-- 日期显示 -->
         <view class="date-card" bindtap="onDateCardClick">
-          <text class="date-number">{{currentDay}}</text>
-          <text class="date-weekday">{{weekDays[currentWeekday]}}</text>
+          <image class="cal-icon" src="/images/calendar.png" mode="widthFix"></image>
+            <text class="data-text">周期记录</text>
         </view>
 
         <!-- 关联切换按钮 -->
         <view class="switch-button" bindtap="onSwitchClick">
-          <text class="switch-text">关联切换</text>
+          <text class="switch-text">关联人</text>
         </view>
       </view>
 
@@ -82,18 +81,22 @@
     </view>
   </view>
 
-  <!-- 底部导航栏 -->
-  <view class="tab-bar">
-    <view class="tab-item" bindtap="switchToKnowledge">
-      <text class="tab-text">知识库</text>
-    </view>
-
-    <image class="tab-plus" src="/images/plus2.png" bindtap="switchToScan" mode="widthFix"></image>
-
-    <view class="tab-item" bindtap="switchToMine">
-      <text class="tab-text">我的</text>
-    </view>
+<!-- Bottom tab-bar -->
+<view class="tab-bar">
+  <view class="tab-item" bindtap="switchToKnowledge">
+    <image class="tab-icon" src="/images/知识库.png" mode="widthFix"></image>
   </view>
+  
+  <view class="tab-item" bindtap="switchToHome">
+    <image class="tab-icon" src="/images/home.png" mode="widthFix"></image>
+  </view>
+  
+  <view class="tab-item" bindtap="switchToMine">
+    <image class="tab-icon" src="/images/me.png" mode="widthFix"></image>
+  </view>
+</view>
+
+
   <view wx:if="{{showPopup}}" class="popup-mask">
   <view class="popup-container">
     <button class="popup-close" bindtap="closePopup">✕</button>

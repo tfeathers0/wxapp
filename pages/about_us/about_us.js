@@ -24,113 +24,98 @@ Page({
       // 清除画布
       ctx.clearRect(0, 0, size, size);
       
-      // --- 绘制娥月形背景 ---
-      ctx.beginPath();
-      // 大黄色圆形（月亮主体）
-      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-      ctx.setFillStyle("#fce39f");
-      ctx.fill();
+        // --- 绘制图片背景 ---
+        // 绘制clock.png作为背景图片
+        ctx.drawImage('/images/clock.png', 0, 0, size, size);
       
-      // 切割内部形成娥月形状
-      ctx.beginPath();
-      // 调整切割圆的位置和大小以形成正确的娥月形
-      ctx.arc(centerX + radius * 0.3, centerY, radius * 0.8, 0, 2 * Math.PI);
-      ctx.setFillStyle("#fcf6f2"); // 使用与页面背景相同的颜色
-      ctx.fill();
-      
-      // --- 绘制刻度 ---
-      // 主要刻度（12、3、6、9点位置）
-      const majorTickLength = 15;
-      const majorTickWidth = 4;
-      ctx.setStrokeStyle("#333");
-      ctx.setLineWidth(majorTickWidth);
-      
-      // 四个主要刻度位置
-      const majorTicks = [
-        {x: 0, y: -radius + 20}, // 12点
-        {x: radius - 20, y: 0},  // 3点
-        {x: 0, y: radius - 20},  // 6点
-        {x: -radius + 20, y: 0}  // 9点
-      ];
-      
-      majorTicks.forEach(pos => {
-        ctx.beginPath();
-        ctx.moveTo(centerX + pos.x * 0.9, centerY + pos.y * 0.9);
-        ctx.lineTo(centerX + pos.x, centerY + pos.y);
-        ctx.stroke();
-      });
-      
-      // 次要刻度（其他小时刻度）
-      const minorTickLength = 8;
-      const minorTickWidth = 2;
-      ctx.setLineWidth(minorTickWidth);
-      
-      for (let i = 0; i < 12; i++) {
-        // 跳过已经绘制的主要刻度位置
-        if (i % 3 === 0) continue;
+         // --- 绘制刻度 ---
+        // 主要刻度（12、3、6、9点位置）
+        const majorTickLength = 15;
+        const majorTickWidth = 4;
+        ctx.setStrokeStyle("#1e3a8a"); // 带蓝色调的浅紫色主要刻度
+        ctx.setLineWidth(majorTickWidth);
         
-        const angle = (Math.PI / 6) * i;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
+        // 四个主要刻度位置
+        const majorTicks = [
+          {x: 0, y: -radius + 20}, // 12点
+          {x: radius - 20, y: 0},  // 3点
+          {x: 0, y: radius - 20},  // 6点
+          {x: -radius + 20, y: 0}  // 9点
+        ];
         
+        majorTicks.forEach(pos => {
+          ctx.beginPath();
+          ctx.moveTo(centerX + pos.x * 0.9, centerY + pos.y * 0.9);
+          ctx.lineTo(centerX + pos.x, centerY + pos.y);
+          ctx.stroke();
+        });
+        
+        // 次要刻度（其他小时刻度）
+        const minorTickLength = 8;
+        const minorTickWidth = 2;
+        ctx.setStrokeStyle("#4338ca"); // 带蓝色调的淡紫色次要刻度
+        ctx.setLineWidth(minorTickWidth);
+        
+        for (let i = 0; i < 12; i++) {
+          // 跳过已经绘制的主要刻度位置
+          if (i % 3 === 0) continue;
+          
+          const angle = (Math.PI / 6) * i;
+          const cos = Math.cos(angle);
+          const sin = Math.sin(angle);
+          
+          ctx.beginPath();
+          ctx.moveTo(
+            centerX + cos * (radius - 20) * 0.9, 
+            centerY + sin * (radius - 20) * 0.9
+          );
+          ctx.lineTo(
+            centerX + cos * (radius - 20), 
+            centerY + sin * (radius - 20)
+          );
+          ctx.stroke();
+        }
+        
+        // --- 绘制时钟指针 ---
+        const now = new Date();
+        const sec = now.getSeconds();
+        const min = now.getMinutes();
+        const hr = now.getHours() % 12;
+        
+        // 时针
+        const hourAngle = (Math.PI / 6) * hr + (Math.PI / 360) * min;
+        this.drawHand(ctx, centerX, centerY, hourAngle, radius * 0.4, 4, "#312e81"); // 更浅的带蓝色调淡紫色时针，更细
+        
+        // 分针
+        const minuteAngle = (Math.PI / 30) * min + (Math.PI / 1800) * sec;
+        this.drawHand(ctx, centerX, centerY, minuteAngle, radius * 0.6, 3, "#1d4ed8"); // 带蓝色调的中紫色分针
+        
+        // 秒针
+        const secondAngle = (Math.PI / 30) * sec;
+        this.drawHand(ctx, centerX, centerY, secondAngle, radius * 0.7, 1, "#6d28d9"); // 紫色系秒针，与整体色调协调
+        
+        // 中心点
         ctx.beginPath();
-        ctx.moveTo(
-          centerX + cos * (radius - 20) * 0.9, 
-          centerY + sin * (radius - 20) * 0.9
-        );
+        ctx.arc(centerX, centerY, 6, 0, 2 * Math.PI);
+        ctx.setFillStyle("#0e7490"); // 稍浅的蓝色中心点
+        ctx.fill();
+        
+        // 绘制
+        ctx.draw();
+      },
+      
+      drawHand(ctx, x, y, angle, length, width, color) {
+        ctx.beginPath();
+        ctx.setLineWidth(width);
+        ctx.setStrokeStyle(color);
+        ctx.setLineCap("round");
+        ctx.moveTo(x, y);
         ctx.lineTo(
-          centerX + cos * (radius - 20), 
-          centerY + sin * (radius - 20)
+          x + Math.cos(angle - Math.PI/2) * length, 
+          y + Math.sin(angle - Math.PI/2) * length
         );
         ctx.stroke();
-      }
-      
-      // --- 绘制时钟指针 ---
-      const now = new Date();
-      const sec = now.getSeconds();
-      const min = now.getMinutes();
-      const hr = now.getHours() % 12;
-      
-      // 时针
-      const hourAngle = (Math.PI / 6) * hr + (Math.PI / 360) * min;
-      this.drawHand(ctx, centerX, centerY, hourAngle, radius * 0.4, 6, "#333");
-      
-      // 分针
-      const minuteAngle = (Math.PI / 30) * min + (Math.PI / 1800) * sec;
-      this.drawHand(ctx, centerX, centerY, minuteAngle, radius * 0.6, 3, "#333");
-      
-      // 秒针
-      const secondAngle = (Math.PI / 30) * sec;
-      this.drawHand(ctx, centerX, centerY, secondAngle, radius * 0.7, 1, "#e74c3c");
-      
-      // 中心点
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 6, 0, 2 * Math.PI);
-      ctx.setFillStyle("#333");
-      ctx.fill();
-      
-      // 中心内圆
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 3, 0, 2 * Math.PI);
-      ctx.setFillStyle("#e74c3c");
-      ctx.fill();
-      
-      // 绘制
-      ctx.draw();
-    },
-    
-    drawHand(ctx, x, y, angle, length, width, color) {
-      ctx.beginPath();
-      ctx.setLineWidth(width);
-      ctx.setStrokeStyle(color);
-      ctx.setLineCap("round");
-      ctx.moveTo(x, y);
-      ctx.lineTo(
-        x + Math.cos(angle - Math.PI/2) * length, 
-        y + Math.sin(angle - Math.PI/2) * length
-      );
-      ctx.stroke();
-    }, 
+      },
   
     data: {
       items: [
@@ -157,11 +142,8 @@ Page({
   
             { text: "4. 多模式共享与关怀", style: "big-bold-text" },
             { text: "- 支持 个人、伴侣、家庭、朋友 四种模式\n- 用户可自主选择授权对象，在隐私保护前提下共享周期信息\n- 提供贴心提示，例如：“月经将至，记得提醒她带上卫生用品”\n- 促进伴侣理解、家庭关怀与朋友互助", style: "details-text" },
-  
-            { text: "5. 周期报告与异常提醒", style: "big-bold-text" },
-            { text: "- 自动生成周期健康报告，可导出为 PDF，方便就医参考\n- 智能识别异常（如周期过长/过短/缺失），及时发出提醒\n- 贴心建议用户关注身体变化，并在必要时寻求专业帮助", style: "details-text" },
-            { text: "\n" },
-            { text: "\n" },
+            {text:"\n"},
+            {text:"\n"},
           ],
           isOpen: false,
           height: 0
